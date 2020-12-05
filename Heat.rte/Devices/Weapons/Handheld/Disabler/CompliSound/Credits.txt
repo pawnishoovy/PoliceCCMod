@@ -1,0 +1,5 @@
+Add - TennoDrakeRifle, pkm_bass_loop
+
+Mech - TennoLeverActionRifle
+
+Reflection - TennoDrakeRifle, tail_open_field_close_sniper (shortened)
