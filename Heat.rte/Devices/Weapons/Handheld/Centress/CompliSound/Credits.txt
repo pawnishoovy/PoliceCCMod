@@ -1,0 +1,5 @@
+Add - TnoGunbladeAutomaticShotC, p226
+
+Mech - m45, TennoMagnum
+
+Reflection - TennoLeverActionRifleTailC
