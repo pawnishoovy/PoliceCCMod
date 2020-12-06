@@ -1,4 +1,4 @@
-Add - BratonVandalReduxFireShotA, GrineerAssaultRifleFire2DA
+Add - BratonVandalReduxFireShotA, GrineerAssaultRifleFire2DA, TnoSundialSMGShotC, mk14 (christ, dude)
 
 Mech - BratonVandalReduxFireMechA
 
