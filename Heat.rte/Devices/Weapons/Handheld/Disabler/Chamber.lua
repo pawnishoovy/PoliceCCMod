@@ -3,6 +3,9 @@ function Create(self)
 	self.parentSet = false;
 	
 	-- Sounds --
+	self.preSounds = {["Variations"] = 3,
+	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Disabler/CompliSound/Pre"};		
+	
 	self.addSounds = {["Loop"] = nil};
 	self.addSounds.Loop = {["Variations"] = 3,
 	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Disabler/CompliSound/Add"};
@@ -14,6 +17,9 @@ function Create(self)
 	self.reflectionSounds = {["Outdoors"] = nil};
 	self.reflectionSounds.Outdoors = {["Variations"] = 3,
 	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Disabler/CompliSound/Reflection"};
+	
+	self.FireTimer = Timer();
+	self:SetNumberValue("DelayedFireTimeMS", 90)	
 	
 	self.lastAge = self.Age
 	
@@ -112,7 +118,7 @@ function Update(self)
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/MagOut";
 			
-			self.rotationTarget = 15;
+			self.rotationTarget = 5;
 			
 		elseif self.reloadPhase == 1 then
 			self.reloadDelay = self.magInPrepareDelay;
@@ -120,7 +126,7 @@ function Update(self)
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/MagIn";
 			
-			self.rotationTarget = 15;
+			self.rotationTarget = 10;
 			
 		elseif self.reloadPhase == 2 then
 			self.Frame = 0;
@@ -130,7 +136,7 @@ function Update(self)
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/BoltBack";	
 
-			self.rotationTarget = 7;
+			self.rotationTarget = 5;
 		
 		elseif self.reloadPhase == 3 then
 			self.Frame = 1;
@@ -139,7 +145,7 @@ function Update(self)
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/BoltForward";
 			
-			self.rotationTarget = 7;
+			self.rotationTarget = 2;
 			
 		end
 	
@@ -174,6 +180,9 @@ function Update(self)
 					fake.HFlipped = self.HFlipped;
 					MovableMan:AddParticle(fake);
 					
+					self.angVel = self.angVel + 2;
+					self.verticalAnim = self.verticalAnim + 1
+					
 				elseif self.reloadPhase == 1 then
 					if self.chamberOnReload then
 						self.phaseOnStop = 2;
@@ -182,6 +191,8 @@ function Update(self)
 						self.reloadPhase = 0;
 						self.phaseOnStop = nil;
 					end
+					self.angVel = self.angVel - 2;
+					self.verticalAnim = self.verticalAnim - 1	
 					self:RemoveNumberValue("MagRemoved");
 					
 				elseif self.reloadPhase == 2 then
