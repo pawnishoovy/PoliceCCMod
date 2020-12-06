@@ -1,0 +1,7 @@
+Add - BratonVandalReduxFireShotA, GrineerAssaultRifleFire2DA
+
+Mech - BratonVandalReduxFireMechA
+
+Reflection - GrnLaserAimRifleTailA (-10), noise_field_close_end_01 (-5), BratonVandalReduxFireShotA
+
+Pre - TennoLeverActionRifle (cut off beginning)
