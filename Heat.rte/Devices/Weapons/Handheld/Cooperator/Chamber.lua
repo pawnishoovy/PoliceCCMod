@@ -44,11 +44,11 @@ function Create(self)
 	self.shotCounter = 0;
 	
 	self.boltBackPrepareDelay = 750;
-	self.boltBackAfterDelay = 800;
+	self.boltBackAfterDelay = 1000;
 	self.magOutPrepareDelay = 700;
-	self.magOutAfterDelay = 1000;
+	self.magOutAfterDelay = 1200;
 	self.magInPrepareDelay = 1000;
-	self.magInAfterDelay = 600;
+	self.magInAfterDelay = 800;
 	self.boltForwardPrepareDelay = 1120;
 	self.boltForwardAfterDelay = 1300;
 	
