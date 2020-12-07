@@ -45,7 +45,7 @@ function Create(self)
 	self.magOutPrepareDelay = 700;
 	self.magOutAfterDelay = 1000;
 	self.magInPrepareDelay = 1000;
-	self.magInAfterDelay = 200;
+	self.magInAfterDelay = 600;
 	self.boltForwardPrepareDelay = 1120;
 	self.boltForwardAfterDelay = 1300;
 	
