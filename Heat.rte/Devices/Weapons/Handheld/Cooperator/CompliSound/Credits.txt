@@ -1,0 +1,18 @@
+START SOUNDS
+
+CrpSentExperimentPistolShotA (bassified)
+CrpSentExperimentRifleShotA (cut off, for the bass at the start)
+
+STOP SOUNDS
+
+CrpSentExperimentRiffleShotStopA (cut off, bassified)
+
+
+TITANFALL 2:
+
+titancoreability_lasercannon stuff
+
+do not use LFE
+remember to stereo
+
+reflection: canyon bf1
