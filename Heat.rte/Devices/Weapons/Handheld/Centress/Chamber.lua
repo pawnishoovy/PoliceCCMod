@@ -191,7 +191,7 @@ function Update(self)
 					self.phaseOnStop = 1;
 					local fake
 					fake = CreateMOSRotating("Fake Magazine MOSRotating Centress");
-					fake.Pos = self.Pos + Vector(1 * self.FlipFactor, 0):RadRotate(self.RotAngle);
+					fake.Pos = self.Pos + Vector(-3 * self.FlipFactor, -2):RadRotate(self.RotAngle);
 					fake.Vel = self.Vel + Vector(0.5*self.FlipFactor, 3):RadRotate(self.RotAngle);
 					fake.RotAngle = self.RotAngle;
 					fake.AngularVel = self.AngularVel + (-1*self.FlipFactor);
@@ -269,7 +269,7 @@ function Update(self)
 	
 	if self.FiredFrame then
 		self.Frame = 1;
-		self.angVel = self.angVel - RangeRand(0.7,1.1) * 15
+		self.angVel = self.angVel - RangeRand(0.7,1.1) * 5
 		
 		self.canSmoke = true
 		self.smokeTimer:Reset()
