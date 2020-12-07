@@ -251,6 +251,18 @@ function Update(self)
 		end
 	end
 	
+	if self.prepareSound then
+		if self.prepareSound:IsBeingPlayed() then
+			self.prepareSound:SetPosition(self.Pos);
+		end
+	end
+	
+	if self.afterSound then
+		if self.afterSound:IsBeingPlayed() then
+			self.afterSound:SetPosition(self.Pos);
+		end
+	end
+	
 	if self:IsActivated() and self.RoundInMagCount > 0 then
 	
 		if self.reflectionSound then
