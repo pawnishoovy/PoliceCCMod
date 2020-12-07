@@ -115,6 +115,7 @@ function Update(self)
 		if self.reloadPhase == 0 then
 			self.reloadDelay = self.magOutPrepareDelay;
 			self.afterDelay = self.magOutAfterDelay;			
+			self.prepareSoundPath = nil;
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/MagOut";
 			
@@ -123,6 +124,8 @@ function Update(self)
 		elseif self.reloadPhase == 1 then
 			self.reloadDelay = self.magInPrepareDelay;
 			self.afterDelay = self.magInAfterDelay;
+			self.prepareSoundPath =
+			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/MagInPrepare";
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/MagIn";
 			
@@ -142,11 +145,19 @@ function Update(self)
 			self.Frame = 1;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
+			self.prepareSoundPath = nil;
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/BoltForward";
 			
 			self.rotationTarget = 2;
 			
+		end
+		
+		if self.prepareSoundPlayed ~= true then
+			self.prepareSoundPlayed = true;
+			if self.prepareSoundPath then
+				self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			end
 		end
 	
 		if self.reloadTimer:IsPastSimMS(self.reloadDelay) then
@@ -214,6 +225,7 @@ function Update(self)
 			if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay) then
 				self.reloadTimer:Reset();
 				self.afterSoundPlayed = false;
+				self.prepareSoundPlayed = false;
 				if self.chamberOnReload and self.reloadPhase == 1 then
 					self.reloadPhase = self.reloadPhase + 1;
 				elseif self.reloadPhase == 1 or self.reloadPhase == 3 then
@@ -228,6 +240,7 @@ function Update(self)
 		
 		self.reloadTimer:Reset();
 		self.afterSoundPlayed = false;
+		self.prepareSoundPlayed = false;
 		if self.reloadPhase == 3 then
 			self.reloadPhase = 2;
 		end
