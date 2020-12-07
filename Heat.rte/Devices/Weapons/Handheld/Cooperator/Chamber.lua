@@ -9,6 +9,9 @@ function Create(self)
 	
 	self.startSounds = {["Variations"] = 3,
 	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Cooperator/CompliSound/Start"};
+	
+	self.lfeSounds = {["Variations"] = 3,
+	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Cooperator/CompliSound/LFE"};
 
 	self.reflectionSounds = {["Outdoors"] = nil};
 	self.reflectionSounds.Outdoors = {["Variations"] = 3,
@@ -280,9 +283,15 @@ function Update(self)
 				self.stopSound:Stop(-1)
 			end
 		end
+		if self.lfeStopSound then
+			if self.lfeStopSound:IsBeingPlayed() then
+				self.lfeStopSound:Stop(-1)
+			end
+		end
 		if self.triggerPulled ~= true then
 			self.triggerPulled = true;
 			self.startSound = AudioMan:PlaySound(self.startSounds.Path .. math.random(1, self.startSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			self.lfeSound = AudioMan:PlaySound(self.lfeSounds.Path .. math.random(1, self.lfeSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, true);
 		end
 		
 	else
@@ -290,6 +299,12 @@ function Update(self)
 		if self.triggerPulled == true then
 		
 			self.triggerPulled = false;
+			
+			if self.lfeSound then
+				if self.lfeSound:IsBeingPlayed() then
+					AudioMan:FadeOutSound(self.lfeSound, 1000);
+				end
+			end
 		
 			if self.shotCounter > 99 then
 				self.smokeSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Cooperator/CompliSound/SmokeLong.ogg", self.Pos, -1, 0, 130, 1, 250, false);
@@ -419,6 +434,14 @@ function Update(self)
 			poof.GlobalAccScalar = RangeRand(0.9, 1.0) * -0.4; -- Go up and down
 			MovableMan:AddParticle(poof);
 			self.smokeDelayTimer:Reset()
+		end
+	end
+end
+
+function Destroy(self)
+	if self.lfeSound then
+		if self.lfeSound:IsBeingPlayed() then
+			AudioMan:FadeOutSound(self.lfeSound, 1000);
 		end
 	end
 end
