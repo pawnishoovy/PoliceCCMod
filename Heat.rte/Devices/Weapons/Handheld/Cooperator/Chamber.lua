@@ -357,22 +357,6 @@ function Update(self)
 
 		self.canSmoke = true
 		self.smokeTimer:Reset()
-		
-		for i = 1, 2 do
-			local Effect = CreateMOSParticle("Tiny Smoke Ball 1", "Base.rte")
-			if Effect then
-				Effect.Pos = self.MuzzlePos;
-				Effect.Vel = (self.Vel + Vector(RangeRand(-20,20), RangeRand(-20,20)) + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 30
-				MovableMan:AddParticle(Effect)
-			end
-		end
-		
-		local Effect = CreateMOSParticle("Side Thruster Blast Ball 1", "Base.rte")
-		if Effect then
-			Effect.Pos = self.MuzzlePos;
-			Effect.Vel = (self.Vel + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 10
-			MovableMan:AddParticle(Effect)
-		end
 
 	end
 	
