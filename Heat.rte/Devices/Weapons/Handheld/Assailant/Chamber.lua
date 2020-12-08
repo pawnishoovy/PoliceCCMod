@@ -15,6 +15,15 @@ function Create(self)
 	self.reflectionSounds.Outdoors = {["Variations"] = 3,
 	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Assailant/CompliSound/Reflection"};
 	
+	self.grenadeAddSounds = {["Variations"] = 3,
+	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Assailant/CompliSound/GLAdd"};
+	
+	self.grenadeMechSounds = {["Variations"] = 3,
+	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Assailant/CompliSound/GLMech"};
+	
+	self.grenadePreSounds = {["Variations"] = 3,
+	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Assailant/CompliSound/GLPre"};
+	
 	self.lastAge = self.Age
 	
 	self.originalSharpLength = self.SharpLength
@@ -37,6 +46,19 @@ function Create(self)
 	self.canSmoke = false
 	
 	self.reloadTimer = Timer();
+	
+	self.grenadeActivated = false;
+	self.grenadeFiring = false;
+	self.grenadeLoaded = true;
+	
+	self.grenadeChargeTimer = Timer();
+	self.grenadeFireTimer = Timer();
+	
+	self.grenadeFireTimeMS = 170;
+	self.grenadeChargeTimeMS = 3000;
+	
+	self.grenadeChargeSoundTimeMS = self.grenadeChargeTimeMS - 550;
+	self.grenadeChargeSoundPlayed = false;
 	
 	self.magOutPrepareDelay = 500;
 	self.magOutAfterDelay = 800;
@@ -252,7 +274,48 @@ function Update(self)
 		self.Magazine.RoundCount = 26
 		self.chamberOnReload = false;
 	end	
-	-- PAWNIS RELOAD ANIMATION HERE
+	
+	if self.grenadeActivated and self.grenadeLoaded and (not self.grenadeFiring) and (not self:IsReloading()) then
+	
+		self.grenadeActivated = false;
+		self.grenadeFiring = true;
+		
+		AudioMan:PlaySound(self.grenadePreSounds.Path .. math.random(1, self.grenadePreSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+		
+		self.grenadeFireTimer:Reset();
+		self.grenadeChargeTimer:Reset();
+		
+	end
+	
+	if self.grenadeFiring and self.grenadeFireTimer:IsPastSimMS(self.grenadeFireTimeMS) then
+	
+		local Grenade = CreateMOSRotating("Grenade Assailant", "Heat.rte");
+		if Grenade then
+			Grenade.Pos = self.MuzzlePos;
+			Grenade.Vel = self.Vel + Vector(70, 0):RadRotate(self.RotAngle);
+			MovableMan:AddParticle(Grenade);
+		end
+		
+		AudioMan:PlaySound(self.grenadeAddSounds.Path .. math.random(1, self.grenadeAddSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+		AudioMan:PlaySound(self.grenadeMechSounds.Path .. math.random(1, self.grenadeMechSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+		
+		self.grenadeFiring = false;
+		self.grenadeLoaded = false;
+		self.grenadeChargeSoundPlayed = false;
+		
+	end
+	
+	if self.grenadeLoaded == false then
+	
+		if self.grenadeChargeSoundPlayed == false and self.grenadeChargeTimer:IsPastSimMS(self.grenadeChargeSoundTimeMS) then
+			self.grenadeChargeSoundPlayed = true;
+			AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/GLRecharging.ogg", self.Pos, -1, 0, 130, 1, 450, false);
+		elseif self.grenadeChargeTimer:IsPastSimMS(self.grenadeChargeTimeMS) then
+			self.grenadeLoaded = true;
+			AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/GLRecharged.ogg", self.Pos, -1, 0, 130, 1, 450, false);
+		end
+		
+	end
 	
 	if self.FiredFrame then
 		self.Frame = 1;
@@ -387,6 +450,19 @@ function Update(self)
 		
 		self.StanceOffset = Vector(self.originalStanceOffset.X, self.originalStanceOffset.Y) + stance
 		self.SharpStanceOffset = Vector(self.originalSharpStanceOffset.X, self.originalSharpStanceOffset.Y) + stance
+		
+		-- Nade launcher piggybacking off self.parent here
+		
+		if self.parent:IsPlayerControlled() then
+			if UInputMan:KeyPressed(15) then
+				if self.grenadeLoaded == true and not self:IsReloading() then
+				  self.grenadeActivated = true;
+				else
+					AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/GLEmpty.ogg", self.Pos, -1, 0, 130, 1, 450, false);
+				end
+			end
+		end
+			
 	end
 	
 	if self.canSmoke and not self.smokeTimer:IsPastSimMS(1500) then
