@@ -55,7 +55,7 @@ function Create(self)
 	self.grenadeFireTimer = Timer();
 	
 	self.grenadeFireTimeMS = 170;
-	self.grenadeChargeTimeMS = 3000;
+	self.grenadeChargeTimeMS = 13000;
 	
 	self.grenadeChargeSoundTimeMS = self.grenadeChargeTimeMS - 550;
 	self.grenadeChargeSoundPlayed = false;
@@ -431,7 +431,7 @@ function Update(self)
 		if self.parent:IsPlayerControlled() and (ctrl:IsState(Controller.PIE_MENU_ACTIVE) or (self.grenadeHUDReady and not self.grenadeHUDTimer:IsPastSimMS(1000))) then
 			local pos = self.parent.AboveHUDPos + Vector(0, 24)
 			
-			if self.grenadeHUDReady and not ctrl:IsState(Controller.PIE_MENU_ACTIVE) and not self.grenadeHUDTimer:IsPastSimMS(1000) then
+			if self.grenadeHUDReady and not ctrl:IsState(Controller.PIE_MENU_ACTIVE) and not self.grenadeHUDTimer:IsPastSimMS(2000) then
 				PrimitiveMan:DrawTextPrimitive(screen, pos + Vector(0, 10), "Nade Launcher Ready!", true, 1);
 			elseif self.grenadeLoaded then
 				PrimitiveMan:DrawTextPrimitive(screen, pos, "Underbarrel Nade: Ready", true, 1);
@@ -487,17 +487,24 @@ function Update(self)
 		self.SharpStanceOffset = Vector(self.originalSharpStanceOffset.X, self.originalSharpStanceOffset.Y) + stance
 		
 		-- Nade launcher piggybacking off self.parent here
-		
+		local fire = false
 		if self.parent:IsPlayerControlled() then
 			if UInputMan:KeyPressed(15) then
-				if self.grenadeLoaded == true and not self:IsReloading() then
-				  self.grenadeActivated = true;
-				else
-					AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/GLEmpty.ogg", self.Pos, -1, 0, 130, 1, 450, false);
-				end
+				fire = true
+			end
+		elseif self.Magazine then -- AI
+			if self.grenadeLoaded == true and not self:IsReloading() and self.Magazine.UniqueID % 3 == 0 and self.Magazine.Age > 500 and self:IsActivated() then -- Hacks
+				fire = true
 			end
 		end
-			
+		
+		if fire then
+			if self.grenadeLoaded == true and not self:IsReloading() then
+			  self.grenadeActivated = true;
+			else
+				AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/GLEmpty.ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			end
+		end
 	end
 	
 	if self.canSmoke and not self.smokeTimer:IsPastSimMS(1500) then
