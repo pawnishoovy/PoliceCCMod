@@ -60,6 +60,9 @@ function Create(self)
 	self.grenadeChargeSoundTimeMS = self.grenadeChargeTimeMS - 550;
 	self.grenadeChargeSoundPlayed = false;
 	
+	self.grenadeHUDReady = false
+	self.grenadeHUDTimer = Timer()
+	
 	self.magOutPrepareDelay = 500;
 	self.magOutAfterDelay = 800;
 	self.magInPrepareDelay = 450;
@@ -292,7 +295,11 @@ function Update(self)
 		local Grenade = CreateMOSRotating("Grenade Assailant", "Heat.rte");
 		if Grenade then
 			Grenade.Pos = self.MuzzlePos;
-			Grenade.Vel = self.Vel + Vector(70, 0):RadRotate(self.RotAngle);
+			Grenade.Vel = self.Vel + Vector(70 * self.FlipFactor, 0):RadRotate(self.RotAngle);
+			Grenade.RotAngle = self.RotAngle;
+			Grenade.HFlipped = self.HFlipped;
+			Grenade.Team = self.Team;
+			Grenade.IgnoresTeamHits = true;
 			MovableMan:AddParticle(Grenade);
 		end
 		
@@ -313,6 +320,9 @@ function Update(self)
 		elseif self.grenadeChargeTimer:IsPastSimMS(self.grenadeChargeTimeMS) then
 			self.grenadeLoaded = true;
 			AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/GLRecharged.ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			
+			self.grenadeHUDReady = true
+			self.grenadeHUDTimer:Reset()
 		end
 		
 	end
@@ -404,8 +414,24 @@ function Update(self)
 		end
 	end
 	
-	-- Animation
+	-- Animation + HUD
 	if self.parent then
+		
+		local ctrl = self.parent:GetController();
+		local screen = ActivityMan:GetActivity():ScreenOfPlayer(ctrl.Player);
+		if self.parent:IsPlayerControlled() and (ctrl:IsState(Controller.PIE_MENU_ACTIVE) or (self.grenadeHUDReady and not self.grenadeHUDTimer:IsPastSimMS(1000))) then
+			local pos = self.parent.AboveHUDPos + Vector(0, 24)
+			
+			if self.grenadeHUDReady and not ctrl:IsState(Controller.PIE_MENU_ACTIVE) and not self.grenadeHUDTimer:IsPastSimMS(1000) then
+				PrimitiveMan:DrawTextPrimitive(screen, pos + Vector(0, 10), "Nade Launcher Ready!", true, 1);
+			elseif self.grenadeLoaded then
+				PrimitiveMan:DrawTextPrimitive(screen, pos, "Underbarrel Nade: Ready", true, 1);
+				PrimitiveMan:DrawTextPrimitive(screen, pos + Vector(0, 10), "Press O to fire", true, 1);
+			else
+				PrimitiveMan:DrawTextPrimitive(screen, pos, "Underbarrel Nade: Loading...", true, 1);
+			end
+		end
+		
 		self.horizontalAnim = math.floor(self.horizontalAnim / (1 + TimerMan.DeltaTimeSecs * 24.0) * 1000) / 1000
 		self.verticalAnim = math.floor(self.verticalAnim / (1 + TimerMan.DeltaTimeSecs * 15.0) * 1000) / 1000
 		
