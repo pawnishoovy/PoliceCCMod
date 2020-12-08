@@ -301,6 +301,8 @@ function Update(self)
 			Grenade.Team = self.Team;
 			Grenade.IgnoresTeamHits = true;
 			MovableMan:AddParticle(Grenade);
+			
+			self.recoilStr = self.recoilStr + ((math.random(10, self.recoilRandomUpper * 10) / 10) * 0.5 * self.recoilStrength) * 3
 		end
 		
 		AudioMan:PlaySound(self.grenadeAddSounds.Path .. math.random(1, self.grenadeAddSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
@@ -312,14 +314,21 @@ function Update(self)
 		
 	end
 	
+	
 	if self.grenadeLoaded == false then
 	
 		if self.grenadeChargeSoundPlayed == false and self.grenadeChargeTimer:IsPastSimMS(self.grenadeChargeSoundTimeMS) then
 			self.grenadeChargeSoundPlayed = true;
 			AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/GLRecharging.ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			
+			self.horizontalAnim = self.horizontalAnim - 1;
+			self.angVel = self.angVel - 2;
 		elseif self.grenadeChargeTimer:IsPastSimMS(self.grenadeChargeTimeMS) then
 			self.grenadeLoaded = true;
 			AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/GLRecharged.ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			
+			self.horizontalAnim = self.horizontalAnim + 1;
+			self.angVel = self.angVel + 4;
 			
 			self.grenadeHUDReady = true
 			self.grenadeHUDTimer:Reset()

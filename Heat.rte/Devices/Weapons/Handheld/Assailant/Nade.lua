@@ -35,8 +35,15 @@ function Create(self)
 	self.TrailWavenessSpeed = 1; -- Wave modulation controller speed
 	
 	self.ParticleName = "Tiny Smoke Ball 1"; -- Trail's particle
+	
+	self.whistleSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Assailant/CompliSound/GLWhistle"..math.random(1,3)..".ogg", self.Pos, -1, 0, 130, 1, 250, false);	
 end
 function Update(self)
+	
+	if self.whistleSound then
+		self.whistleSound:SetPosition(self.Pos);
+	end
+	
 	-- Epic smoke trail TM by filipex2000, 2020
 	local smoke
 	local offset = self.Vel*(17*TimerMan.DeltaTimeSecs)
@@ -66,5 +73,12 @@ function Update(self)
 				self.trailGLoss = math.min(self.trailGLoss + TimerMan.DeltaTimeSecs * 0.65, 1.0);
 			end
 		end
+	end
+end
+
+function Destroy(self)
+	if self.whistleSound ~= nil then
+		self.whistleSound:Stop()
+		self.whistleSound = nil
 	end
 end
