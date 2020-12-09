@@ -1,0 +1,15 @@
+START SOUNDS
+
+CrpSplitLaserShotB, cut, sped by 30
+
+STOP SOUNDS
+
+CrpShipDualCannonMoaShotA, -4, mixed with loop
+
+REFLECTION
+
+CrpSpearGunTailA
+
+LOOP
+
+SUModularSecondaryBarrelBeamLoop, compressed, -5, sped by 30
