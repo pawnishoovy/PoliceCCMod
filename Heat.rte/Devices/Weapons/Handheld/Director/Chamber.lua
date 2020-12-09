@@ -44,14 +44,11 @@ function Create(self)
 	self.Overheat = 0;
 	self.Cooldownable = true;
 	
-	self.burstThreshold = 150;
+	self.burstThreshold = 31;
 	self.shotCounter = 0;
+	self.burstCount = 5;
 	self.burstFireDuration = 50;
-	self.burstFireDelay = 200;
-	
-	self.pulseThreshold = 250;
-	self.pulseFireDuration = 80;
-	self.pulseFireDelay = 350;
+	self.burstFireDelay = 350;
 	
 	self.activatableTimer = Timer();
 	
@@ -129,73 +126,52 @@ function Update(self)
 	end
 	
 	if self.Overheat > 0 and (not tryingToFire) and self.Cooldownable == true then
-		if self.Overheat > 400 then
-			self.Overheat = 400;
+		if self.Overheat > 150 then
+			self.Overheat = 150;
 		end
 		self.Overheat = self.Overheat - 0.5;
 	end
 	
-	if self.Overheat > self.pulseThreshold then
-		if self.Burst == true then -- set all this just once thanks
-			self.actingFireDuration = self.pulseFireDuration;
-			self.actingFireDelay = self.pulseFireDelay;
-			self.actingTimerDelay = self.actingFireDuration;
-			self.Burst = false;
-		end
-	elseif self.Overheat > self.burstThreshold then
+	if self.Overheat > self.burstThreshold then
 		if self.Burst == false then
-			self.actingFireDuration = self.burstFireDuration;
-			self.actingFireDelay = self.burstFireDelay;
-			self.actingTimerDelay = self.actingFireDuration;
+			self.actingTimerDelay = self.burstFireDuration;
 			self.Burst = true;
 		end
 	else
 		self.Activatable = true;
-		self.actingFireDuration = 0;
-		self.actingFireDelay = 0;
 		self.Burst = false;
 		self.shotCounter = 0;
 	end
 	
-	if self.actingFireDuration ~= 0 then
-		if self.Burst == true then
-			if self.activatableTimer:IsPastSimMS(self.actingTimerDelay) then
-				if self.Activatable == true then
-					if tryingToFire then
-						self.Cooldownable = false;
-					else
-						self.Cooldownable = true;
-					end
-					self.Activatable = false;
-					self.shotCounter = self.shotCounter + 1
-					if self.shotCounter == 3 then
-						self.actingTimerDelay = self.actingFireDelay;
-						self.shotCounter = 0;
-					end
-				else
-					self.Activatable = true;
-					self.actingTimerDelay = self.actingFireDuration;
-				end
-				self.activatableTimer:Reset();
-			end
+	if self.Burst == true then
+		if self.Overheat > 110 then
+			self.burstCount = 1;
+		elseif self.Overheat > 70 then
+			self.burstCount = 2;
 		else
-			if self.activatableTimer:IsPastSimMS(self.actingTimerDelay) then
-				if self.Activatable == true then
-					if tryingToFire then
-						self.Cooldownable = false;
-					else
-						self.Cooldownable = true;
-					end
-					self.Activatable = false;
-					self.actingTimerDelay = self.actingFireDelay;
-				else
-					self.Activatable = true;
-					self.actingTimerDelay = self.actingFireDuration;
-				end
-				self.activatableTimer:Reset();
-			end
+			self.burstCount = 4;
 		end
-	end		
+		if self.activatableTimer:IsPastSimMS(self.actingTimerDelay) then
+			if self.Activatable == true then
+				if tryingToFire then
+					self.Cooldownable = false;
+				else
+					self.Cooldownable = true;
+					self.shotCounter = 0;
+				end
+				self.Activatable = false;
+				self.shotCounter = self.shotCounter + 1
+				if self.shotCounter >= self.burstCount then
+					self.actingTimerDelay = self.burstFireDelay;
+					self.shotCounter = 0;
+				end
+			else
+				self.Activatable = true;
+				self.actingTimerDelay = self.burstFireDuration;
+			end
+			self.activatableTimer:Reset();
+		end
+	end	
 	
 	-- PAWNIS RELOAD ANIMATION HERE
 	if self:IsReloading() then
