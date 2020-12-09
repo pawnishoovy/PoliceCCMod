@@ -52,20 +52,17 @@ function Create(self)
 	
 	self.activatableTimer = Timer();
 	
-	self.boltBackPrepareDelay = 300;
+	self.boltBackPrepareDelay = 600;
 	self.boltBackAfterDelay = 600;
-	self.magOutPrepareDelay = 400;
-	self.magOutAfterDelay = 1200;
 	self.magInPrepareDelay = 500;
 	self.magInAfterDelay = 500;
 	self.boltForwardPrepareDelay = 600;
 	self.boltForwardAfterDelay = 400;
 	
 	-- phases:
-	-- 0 magout
+	-- 0 boltback
 	-- 1 magin
-	-- 2 boltback
-	-- 3 boltforward
+	-- 2 boltforward
 	
 	self.reloadPhase = 0;
 	
@@ -125,7 +122,7 @@ function Update(self)
 		self:Deactivate();
 	end
 	
-	if self.Overheat > 0 and (not tryingToFire) and self.Cooldownable == true then
+	if (self.Overheat > 0) and (((not tryingToFire) and self.Cooldownable == true) or (self:IsReloading())) then
 		if self.Overheat > 150 then
 			self.Overheat = 150;
 		end
@@ -187,16 +184,6 @@ function Update(self)
 			self.rotationTarget = 5;
 			
 		elseif self.reloadPhase == 1 then
-			self.reloadDelay = self.magOutPrepareDelay;
-			self.afterDelay = self.magOutAfterDelay;
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Director/Sounds/MagOutPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Director/Sounds/MagOut";
-			
-			self.rotationTarget = 10;
-			
-		elseif self.reloadPhase == 2 then
 			self.Frame = 0;
 			self.reloadDelay = self.magInPrepareDelay;
 			self.afterDelay = self.magInAfterDelay;
@@ -207,7 +194,7 @@ function Update(self)
 
 			self.rotationTarget = 5;
 		
-		elseif self.reloadPhase == 3 then
+		elseif self.reloadPhase == 2 then
 			self.Frame = 1;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
@@ -230,24 +217,14 @@ function Update(self)
 		if self.reloadTimer:IsPastSimMS(self.reloadDelay) then
 		
 			if self.reloadPhase == 0 then
-			elseif self.reloadPhase == 1 then
 				self:SetNumberValue("MagRemoved", 1);
-			elseif self.reloadPhase == 2 then
-			
+			elseif self.reloadPhase == 1 then			
 				self:RemoveNumberValue("MagRemoved");
-
-			elseif self.reloadPhase == 3 then
-
 			end
 			
 			if self.afterSoundPlayed ~= true then
 			
 				if self.reloadPhase == 0 then
-					
-					self.horizontalAnim = self.horizontalAnim - 1;
-					self.angVel = self.angVel - 2;
-					
-				elseif self.reloadPhase == 1 then
 					
 					self.phaseOnStop = 2;
 					local fake
@@ -259,17 +236,17 @@ function Update(self)
 					fake.HFlipped = self.HFlipped;
 					MovableMan:AddParticle(fake);
 					
-					self.angVel = self.angVel + 2;
-					self.verticalAnim = self.verticalAnim + 1
+					self.horizontalAnim = self.horizontalAnim - 1;
+					self.angVel = self.angVel - 2;
 					
-				elseif self.reloadPhase == 2 then
+				elseif self.reloadPhase == 1 then
 					
 					self.phaseOnStop = 3;
 					self.angVel = self.angVel - 2;
 					self.verticalAnim = self.verticalAnim - 1	
 					self:RemoveNumberValue("MagRemoved");					
 					
-				elseif self.reloadPhase == 3 then
+				elseif self.reloadPhase == 2 then
 				
 					self.horizontalAnim = self.horizontalAnim + 1;
 					self.angVel = self.angVel + 4;
@@ -280,6 +257,7 @@ function Update(self)
 				end
 			
 				self.afterSoundPlayed = true;
+				print("yes")
 				if self.afterSoundPath then
 					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
 				end
@@ -288,7 +266,7 @@ function Update(self)
 				self.reloadTimer:Reset();
 				self.afterSoundPlayed = false;
 				self.prepareSoundPlayed = false;
-				if self.reloadPhase == 3 then
+				if self.reloadPhase == 2 then
 					self.ReloadTime = 0;
 					self.reloadPhase = 0;
 				else
@@ -301,9 +279,6 @@ function Update(self)
 		self.reloadTimer:Reset();
 		self.afterSoundPlayed = false;
 		self.prepareSoundPlayed = false;
-		if self.reloadPhase == 3 then
-			self.reloadPhase = 2;
-		end
 		if self.phaseOnStop then
 			self.reloadPhase = self.phaseOnStop;
 			self.phaseOnStop = nil;
