@@ -137,7 +137,11 @@ function Update(self)
 	else
 		self.Activatable = true;
 		self.Burst = false;
+		if self.shotCounter ~= 0 then
+			self.switchOffSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Director/Sounds/SwitchOffLast.ogg", self.Pos, -1, 0, 130, 1, 150, false);
+		end
 		self.shotCounter = 0;
+		
 	end
 	
 	if self.Burst == true then
@@ -154,17 +158,24 @@ function Update(self)
 					self.Cooldownable = false;
 				else
 					self.Cooldownable = true;
-					self.shotCounter = 0;
 				end
 				self.Activatable = false;
 				self.shotCounter = self.shotCounter + 1
 				if self.shotCounter >= self.burstCount then
 					self.actingTimerDelay = self.burstFireDelay;
 					self.shotCounter = 0;
+					self.switchOffSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Director/Sounds/SwitchOffLast.ogg", self.Pos, -1, 0, 130, 1, 150, false);
+				else
+					self.switchOffSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Director/Sounds/SwitchOff.ogg", self.Pos, -1, 0, 130, 1, 150, false);
 				end
 			else
 				self.Activatable = true;
 				self.actingTimerDelay = self.burstFireDuration;
+				if self.actingTimerDelay == self.burstFireDelay then
+					self.switchOnSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Director/Sounds/SwitchOnFirst.ogg", self.Pos, -1, 0, 130, 1, 150, false);
+				else
+					self.switchOnSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Director/Sounds/SwitchOn.ogg", self.Pos, -1, 0, 130, 1, 150, false);
+				end
 			end
 			self.activatableTimer:Reset();
 		end
@@ -257,7 +268,6 @@ function Update(self)
 				end
 			
 				self.afterSoundPlayed = true;
-				print("yes")
 				if self.afterSoundPath then
 					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
 				end
