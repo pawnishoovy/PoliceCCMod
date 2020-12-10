@@ -1,11 +1,11 @@
 
 function Create(self)
-	local glow = CreateMOPixel("Glow Cooperator Beam Extra");
+	local glow = CreateMOPixel("Glow Director Beam Extra");
 	glow.Pos = self.Pos;
 	MovableMan:AddParticle(glow);
 	
 	self.lastPos = Vector(self.Pos.X, self.Pos.Y);
-	self.hits = 0;
+	self.hits = math.min(math.random(0,1), 1);
 	
 	self.cast = true;
 	self.castLength = 700;
@@ -31,17 +31,17 @@ function Update(self)
 		local travelMagnitude = travel.Magnitude
 		
 		if travelMagnitude > 5 then
-			local maxi = travelMagnitude / GetPPM() * 5
+			local maxi = travelMagnitude / GetPPM() * 6
 			for i = 0, maxi do
 				--PrimitiveMan:DrawCirclePrimitive(self.Pos + travel / maxi * i, 2 + i / maxi * 3, math.floor(154 + 3 / maxi * i));
 				
-				local glow = CreateMOPixel("Glow Cooperator Beam "..math.random(1,5));
+				local glow = CreateMOPixel("Glow Director Beam "..math.random(1,5));
 				glow.Pos = self.Pos + travel * math.max(math.min(1 / maxi * i, 1), 0);
 				--glow.Vel = travel:SetMagnitude(30)
 				glow.EffectRotAngle = self.RotAngle;
 				MovableMan:AddParticle(glow);
 				
-				--local glowExtra = CreateMOPixel("Glow Cooperator Beam Extra");
+				--local glowExtra = CreateMOPixel("Glow Director Beam Extra");
 				--glowExtra.Pos = self.Pos + travel * math.max(math.min(1 / maxi * i, 1), 0);
 				--MovableMan:AddParticle(glowExtra);
 			end
@@ -53,13 +53,13 @@ function Update(self)
 	end
 	
 	
-	if (self.ray > -1 or self.hits > 0) and self.hits < 2 then
+	if (self.ray > -1 or self.hits > 0) and self.hits < 1 then
 		
-		local glow = CreateMOPixel("Glow Cooperator Beam Extra");
+		local glow = CreateMOPixel("Glow Director Beam Extra");
 		glow.Pos = self.Pos;
 		MovableMan:AddParticle(glow);
 		if (self.hits >= 1 and math.random(1,2) < 2) or self.hits < 1 then
-			local pixel = CreateMOPixel("Cooperator Beam Damage 1");
+			local pixel = CreateMOPixel("Director Beam Damage 1");
 			pixel.Vel = Vector(1, 0):RadRotate(self.RotAngle) * 70;
 			pixel.Pos = self.Pos - Vector(2, 0):RadRotate(self.RotAngle);
 			pixel.Team = self.Team -- It doesn't work, somehow
@@ -90,7 +90,7 @@ function Update(self)
 		if self.hits == 1 then
 			--AudioMan:PlaySound("FGround.rte/Effects/Special/Lasers/Sounds/LaserDissipate"..math.random(1,3)..".wav", self.Pos);
 			if math.random(1,3) < 2 then
-				AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Cooperator/Beam/Sounds/Hit"..math.random(1,4)..".wav", self.Pos);
+				AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Director/Beam/Sounds/Hit"..math.random(1,4)..".wav", self.Pos);
 			end
 			
 			local smoke = CreateMOSParticle("Small Smoke Ball 1");
