@@ -71,6 +71,7 @@ function Create(self)
 end
 
 function Update(self)
+	self.Frame = 0;
 	self.rotationTarget = 0 -- ZERO IT FIRST AAAA!!!!!
 	
 	if self.ID == self.RootID then

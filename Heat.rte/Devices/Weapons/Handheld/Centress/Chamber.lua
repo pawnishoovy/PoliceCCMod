@@ -79,6 +79,7 @@ function Create(self)
 end
 
 function Update(self)
+	self.Frame = 0;
 	self.rotationTarget = 0 -- ZERO IT FIRST AAAA!!!!!
 	
 	if self.ID == self.RootID then
@@ -146,17 +147,17 @@ function Update(self)
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Centress/Sounds/BoltBack";	
 
-			self.rotationTarget = 5;
+			self.rotationTarget = 20;
 		
 		elseif self.reloadPhase == 3 then
-			self.Frame = 1;
+			self.Frame = 2;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
 			self.prepareSoundPath = nil;
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Centress/Sounds/BoltForward";
 			
-			self.rotationTarget = 2;
+			self.rotationTarget = 18;
 			
 		end
 		
@@ -175,13 +176,21 @@ function Update(self)
 				self:RemoveNumberValue("MagRemoved");
 			elseif self.reloadPhase == 2 then
 			
-				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
+					self.Frame = 2;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
 					self.Frame = 1;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+					self.Frame = 0;
 				end
 
 			elseif self.reloadPhase == 3 then
-				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
 					self.Frame = 0;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
+					self.Frame = 1;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+					self.Frame = 2;
 				end
 			end
 			
@@ -215,10 +224,10 @@ function Update(self)
 					
 				elseif self.reloadPhase == 2 then
 					self.horizontalAnim = self.horizontalAnim - 1;
-					self.angVel = self.angVel - 2;
+					self.angVel = self.angVel - 3;
 				elseif self.reloadPhase == 3 then
 					self.horizontalAnim = self.horizontalAnim + 1;
-					self.angVel = self.angVel + 4;
+					self.angVel = self.angVel + 15;
 					self.phaseOnStop = nil;
 				else
 					self.phaseOnStop = nil;
@@ -268,7 +277,7 @@ function Update(self)
 	-- PAWNIS RELOAD ANIMATION HERE
 	
 	if self.FiredFrame then
-		self.Frame = 1;
+		self.Frame = 2;
 		self.angVel = self.angVel - RangeRand(0.7,1.1) * 5
 		
 		self.canSmoke = true

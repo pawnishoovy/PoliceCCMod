@@ -96,6 +96,7 @@ function Create(self)
 end
 
 function Update(self)
+	self.Frame = 0;
 	self.rotationTarget = 0 -- ZERO IT FIRST AAAA!!!!!
 	
 	if self.ID == self.RootID then
@@ -161,7 +162,7 @@ function Update(self)
 			self.rotationTarget = 5;
 		
 		elseif self.reloadPhase == 3 then
-			self.Frame = 1;
+			self.Frame = 3;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
 			self.prepareSoundPath = nil;
@@ -187,13 +188,23 @@ function Update(self)
 				self:RemoveNumberValue("MagRemoved");
 			elseif self.reloadPhase == 2 then
 			
-				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
+					self.Frame = 3;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
+					self.Frame = 2;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
 					self.Frame = 1;
 				end
 
 			elseif self.reloadPhase == 3 then
-				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
 					self.Frame = 0;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
+					self.Frame = 1;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+					self.Frame = 2;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.3)) then
+					self.Frame = 3;
 				end
 			end
 			
@@ -337,7 +348,7 @@ function Update(self)
 	end
 	
 	if self.FiredFrame then
-		self.Frame = 1;
+		self.Frame = 3;
 		self.angVel = self.angVel - RangeRand(0.7,1.1) * 5
 		
 		self.canSmoke = true

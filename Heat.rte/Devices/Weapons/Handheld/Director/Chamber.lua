@@ -82,6 +82,7 @@ function Create(self)
 end
 
 function Update(self)
+	self.Frame = 0;
 	self.rotationTarget = 0 -- ZERO IT FIRST AAAA!!!!!
 	
 	local tryingToFire = self:IsActivated();
@@ -195,7 +196,6 @@ function Update(self)
 			self.rotationTarget = 5;
 			
 		elseif self.reloadPhase == 1 then
-			self.Frame = 0;
 			self.reloadDelay = self.magInPrepareDelay;
 			self.afterDelay = self.magInAfterDelay;
 			self.prepareSoundPath = 
@@ -206,7 +206,6 @@ function Update(self)
 			self.rotationTarget = 5;
 		
 		elseif self.reloadPhase == 2 then
-			self.Frame = 1;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
 			self.prepareSoundPath =
@@ -392,6 +391,7 @@ function Update(self)
 			
 	
 	if self.FiredFrame then
+		self.Frame = 1;
 		self.Overheat = self.Overheat + 1;
 
 		self.canSmoke = true
