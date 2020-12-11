@@ -160,9 +160,9 @@ function Update(self)
 				
 					self.phaseOnStop = 2;
 					local fake
-					fake = CreateMOSRotating("Fake Magazine MOSRotating Tazer");
-					fake.Pos = self.Pos + Vector(-3 * self.FlipFactor, 0):RadRotate(self.RotAngle);
-					fake.Vel = self.Vel + Vector(0.5*self.FlipFactor, 3):RadRotate(self.RotAngle);
+					fake = CreateMOSRotating("Battery MOSRotating Tazer");
+					fake.Pos = self.Pos + Vector(-0.5 * self.FlipFactor, 0):RadRotate(self.RotAngle);
+					fake.Vel = self.Vel + Vector(0.5*self.FlipFactor, -6):RadRotate(self.RotAngle);
 					fake.RotAngle = self.RotAngle;
 					fake.AngularVel = self.AngularVel + (-1*self.FlipFactor);
 					fake.HFlipped = self.HFlipped;
