@@ -1,0 +1,20 @@
+MAIN:
+
+add: GrnGorgSniperRifle2DShotA
+mech: GrnGorgSniperRifle2DTaggedMechA
+reflection: weap_refl_sniper_urb_ext_dist_lsrs_01 (delayed 200ms) 
+
+TnHeavyShotgunTailA
+cut first 156ms
+total length 2 sec roughly
+fade out from mid
+-9
+
+SECONDARY:
+
+add: GrnGorgSniperRifle2DTaggedShotC
+
+BurstEndTail:
+
+GorgTaggedTail
+
