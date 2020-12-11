@@ -1,0 +1,18 @@
+START SOUNDS
+
+chainlightning gun, cut up
+
+STOP SOUNDS
+
+dst_iw8_office_server_rack_spark_01
+
+
+LOOP:
+
+chainlightning gun, speed up, sliding up
+
+REFLECTION:
+
+CrpLightningRifleSparkA, sped down, -20
+
+weap_pistol_mag_fire_plr_atmo_ext1_01
