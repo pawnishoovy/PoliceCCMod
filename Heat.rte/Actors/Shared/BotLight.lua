@@ -34,8 +34,6 @@ function Create(self)
 	self.RTE.."/Actors/Shared/Sounds/VO/Pain/Pain"};
 	
 	self.voiceSoundVariations = {Pain =	5};
-	
-	self.sprintMultiplier = 1.1;	
 
 	self.altitude = 0;
 	self.wasInAir = false;
@@ -56,14 +54,7 @@ function Create(self)
 	self.blinkTimer = Timer();
 	self.blinkDelay = math.random(5000, 11000);
 
-	-- fil walk/sprint/jump
-	
-    -- Leg Collision Detection system
-    self.feetContact = {false, false}
-    self.feetTimers = {Timer(), Timer()}
-	self.footstepTime = 100 -- 2 Timers to avoid noise
-	self.sprintFootstepTime = 75
-	self.walkFootstepTime = 100
+	-- fil jump
 	
 	-- Custom Jumping
 	self.isJumping = false
@@ -71,20 +62,6 @@ function Create(self)
 	self.jumpDelay = 500;
 	self.jumpStop = Timer();
 	self.jumpBoost = Timer();
-	
-	-- Spring
-	self.isSprinting = false
-	self.doubleTapTimer = Timer();
-	self.doubleTapState = 0
-
-	self.sprintPushForceDenominator = 1.2 / 0.8
-	
-	self.limbPathDefaultSpeed0 = self:GetLimbPathSpeed(0) * 0.6
-	self.limbPathDefaultSpeed1 = self:GetLimbPathSpeed(1) * 0.6
-	self.limbPathDefaultSpeed2 = self:GetLimbPathSpeed(2) * 0.6
-	self.limbPathDefaultPushForce = self.LimbPathPushForce * 0.6
-	
-	-- footstep sounds	
 	
 	-- End modded code
 end

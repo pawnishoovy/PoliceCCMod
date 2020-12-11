@@ -110,6 +110,7 @@ function Update(self)
 	if self:IsReloading() then
 
 		if self.reloadPhase == 0 then
+			self.Frame = 0;
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;			
 			self.prepareSoundPath = 
@@ -120,7 +121,7 @@ function Update(self)
 			self.rotationTarget = 5;
 			
 		elseif self.reloadPhase == 1 then
-			self.Frame = 0;
+			self.Frame = 4;
 			self.reloadDelay = self.magInPrepareDelay;
 			self.afterDelay = self.magInAfterDelay;
 			self.prepareSoundPath = 
@@ -131,7 +132,7 @@ function Update(self)
 			self.rotationTarget = 5;
 		
 		elseif self.reloadPhase == 2 then
-			self.Frame = 1;
+			self.Frame = 5;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
 			self.prepareSoundPath =
@@ -152,17 +153,50 @@ function Update(self)
 	
 		if self.reloadTimer:IsPastSimMS(self.reloadDelay) then
 		
-			if self.reloadPhase == 0 then
+			if self.reloadPhase == 0 then			
 				self:SetNumberValue("MagRemoved", 1);
+				
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
+					self.Frame = 4;
+					self.coverBack = true;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+					self.Frame = 3;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.4)) then
+					self.Frame = 2;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.3)) then
+					self.Frame = 1;
+				end
+				
 			elseif self.reloadPhase == 1 then
+			
 				self:RemoveNumberValue("MagRemoved");
+				self.magInside = true;
+				self.Frame = 5;
+				
+			elseif self.reloadPhase == 2 then	
+			
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
+					self.Frame = 0;
+					self.coverBack = false;
+					self.magInside = false;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.7)) then
+					self.Frame = 10;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+					self.Frame = 9;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.5)) then
+					self.Frame = 8;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.4)) then
+					self.Frame = 7;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.2)) then
+					self.Frame = 6;
+				end
 			end
 			
 			if self.afterSoundPlayed ~= true then
 			
 				if self.reloadPhase == 0 then
 				
-					self.phaseOnStop = 2;
+					self.phaseOnStop = 1;
 					local fake
 					fake = CreateMOSRotating("Battery MOSRotating Tazer");
 					fake.Pos = self.Pos + Vector(-0.5 * self.FlipFactor, 0):RadRotate(self.RotAngle);
@@ -177,7 +211,7 @@ function Update(self)
 					
 				elseif self.reloadPhase == 1 then
 					
-					self.phaseOnStop = 3;
+					self.phaseOnStop = 2;
 					self.angVel = self.angVel - 2;
 					self.verticalAnim = self.verticalAnim - 1	
 					self:RemoveNumberValue("MagRemoved");		
@@ -211,6 +245,13 @@ function Update(self)
 		end		
 	else
 		
+		if self.magInside == true then
+			self.Frame = 5;
+		elseif self.coverBack == true then
+			self.Frame = 4;
+		else
+			self.Frame = 0;
+		end
 		self.reloadTimer:Reset();
 		self.afterSoundPlayed = false;
 		self.prepareSoundPlayed = false;
