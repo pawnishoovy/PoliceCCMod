@@ -55,12 +55,12 @@ function Create(self)
 				end
 				
 				local score = 5 / SceneMan:ShortestDistance(self.Pos, checkPos, SceneMan.SceneWrapsX).Magnitude
-				table.insert(self.detectedPoints, {Vector(checkPos.X, checkPos.Y), score})
+				table.insert(self.detectedPoints, {Vector(checkPos.X, checkPos.Y), score, moCheck})
 			elseif terrCheck ~= 0 then
 				color = 5;
 				
 				local score = 1 / SceneMan:ShortestDistance(self.Pos, checkPos, SceneMan.SceneWrapsX).Magnitude
-				table.insert(self.detectedPoints, {Vector(checkPos.X, checkPos.Y), score})
+				table.insert(self.detectedPoints, {Vector(checkPos.X, checkPos.Y), score, nil})
 			end
 			--PrimitiveMan:DrawLinePrimitive(checkPos, checkPos, color);
 			
@@ -69,6 +69,9 @@ function Create(self)
 	
 	-- Pick best point
 	self.targetPos = self.Pos + Vector(self.spiralScale * 13 * RangeRand(0.8,1.2), 0):RadRotate(self.RotAngle + RangeRand(-1,1) * 0.35)
+	local hit = false
+	local hitPos = Vector(self.Pos.X, self.Pos.Y)
+	local hitMO = nil
 	
 	if #self.detectedPoints > 0 then
 		local lastScore = 0
@@ -77,11 +80,19 @@ function Create(self)
 			if lastScore < score then
 				self.targetPos = point[1]
 				lastScore = score
+				
+				hitPos = Vector(self.targetPos.X, self.targetPos.Y)
+				
+				if point[3] ~= nil then
+					hitMO = point[3]
+				end
+				hit = true
 			end
 		end
 		
 	end
 	
+	-- GFX
 	local dif = SceneMan:ShortestDistance(self.Pos, self.targetPos, SceneMan.SceneWrapsX)
 	local maxi = math.floor((dif.Magnitude * 0.25))
 	
@@ -96,9 +107,65 @@ function Create(self)
 		local p2 = midpoint
 		local p3 = dif
 		
+		
 		local pos = self.Pos + (p1 * math.pow(1 - fac, 2) + p2 * 2 * (1 - fac) * fac + p3 * math.pow(fac, 2)) + Vector(RangeRand(-1,1), RangeRand(-1,1)) * 3
-		PrimitiveMan:DrawLinePrimitive(lastPos, pos, 5);
+		local glow = CreateMOPixel("Tazer Lighting Glow "..math.random(1,3));
+		glow.Pos = pos;
+		MovableMan:AddParticle(glow);
+		
+		local glow = CreateMOPixel("Tazer Lighting Glow "..math.random(1,3));
+		glow.Pos = lastPos + SceneMan:ShortestDistance(lastPos, pos, SceneMan.SceneWrapsX) * 0.5
+		MovableMan:AddParticle(glow);
+		
+		PrimitiveMan:DrawLinePrimitive(lastPos, pos, 187);
+		
+		if fac > 0.5 or fac < 0.2 then
+			if SceneMan:GetTerrMatter(pos.X, pos.Y) ~= 0 then
+				hitPos = Vector(lastPos.X, lastPos.Y)
+				hitMO = nil
+				break
+			end
+		end
 		lastPos = pos
+	end
+	
+	-- Damage
+	if hitMO ~= nil then
+		hitMO = MovableMan:GetMOFromID(hitMO)
+		if IsMOSRotating(hitMO) then hitMO = ToMOSRotating(hitMO) end
+		if IsAttachable(hitMO) then hitMO = ToAttachable(hitMO) end
+		
+		local parent = hitMO:GetRootParent()
+		local actor = ((parent ~= nil and IsAHuman(parent)) and parent) or (IsAHuman(hitMO) and hitMO)
+		if actor then
+			actor = ToAHuman(actor)
+			if math.random(1,4) < 2 and actor.PinStrength < 1 then
+				actor:FlashWhite(36)
+				actor.Pos = actor.Pos + Vector(RangeRand(-1,1), RangeRand(-1,1)) * 2
+				actor.Vel = actor.Vel + Vector(RangeRand(-1,1), RangeRand(-1,1))
+				
+			end
+			
+			local wound = CreateAEmitter(actor:GetEntryWoundPresetName(), PresetMan:GetDataModule(actor.ModuleID).FileName);
+			actor.Health = actor.Health - wound.BurstDamage * 0.33 * math.random(1,3)
+		end
+	end
+	
+	-- Hit GFX
+	if hit then
+		if math.random(1,7) < 2 then
+		self.explosion = CreateAEmitter("Heat.rte/Lighting Hit Effect");
+		self.explosion.Pos = hitPos;
+		self.explosion.RotAngle = self.RotAngle;
+		self.explosion.Team = self.Team;
+		MovableMan:AddParticle(self.explosion);
+		end
+		
+		local spark = CreateMOPixel("Spark Tazer 1");
+		spark.Pos = hitPos + Vector(RangeRand(-1, 1), RangeRand(-1, 1))
+		spark.Vel = Vector(RangeRand(-1, 1), RangeRand(-1, 1)) * 15
+		spark.Lifetime = spark.Lifetime * RangeRand(0.8, 1.2) * math.random(1,3)
+		MovableMan:AddParticle(spark);
 	end
 end
 
