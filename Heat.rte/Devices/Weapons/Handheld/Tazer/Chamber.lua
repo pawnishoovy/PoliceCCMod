@@ -102,6 +102,10 @@ function Update(self)
 	self.lastRotAngle = self.RotAngle
 	self.angVel = (result / TimerMan.DeltaTimeSecs) * self.FlipFactor
 	
+	-- TEST
+	--if self.Magazine then self.Magazine.RoundCount = -1 end
+	-- TEST
+	
 	-- PAWNIS RELOAD ANIMATION HERE
 	if self:IsReloading() then
 
@@ -236,6 +240,7 @@ function Update(self)
 			self.afterSound:SetPosition(self.Pos);
 		end
 	end
+	
 	
 	if self:IsActivated() and self.RoundInMagCount > 0 then
 	

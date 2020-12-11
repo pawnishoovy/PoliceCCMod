@@ -8,100 +8,97 @@ function Create(self)
 	glow.Pos = self.Pos;
 	MovableMan:AddParticle(glow);
 	
-	local startPos = Vector(self.Pos.X, self.Pos.Y)
-	self.Pos = startPos
+	self.pointCount = math.floor(500 * RangeRand(0.9,1.1) + 0.5);	-- Number of points
+	self.spiralScale = 10 * RangeRand(0.85,1.15);	-- Size of the spiral
+	self.skipPoints = 5;
+	self.skipDegreeRange = 35 * RangeRand(0.9,1.1)
 	
-	local maxi = math.random(90,110)
-	local mini = 0
-	for i = mini, maxi do
-		local fac = i / maxi
+	self.detectedPoints = {}
+	
+	for i = self.skipPoints, self.pointCount - 1 do
+		local radius = self.spiralScale * math.sqrt(i);
+		local angle = i * 137.508;
+		local checkVec = Vector(radius, 0):DegRotate(angle)
+		local checkPos = self.Pos + checkVec + Vector(5, 0):RadRotate(self.RotAngle);
 		
-		local travel = Vector(RangeRand(2,4), RangeRand(-1,1)):RadRotate(self.RotAngle)
-		local newPos = Vector(self.Pos.X, self.Pos.Y) + travel
+		local min_value = -math.pi;
+		local max_value = math.pi;
+		local value = self.RotAngle - checkVec.AbsRadAngle
+		local result;
+		local ret = 0
 		
-		local terrCheck = SceneMan:GetTerrMatter(newPos.X, newPos.Y)
-		local MOIDCheck = SceneMan:GetMOIDPixel(newPos.X, newPos.Y)
-		if (MOIDCheck and MOIDCheck ~= rte.NoMOID and MovableMan:GetMOFromID(MOIDCheck).Team ~= self.Team) or terrCheck ~= 0 then
-			if math.random(1,3) < 2 then
-				AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Tazer/Lighting/Sounds/Hit"..math.random(1,6)..".ogg", self.Pos);
-			end
-			
-			for i = 1, 2 do
-				local glowHit = CreateMOPixel("Tazer Lighting Glow "..math.random(1,5));
-				glowHit.Pos = newPos + Vector(RangeRand(-1,1), RangeRand(-1,1)) * 4;
-				MovableMan:AddParticle(glowHit);
-				
-				if math.random(1,4) < 2 then
-					local pixel = CreateMOPixel("Tazer Lighting Damage 1");
-					pixel.Vel = Vector(60, 0):RadRotate(self.RotAngle + RangeRand(-1,1) * 2.0);
-					pixel.Pos = self.Pos - Vector(2, 0):RadRotate(self.RotAngle);
-					pixel.Team = self.Team -- It doesn't work, somehow
-					pixel.IgnoresTeamHits = true;
-					MovableMan:AddParticle(pixel);
-				
-					if (MOIDCheck and MOIDCheck ~= rte.NoMOID and MovableMan:GetMOFromID(MOIDCheck).Team ~= self.Team) then
-						local MO = MovableMan:GetMOFromID(MOIDCheck)
-						if MO and IsMOSRotating(MO) then
-							local actor = MovableMan:GetMOFromID(MO.RootID)
-							if (actor and IsActor(actor)) and (MO.RootID == moCheck or (not IsAttachable(MO) or string.find(MO.PresetName,"Arm") or string.find(MO.PresetName,"Leg") or string.find(MO.PresetName,"Head"))) then
-								actor = ToActor(actor)
-								actor:FlashWhite(26)
-								actor.Status = 1
-								actor.Vel = actor.Vel * 0.5 + Vector(RangeRand(-1.0,1.0), RangeRand(-1.0,1.0)) * math.random(1,3)
-							end
-						end
-					end
-				end
-				
-			end
-			break
+		local range = max_value - min_value;
+		if range <= 0 then
+			result = min_value;
 		else
-			self.Pos = newPos
+			ret = (value - min_value) % range;
+			if ret < 0 then ret = ret + range end
+			result = ret + min_value;
 		end
 		
-		local glowA = CreateMOPixel("Tazer Lighting Glow "..math.random(2,3));
-		glowA.Pos = self.Pos;
-		MovableMan:AddParticle(glowA);
-		
-		if RangeRand(0,1) >= fac then
-			local glowB = CreateMOPixel("Tazer Lighting Glow "..math.random(4,5));
-			glowB.Pos = self.Pos - travel * RangeRand(0.3,0.6);
-			MovableMan:AddParticle(glowB);
-		end
-		
-		self.RotAngle = self.RotAngle + RangeRand(-1,1) * 0.035 + RangeRand(-1,1) * 0.075 * fac
-		--DrawCircleDir(self.Pos, 2, self.RotAngle)
-		
-		local g = math.random(1,2)
-		if math.random(1, 100) <= 15 / g then
-			local maxj = math.random(2,8) * g
-			local minj = 0
-			local branchPos = self.Pos
-			local branchRotAngle = self.RotAngle + math.pi * 0.3 * (math.random(0,1) * 2 - 1) + RangeRand(-1,1) * 0.5
-			for j = minj, maxj do
-				local facj = j / maxj
-				
-				local newBranchPos = Vector(branchPos.X, branchPos.Y) + Vector(RangeRand(1,5), RangeRand(-1,1)):RadRotate(branchRotAngle)
-				local terrCheck = SceneMan:GetTerrMatter(newBranchPos.X, newBranchPos.Y)
+		if math.abs(result * (1 + (radius / 100)) * 0.5) < math.rad(self.skipDegreeRange) then
+			
+			if SceneMan.SceneWrapsX == true then
+				if checkPos.X > SceneMan.SceneWidth then
+					checkPos = Vector(checkPos.X - SceneMan.SceneWidth, checkPos.Y);
+				elseif checkPos.X < 0 then
+					checkPos = Vector(SceneMan.SceneWidth + checkPos.X, checkPos.Y);
+				end
+			end
+			local color = 254;
+			local terrCheck = SceneMan:GetTerrMatter(checkPos.X, checkPos.Y);
+			local moCheck = SceneMan:GetMOIDPixel(checkPos.X, checkPos.Y);
+			if moCheck ~= 255 and MovableMan:GetMOFromID(moCheck).Team ~= self.Team then
+				color = 122;
 				if terrCheck ~= 0 then
-					break
-				else
-					local glowA = CreateMOPixel("Tazer Lighting Glow "..math.random(1,2));
-					glowA.Pos = newBranchPos;
-					MovableMan:AddParticle(glowA);
-					
-					if RangeRand(0,1) >= facj then
-						local glowB = CreateMOPixel("Tazer Lighting Glow "..math.random(3,5));
-						glowB.Pos = newBranchPos;
-						MovableMan:AddParticle(glowB);
-					end
-					
-					branchPos = newBranchPos
-					branchRotAngle = branchRotAngle + RangeRand(-1,1) * 0.3
+					color = 149;
 				end
 				
+				local score = 5 / SceneMan:ShortestDistance(self.Pos, checkPos, SceneMan.SceneWrapsX).Magnitude
+				table.insert(self.detectedPoints, {Vector(checkPos.X, checkPos.Y), score})
+			elseif terrCheck ~= 0 then
+				color = 5;
+				
+				local score = 1 / SceneMan:ShortestDistance(self.Pos, checkPos, SceneMan.SceneWrapsX).Magnitude
+				table.insert(self.detectedPoints, {Vector(checkPos.X, checkPos.Y), score})
+			end
+			--PrimitiveMan:DrawLinePrimitive(checkPos, checkPos, color);
+			
+		end
+	end
+	
+	-- Pick best point
+	self.targetPos = self.Pos + Vector(self.spiralScale * 13 * RangeRand(0.8,1.2), 0):RadRotate(self.RotAngle + RangeRand(-1,1) * 0.35)
+	
+	if #self.detectedPoints > 0 then
+		local lastScore = 0
+		for i, point in ipairs(self.detectedPoints) do
+			local score = point[2]
+			if lastScore < score then
+				self.targetPos = point[1]
+				lastScore = score
 			end
 		end
+		
+	end
+	
+	local dif = SceneMan:ShortestDistance(self.Pos, self.targetPos, SceneMan.SceneWrapsX)
+	local maxi = math.floor((dif.Magnitude * 0.25))
+	
+	local lastPos = self.Pos
+	
+	local midpoint = Vector(self.spiralScale * 3 * RangeRand(0.8,1.2), 0):RadRotate(self.RotAngle) + Vector(RangeRand(-1,1), RangeRand(-1,1)) * 20
+	for i = 1, maxi do
+		local fac = i / maxi
+		local facRev = 1 - fac
+		
+		local p1 = Vector(0, 0)
+		local p2 = midpoint
+		local p3 = dif
+		
+		local pos = self.Pos + (p1 * math.pow(1 - fac, 2) + p2 * 2 * (1 - fac) * fac + p3 * math.pow(fac, 2)) + Vector(RangeRand(-1,1), RangeRand(-1,1)) * 3
+		PrimitiveMan:DrawLinePrimitive(lastPos, pos, 5);
+		lastPos = pos
 	end
 end
 
