@@ -2,11 +2,12 @@ function Create(self)
 	
 	local offset = Vector(self.Vel.X, self.Vel.Y):SetMagnitude(30) * -1
 	
-	for i = 1, math.random(1,3) do
+	for i = 1, math.random(2,6) do
 		local poof = CreateMOSParticle(math.random(1,2) < 2 and "Tiny Smoke Ball 1" or "Small Smoke Ball 1");
 		poof.Pos = self.Pos + offset
-		poof.Vel = Vector(self.Vel.X, self.Vel.Y):RadRotate(math.pi * RangeRand(-1, 1) * 0.05) * RangeRand(0.1, 0.9) * 0.6;
-		poof.Lifetime = poof.Lifetime * RangeRand(0.9, 1.6) * 0.6
+		poof.Vel = Vector(self.Vel.X, self.Vel.Y):RadRotate(math.pi * RangeRand(-1, 1) * 0.05) * RangeRand(0.1, 0.9) * 0.7;
+		poof.Lifetime = poof.Lifetime * RangeRand(0.9, 1.6) * 1.4
+		poof.AirResistance = poof.AirResistance / math.random(1,3) * 0.66
 		poof.HitsMOs = false
 		MovableMan:AddParticle(poof);
 	end
@@ -14,7 +15,7 @@ function Create(self)
 		local poof = CreateMOSParticle("Small Smoke Ball 1");
 		poof.Pos = self.Pos + offset
 		poof.Vel = (Vector(self.Vel.X, self.Vel.Y):RadRotate(math.pi * (math.random(0,1) * 2.0 - 1.0) * 2.5 + math.pi * RangeRand(-1, 1) * 0.15) * RangeRand(0.1, 0.9) * 0.6 + Vector(self.Vel.X, self.Vel.Y):RadRotate(math.pi * RangeRand(-1, 1) * 0.15) * RangeRand(0.1, 0.9) * 0.2) * 0.5;
-		poof.Lifetime = poof.Lifetime * RangeRand(0.9, 1.6) * 0.6
+		poof.Lifetime = poof.Lifetime * RangeRand(0.9, 1.6) * 0.7
 		poof.HitsMOs = false
 		MovableMan:AddParticle(poof);
 	end
@@ -22,7 +23,7 @@ function Create(self)
 		local poof = CreateMOSParticle("Explosion Smoke 2");
 		poof.Pos = self.Pos + offset
 		poof.Vel = Vector(self.Vel.X, self.Vel.Y):RadRotate(RangeRand(-1, 1) * 0.15) * RangeRand(0.9, 1.6) * 0.22 * i
-		poof.Lifetime = poof.Lifetime * RangeRand(0.8, 1.6) * 0.1 * i
+		poof.Lifetime = poof.Lifetime * RangeRand(0.8, 1.6) * 0.1 * i * math.random(1,2)
 		poof.HitsMOs = false
 		MovableMan:AddParticle(poof);
 	end
