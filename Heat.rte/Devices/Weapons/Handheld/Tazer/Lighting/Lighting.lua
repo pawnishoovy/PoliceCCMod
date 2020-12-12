@@ -124,7 +124,7 @@ function Create(self)
 		if fac > 0.5 or fac < 0.2 then
 			if SceneMan:GetTerrMatter(pos.X, pos.Y) ~= 0 then
 				hitPos = Vector(lastPos.X, lastPos.Y)
-				--hitMO = nil
+				hitMO = nil
 				break
 			end
 		end

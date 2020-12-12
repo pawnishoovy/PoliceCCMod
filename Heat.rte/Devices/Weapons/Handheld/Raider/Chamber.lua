@@ -243,6 +243,24 @@ function Update(self)
 				self.burstTailSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Raider/CompliSound/BurstEndTail" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
 			end
 			
+			-- Bullets
+			for i = 0, 1 do
+				local damagePar = CreateMOPixel("Particle Raider");
+				if damagePar then
+					local spreadDeg = 1
+					local spread = math.rad(spreadDeg) * (i - 0.5) * 2 * self.shotCounter
+					
+					
+					damagePar.Pos = self.MuzzlePos
+					damagePar.Vel = Vector((150 + 25 * self.shotCounter) * self.FlipFactor, 0):RadRotate(self.RotAngle + spread)
+					damagePar.Team = self.Team
+					damagePar.IgnoresTeamHits = true;
+					MovableMan:AddParticle(damagePar)
+				end
+			end
+			
+			--self.shotCounter
+			
 			for i = 1, 2 do
 				local Effect = CreateMOSParticle("Tiny Smoke Ball 1", "Base.rte")
 				if Effect then
@@ -251,6 +269,7 @@ function Update(self)
 					MovableMan:AddParticle(Effect)
 				end
 			end
+			
 			
 			local Effect = CreateMOSParticle("Side Thruster Blast Ball 1", "Base.rte")
 			if Effect then
