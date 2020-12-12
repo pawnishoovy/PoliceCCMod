@@ -159,6 +159,7 @@ function Update(self)
 				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
 					self.Frame = 4;
 					self.coverBack = true;
+					self.phaseOnStop = 1;
 				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
 					self.Frame = 3;
 				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.4)) then
@@ -171,6 +172,7 @@ function Update(self)
 			
 				self:RemoveNumberValue("MagRemoved");
 				self.magInside = true;
+				self.phaseOnStop = 2;
 				self.Frame = 5;
 				
 			elseif self.reloadPhase == 2 then	

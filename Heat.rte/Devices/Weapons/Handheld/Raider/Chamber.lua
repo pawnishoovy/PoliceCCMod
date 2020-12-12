@@ -43,7 +43,7 @@ function Create(self)
 	self.burstCount = 2; -- excluding main gunshot
 	self.burstTimer = Timer();
 	
-	self.openPrepareDelay = 300;
+	self.openPrepareDelay = 800;
 	self.openAfterDelay = 800;
 	self.loadPrepareDelay = 450;
 	self.loadAfterDelay = 800;
@@ -73,7 +73,6 @@ function Create(self)
 end
 
 function Update(self)
-	self.Frame = 0;
 	self.rotationTarget = 0 -- ZERO IT FIRST AAAA!!!!!
 	
 	if self.ID == self.RootID then
@@ -118,7 +117,10 @@ function Update(self)
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Raider/Sounds/Open";
 			
+			self.rotationTarget = 5;
+			
 		elseif self.reloadPhase == 1 then
+			self.Frame = 3;
 			self.reloadDelay = self.loadPrepareDelay;
 			self.afterDelay = self.loadAfterDelay;
 			self.prepareSoundPath = 
@@ -126,9 +128,10 @@ function Update(self)
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Raider/Sounds/Load";
 			
-			self.rotationTarget = -5;
+			self.rotationTarget = 5;
 			
 		elseif self.reloadPhase == 2 then
+			self.Frame = 3;
 			self.reloadDelay = self.closePrepareDelay;
 			self.afterDelay = self.closeAfterDelay;
 			self.prepareSoundPath = 
@@ -136,7 +139,7 @@ function Update(self)
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Raider/Sounds/Close";
 
-			self.rotationTarget = 5;
+			self.rotationTarget = 15;
 			
 		end
 		
@@ -150,8 +153,27 @@ function Update(self)
 		if self.reloadTimer:IsPastSimMS(self.reloadDelay) then
 		
 			if self.reloadPhase == 0 then
-			elseif self.reloadPhase == 1 then
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
+					self.Frame = 3;
+					self.phaseOnStop = 1;
+					self.barrelsOpen = true;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.0)) then
+					self.Frame = 2;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.5)) then
+					self.Frame = 1;
+				end
 			elseif self.reloadPhase == 2 then
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.5)) then
+					self.Frame = 0;
+					if self.barrelsOpen ~= false then
+						self.barrelsOpen = false;
+						self.angVel = self.angVel - 5;
+					end
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.0)) then
+					self.Frame = 1;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.5)) then
+					self.Frame = 2;
+				end
 			
 			end
 			
@@ -170,8 +192,8 @@ function Update(self)
 						MovableMan:AddParticle(fake);
 					end
 						
-						self.angVel = self.angVel + 2;
-						self.verticalAnim = self.verticalAnim + 1
+					self.angVel = self.angVel + 2;
+					self.verticalAnim = self.verticalAnim + 1
 					
 				elseif self.reloadPhase == 1 then
 					self.angVel = self.angVel + 2;
@@ -211,8 +233,8 @@ function Update(self)
 			self.reloadPhase = self.phaseOnStop;
 			self.phaseOnStop = nil;
 		end
-		if self.reloadPhase == 1 then
-			self.Frame = 1;
+		if self.barrelsOpen == true then
+			self.Frame = 3;
 		else
 			self.Frame = 0;
 		end
@@ -281,7 +303,6 @@ function Update(self)
 	end
 	
 	if self.FiredFrame then
-		self.Frame = 1;
 		self.angVel = self.angVel - RangeRand(0.7,1.1) * 15
 		
 		self.canSmoke = true
