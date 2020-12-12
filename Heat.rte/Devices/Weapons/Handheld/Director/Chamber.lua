@@ -105,6 +105,15 @@ function Update(self)
 	local result;
 	local ret = 0
 	
+	if self.lastHFlipped ~= nil then
+		if self.lastHFlipped ~= self.HFlipped then
+			self.lastHFlipped = self.HFlipped
+			value = value + math.pi
+		end
+	else
+		self.lastHFlipped = self.HFlipped
+	end
+	
 	local range = max_value - min_value;
 	if range <= 0 then
 		result = min_value;
