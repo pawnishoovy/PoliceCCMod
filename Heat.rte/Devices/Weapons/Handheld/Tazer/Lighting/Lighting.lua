@@ -48,7 +48,9 @@ function Create(self)
 			local color = 254;
 			local terrCheck = SceneMan:GetTerrMatter(checkPos.X, checkPos.Y);
 			local moCheck = SceneMan:GetMOIDPixel(checkPos.X, checkPos.Y);
-			if moCheck ~= 255 and MovableMan:GetMOFromID(moCheck).Team ~= self.Team then
+			
+			local mo = moCheck ~= 255 and MovableMan:GetMOFromID(moCheck)
+			if moCheck ~= 255 and (mo.Team ~= self.Team) then
 				color = 122;
 				if terrCheck ~= 0 then
 					color = 149;
@@ -122,7 +124,7 @@ function Create(self)
 		if fac > 0.5 or fac < 0.2 then
 			if SceneMan:GetTerrMatter(pos.X, pos.Y) ~= 0 then
 				hitPos = Vector(lastPos.X, lastPos.Y)
-				hitMO = nil
+				--hitMO = nil
 				break
 			end
 		end
@@ -136,9 +138,9 @@ function Create(self)
 		if IsAttachable(hitMO) then hitMO = ToAttachable(hitMO) end
 		
 		local parent = hitMO:GetRootParent()
-		local actor = ((parent ~= nil and IsAHuman(parent)) and parent) or (IsAHuman(hitMO) and hitMO)
-		if actor then
-			actor = ToAHuman(actor)
+		local actor = ((parent ~= nil and IsActor(parent)) and parent) or (IsActor(hitMO) and hitMO)
+		if actor and actor.ClassName ~= "ADoor" then
+			actor = ToActor(actor)
 			if math.random(1,4) < 2 and actor.PinStrength < 1 then
 				actor:FlashWhite(36)
 				actor.Pos = actor.Pos + Vector(RangeRand(-1,1), RangeRand(-1,1)) * 2
@@ -147,7 +149,7 @@ function Create(self)
 			end
 			
 			local wound = CreateAEmitter(actor:GetEntryWoundPresetName(), PresetMan:GetDataModule(actor.ModuleID).FileName);
-			actor.Health = actor.Health - wound.BurstDamage * 0.33 * math.random(1,3)
+			actor.Health = actor.Health - wound.BurstDamage * 0.33 * math.random(1,3) / actor.Radius * 14
 		end
 	end
 	
