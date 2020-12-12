@@ -5,7 +5,7 @@ function Create(self)
 	MovableMan:AddParticle(glow);
 	
 	self.lastPos = Vector(self.Pos.X, self.Pos.Y);
-	self.hits = math.min(math.random(0,1), 1);
+	self.hits = math.max(math.random(-1,1), 0)
 	
 	self.cast = true;
 	self.castLength = 700;
