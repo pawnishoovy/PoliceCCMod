@@ -75,9 +75,57 @@ function HeatAIBehaviours.handleMovement(self)
 	local crouching = self.controller:IsState(Controller.BODY_CROUCH)
 	local moving = self.controller:IsState(Controller.MOVE_LEFT) or self.controller:IsState(Controller.MOVE_RIGHT);
 	
+	--NOTE: you could also put in things like your falling scream here easily with very little overhead
+	
+	-- Leg Collision Detection system
+    --local i = 0
+    for i = 1, 2 do
+        --local foot = self.feet[i]
+		local foot = nil
+        --local leg = self.legs[i]
+		if i == 1 then
+			foot = self.FGFoot 
+		else
+			foot = self.BGFoot 
+		end
+        --if foot ~= nil and leg ~= nil and leg.ID ~= rte.NoMOID then
+		if foot ~= nil then
+            local footPos = foot.Pos				
+			local mat = nil
+			local pixelPos = footPos + Vector(0, 4)
+			self.footPixel = SceneMan:GetTerrMatter(pixelPos.X, pixelPos.Y)
+			--PrimitiveMan:DrawLinePrimitive(pixelPos, pixelPos, 13)
+			if self.footPixel ~= 0 then
+				mat = SceneMan:GetMaterialFromID(self.footPixel)
+			--	PrimitiveMan:DrawLinePrimitive(pixelPos, pixelPos, 162);
+			--else
+			--	PrimitiveMan:DrawLinePrimitive(pixelPos, pixelPos, 13);
+			end
+			
+			local movement = (self.controller:IsState(Controller.MOVE_LEFT) == true or self.controller:IsState(Controller.MOVE_RIGHT) == true or self.Vel.Magnitude > 3)
+			if mat ~= nil then
+				--PrimitiveMan:DrawTextPrimitive(footPos, mat.PresetName, true, 0);
+				if self.feetContact[i] == false then
+					self.feetContact[i] = true
+					if self.feetTimers[i]:IsPastSimMS(self.footstepTime) and movement then						
+						-- HeatAIBehaviours.createSoundEffect(self, self.movementSounds.Step, self.movementSoundVariations.Step);												
+						self.feetTimers[i]:Reset()
+					end
+				end
+			else
+				if self.feetContact[i] == true then
+					self.feetContact[i] = false
+					if self.feetTimers[i]:IsPastSimMS(self.footstepTime) and movement then
+						self.feetTimers[i]:Reset()
+					end
+				end
+			end
+		end
+	end
+	
 	-- Custom Jump
 	if self.controller:IsState(Controller.BODY_JUMPSTART) == true and self.controller:IsState(Controller.BODY_CROUCH) == false and self.jumpTimer:IsPastSimMS(self.jumpDelay) and not self.isJumping then
-		if self.wasInAir == false then
+		if self.feetContact[1] == true or self.feetContact[2] == true then
 			local jumpVec = Vector(0,-1.5)
 			local jumpWalkX = 3
 			if self.controller:IsState(Controller.MOVE_LEFT) == true then
@@ -94,31 +142,20 @@ function HeatAIBehaviours.handleMovement(self)
 			self.isJumping = true
 			self.jumpTimer:Reset()
 			self.jumpStop:Reset()
-			self.jumpBoost:Reset()
 		end
-	elseif self.isJumping then
-		if self.wasInAir == false and self.jumpStop:IsPastSimMS(100) then
+	elseif self.isJumping or self.wasInAir then
+		if (self.feetContact[1] == true or self.feetContact[2] == true) and self.jumpStop:IsPastSimMS(100) then
 			self.isJumping = false
-			if self.Vel.Y > 0 then
-				HeatAIBehaviours.createSoundEffect(self, self.movementSounds.Land, self.movementSoundVariations.Land);
-			end
-		else
-			if self.controller:IsState(Controller.BODY_JUMP) == true and not self.jumpBoost:IsPastSimMS(200) then
-				self.Vel = self.Vel - SceneMan.GlobalAcc * TimerMan.DeltaTimeSecs * 1.0 -- Stop the gravity
-			end
-		end
-	end
-	
-	if (self.wasInAir and self.Vel.Y < 10) then
-		self.altitude = SceneMan:FindAltitude(self.Pos, 100, 3);
-		if self.altitude < 25 then
 			self.wasInAir = false;
-			HeatAIBehaviours.createSoundEffect(self, self.movementSounds.Land, self.movementSoundVariations.Land);
+			if self.Vel.Y > 0 and self.moveSoundTimer:IsPastSimMS(500) then
+				HeatAIBehaviours.createSoundEffect(self, self.movementSounds.Land, self.movementSoundVariations.Land);
+				self.moveSoundTimer:Reset();
+			end
 		end
 	end
 
 	if (crouching) then
-		if (not self.wasCrouching and self.moveSoundTimer:IsPastSimMS(800)) then
+		if (not self.wasCrouching and self.moveSoundTimer:IsPastSimMS(600)) then
 			HeatAIBehaviours.createSoundEffect(self, self.movementSounds.Crouch, self.movementSoundVariations.Crouch);
 		end
 		if (moving) then
@@ -128,7 +165,7 @@ function HeatAIBehaviours.handleMovement(self)
 			end
 		end
 	else
-		if (self.wasCrouching and self.moveSoundTimer:IsPastSimMS(800)) then
+		if (self.wasCrouching and self.moveSoundTimer:IsPastSimMS(600)) then
 			HeatAIBehaviours.createSoundEffect(self, self.movementSounds.Stand, self.movementSoundVariations.Stand);
 			self.moveSoundTimer:Reset();
 		end
@@ -182,4 +219,3 @@ end
 function HeatAIBehaviours.handleVoicelines(self)
 
 end
-

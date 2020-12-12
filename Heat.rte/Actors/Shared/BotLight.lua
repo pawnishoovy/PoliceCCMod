@@ -56,12 +56,16 @@ function Create(self)
 
 	-- fil jump
 	
+	-- Leg Collision Detection system
+    self.feetContact = {false, false}
+    self.feetTimers = {Timer(), Timer()}
+	self.footstepTime = 100 -- 2 Timers to avoid noise
+	
 	-- Custom Jumping
 	self.isJumping = false
 	self.jumpTimer = Timer();
 	self.jumpDelay = 500;
 	self.jumpStop = Timer();
-	self.jumpBoost = Timer();
 	
 	-- End modded code
 end
