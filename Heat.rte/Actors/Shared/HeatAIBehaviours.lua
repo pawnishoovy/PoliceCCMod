@@ -178,12 +178,12 @@ function HeatAIBehaviours.handleMovement(self)
 			
 			self.boosterAITimer:Reset()
 			
-			local emitterA = CreateAEmitter("Smoke Trail Medium")
-			emitterA.Lifetime = 1500
+			local emitterA = CreateAEmitter("Heat Jetpack Smoke Trail Medium")
+			emitterA.Lifetime = 1300
 			self.Jetpack:AddAttachable(emitterA);
 			
-			local emitterB = CreateAEmitter("Smoke Trail Heavy")
-			emitterB.Lifetime = 1000
+			local emitterB = CreateAEmitter("Heat Jetpack Smoke Trail Heavy")
+			emitterB.Lifetime = 400
 			self.Jetpack:AddAttachable(emitterB);
 			
 		elseif not self.boosterReady and (self.feetContact[1] == true or self.feetContact[2] == true) then
