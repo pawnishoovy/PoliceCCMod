@@ -186,7 +186,7 @@ function HeatAIBehaviours.handleMovement(self)
 			
 			self.boosterTimer:Reset()
 			
-			local offset = Vector(0, 7)--Vector(self.Jetpack.EmissionOffset.X, self.Jetpack.EmissionOffset.Y)
+			local offset = Vector(-4, 6)--Vector(self.Jetpack.EmissionOffset.X, self.Jetpack.EmissionOffset.Y)
 			
 			local emitterA = CreateAEmitter("Heat Jetpack Smoke Trail Medium")
 			emitterA.Lifetime = 1300
