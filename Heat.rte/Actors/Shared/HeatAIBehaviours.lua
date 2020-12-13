@@ -158,26 +158,41 @@ function HeatAIBehaviours.handleMovement(self)
 	
 	-- Booster
 	if self.Jetpack then
-		if crouching and self.controller:IsState(Controller.BODY_JUMPSTART) and self.boosterReady then
+		
+		
+		local boosting = false
+		if self:IsPlayerControlled() then
+			boosting = crouching and self.controller:IsState(Controller.BODY_JUMPSTART)
+		elseif self.boosterAITimer:IsPastSimMS(self.boosterAIDelay) then
+			boosting = self.controller:IsState(Controller.BODY_JUMPSTART) and SceneMan:ShortestDistance(self.Pos,self:GetLastAIWaypoint(),SceneMan.SceneWrapsX).Y < -5
+		end
+		
+		if boosting and self.boosterReady then
 			
 			self.Vel = Vector(self.Vel.X, self.Vel.Y):RadRotate(-self.RotAngle)
 			self.Vel = Vector(self.Vel.X, self.Vel.Y * 0.5)
 			self.Vel = Vector(self.Vel.X, self.Vel.Y):RadRotate(self.RotAngle)
 			
-			self.Vel = self.Vel + Vector(0, -15):RadRotate(self.RotAngle)
+			self.Vel = self.Vel + Vector(0, -10):RadRotate(self.RotAngle)
 			self.boosterReady = false
 			
+			self.boosterAITimer:Reset()
+			
 			local emitterA = CreateAEmitter("Smoke Trail Medium")
-			emitterA.Lifetime = 1000
+			emitterA.Lifetime = 1500
 			self.Jetpack:AddAttachable(emitterA);
 			
 			local emitterB = CreateAEmitter("Smoke Trail Heavy")
-			emitterB.Lifetime = 500
+			emitterB.Lifetime = 1000
 			self.Jetpack:AddAttachable(emitterB);
 			
-		elseif self.feetContact[1] == true or self.feetContact[2] == true then
+		elseif not self.boosterReady and (self.feetContact[1] == true or self.feetContact[2] == true) then
 			self.boosterReady = true
-			
+			for attachable in self.Jetpack.Attachables do
+				if attachable.ClassName == "AEmitter" and string.find(attachable.PresetName,"Smoke Trail") then
+					attachable.ToDelete = true
+				end
+			end
 		end
 	end
 

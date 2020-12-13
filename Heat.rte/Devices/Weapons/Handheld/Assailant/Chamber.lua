@@ -513,7 +513,7 @@ function Update(self)
 				fire = true
 			end
 		elseif self.Magazine then -- AI
-			if self.grenadeLoaded == true and not self:IsReloading() and self.Magazine.UniqueID % 3 == 0 and self.Magazine.Age > 500 and self:IsActivated() then -- Hacks
+			if self.grenadeLoaded == true and not self:IsReloading() and self.Magazine.UniqueID % 3 == 0 and self.Magazine.Age > 500 and self.parent:GetController():IsState(Controller.WEAPON_FIRE) == true then -- Hacks
 				fire = true
 			end
 		end
