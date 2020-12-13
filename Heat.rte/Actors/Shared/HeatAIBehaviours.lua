@@ -153,6 +153,33 @@ function HeatAIBehaviours.handleMovement(self)
 			end
 		end
 	end
+	
+	--- Extra Movement
+	
+	-- Booster
+	if self.Jetpack then
+		if crouching and self.controller:IsState(Controller.BODY_JUMPSTART) and self.boosterReady then
+			
+			self.Vel = Vector(self.Vel.X, self.Vel.Y):RadRotate(-self.RotAngle)
+			self.Vel = Vector(self.Vel.X, self.Vel.Y * 0.5)
+			self.Vel = Vector(self.Vel.X, self.Vel.Y):RadRotate(self.RotAngle)
+			
+			self.Vel = self.Vel + Vector(0, -15):RadRotate(self.RotAngle)
+			self.boosterReady = false
+			
+			local emitterA = CreateAEmitter("Smoke Trail Medium")
+			emitterA.Lifetime = 1000
+			self.Jetpack:AddAttachable(emitterA);
+			
+			local emitterB = CreateAEmitter("Smoke Trail Heavy")
+			emitterB.Lifetime = 500
+			self.Jetpack:AddAttachable(emitterB);
+			
+		elseif self.feetContact[1] == true or self.feetContact[2] == true then
+			self.boosterReady = true
+			
+		end
+	end
 
 	if (crouching) then
 		if (not self.wasCrouching and self.moveSoundTimer:IsPastSimMS(600)) then

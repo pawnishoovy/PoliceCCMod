@@ -67,6 +67,9 @@ function Create(self)
 	self.jumpDelay = 500;
 	self.jumpStop = Timer();
 	
+	-- Extra Movement
+	self.boosterReady = true
+	
 	-- End modded code
 end
 
