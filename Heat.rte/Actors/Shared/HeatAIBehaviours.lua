@@ -168,6 +168,8 @@ function HeatAIBehaviours.handleMovement(self)
 		end
 		
 		if boosting and self.boosterReady then
+		
+			self.jumpJetSound = AudioMan:PlaySound("Heat.rte/Actors/Shared/Sounds/Jumpjet/JumpjetStart" .. math.random(1, 3) .. ".ogg", self.Jetpack.Pos, -1, 0, 130, 1, 400, false);
 			
 			self.Vel = Vector(self.Vel.X, self.Vel.Y):RadRotate(-self.RotAngle)
 			self.Vel = Vector(self.Vel.X, self.Vel.Y * 0.5)
@@ -187,6 +189,13 @@ function HeatAIBehaviours.handleMovement(self)
 			self.Jetpack:AddAttachable(emitterB);
 			
 		elseif not self.boosterReady and (self.feetContact[1] == true or self.feetContact[2] == true) then
+		
+			if self.jumpJetSound then
+				if self.jumpJetSound:IsBeingPlayed() then
+					self.jumpJetSound:SetPosition(self.Jetpack.Pos);
+				end
+			end
+			
 			self.boosterReady = true
 			for attachable in self.Jetpack.Attachables do
 				if attachable.ClassName == "AEmitter" and string.find(attachable.PresetName,"Smoke Trail") then
