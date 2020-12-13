@@ -69,7 +69,7 @@ function Create(self)
 	
 	-- Extra Movement
 	self.boosterReady = true
-	self.boosterAITimer = Timer()
+	self.boosterTimer = Timer()
 	self.boosterAIDelay = 6000
 	
 	-- End modded code

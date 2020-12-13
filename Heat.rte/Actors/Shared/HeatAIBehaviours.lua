@@ -163,8 +163,14 @@ function HeatAIBehaviours.handleMovement(self)
 		local boosting = false
 		if self:IsPlayerControlled() then
 			boosting = crouching and self.controller:IsState(Controller.BODY_JUMPSTART)
-		elseif self.boosterAITimer:IsPastSimMS(self.boosterAIDelay) then
+		elseif self.boosterTimer:IsPastSimMS(self.boosterAIDelay) then
 			boosting = self.controller:IsState(Controller.BODY_JUMPSTART) and SceneMan:ShortestDistance(self.Pos,self:GetLastAIWaypoint(),SceneMan.SceneWrapsX).Y < -5
+		end
+		
+		if self.jumpJetSound then
+			if self.jumpJetSound:IsBeingPlayed() then
+				self.jumpJetSound:SetPosition(self.Jetpack.Pos);
+			end
 		end
 		
 		if boosting and self.boosterReady then
@@ -178,24 +184,23 @@ function HeatAIBehaviours.handleMovement(self)
 			self.Vel = self.Vel + Vector(0, -10):RadRotate(self.RotAngle)
 			self.boosterReady = false
 			
-			self.boosterAITimer:Reset()
+			self.boosterTimer:Reset()
+			
+			local offset = Vector(0, 7)--Vector(self.Jetpack.EmissionOffset.X, self.Jetpack.EmissionOffset.Y)
 			
 			local emitterA = CreateAEmitter("Heat Jetpack Smoke Trail Medium")
 			emitterA.Lifetime = 1300
 			self.Jetpack:AddAttachable(emitterA);
 			
+			ToAttachable(emitterA).ParentOffset = offset
+			
 			local emitterB = CreateAEmitter("Heat Jetpack Smoke Trail Heavy")
 			emitterB.Lifetime = 400
 			self.Jetpack:AddAttachable(emitterB);
 			
-		elseif not self.boosterReady and (self.feetContact[1] == true or self.feetContact[2] == true) then
-		
-			if self.jumpJetSound then
-				if self.jumpJetSound:IsBeingPlayed() then
-					self.jumpJetSound:SetPosition(self.Jetpack.Pos);
-				end
-			end
+			ToAttachable(emitterB).ParentOffset = offset
 			
+		elseif not self.boosterReady and (self.feetContact[1] == true or self.feetContact[2] == true) and self.boosterTimer:IsPastSimMS(300) then
 			self.boosterReady = true
 			for attachable in self.Jetpack.Attachables do
 				if attachable.ClassName == "AEmitter" and string.find(attachable.PresetName,"Smoke Trail") then
