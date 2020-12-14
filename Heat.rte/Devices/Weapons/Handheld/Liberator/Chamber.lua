@@ -77,13 +77,19 @@ function Create(self)
 	self.recoilAcc = 0 -- for sinous
 	self.recoilStr = 0 -- for accumulator
 	self.recoilStrength = 13 -- multiplier for base recoil added to the self.recoilStr when firing
-	self.recoilPowStrength = 0.2 -- multiplier for self.recoilStr when firing
+	self.recoilPowStrength = 1.0 -- multiplier for self.recoilStr when firing
 	self.recoilRandomUpper = 2 -- upper end of random multiplier (1 is lower)
-	self.recoilDamping = 1.0
+	self.recoilDamping = 0.3
 	
 	self.recoilMax = 5 -- in deg.
 	self.originalSharpLength = self.SharpLength
 	-- Progressive Recoil System 
+	
+	self.targetingLaser = true
+	self.targetingLaserTimer = Timer();
+	self.targetingLaserDelay = 70;
+	self.targetingPos = Vector(self.Pos.X, self.Pos.Y)
+	self.targetingMOUniqueID = -1
 end
 
 function Update(self)
@@ -341,6 +347,64 @@ function Update(self)
 	
 	-- PAWNIS RELOAD ANIMATION HERE
 	
+	-- Laser
+	-- Tactical Laser!!
+	if self.parent then
+		local offset = Vector(5 * self.FlipFactor, -0.5):RadRotate(self.RotAngle)
+		local point = self.Pos + offset
+		
+		--PrimitiveMan:DrawCirclePrimitive(point, 1, 13);
+		PrimitiveMan:DrawLinePrimitive(point, point, 13);
+		
+		if self.targetingLaserTimer:IsPastSimMS(self.targetingLaserDelay) then
+			local glow = CreateMOPixel("Mine Laser Particle");
+			glow.Pos = point;
+			MovableMan:AddParticle(glow);
+			
+			local rayVec = Vector(700 * self.FlipFactor, 0):RadRotate(self.RotAngle)
+			
+			local endPos = point + rayVec; -- This value is going to be overriden by function below, this is the end of the ray
+			self.ray = SceneMan:CastObstacleRay(point, rayVec, Vector(0, 0), endPos, actor.ID, self.Team, 0, 2) -- Do the hitscan stuff, raycast
+			local vec = SceneMan:ShortestDistance(point,endPos,SceneMan.SceneWrapsX);
+			
+			local moCheckPos = endPos + Vector(rayVec.X, rayVec.Y):SetMagnitude(math.random(1,2))
+			local moCheck = SceneMan:GetMOIDPixel(moCheckPos.X, moCheckPos.Y);
+			if moCheck ~= 255 then
+				self.targetingMOID = MovableMan:GetMOFromID(moCheck).UniqueID
+			else
+				self.targetingMOID = nil
+			end
+			
+			self.targetingPos = Vector(endPos.X, endPos.Y)
+			
+			--PrimitiveMan:DrawLinePrimitive(point, point + vec, 13);
+			if self.parent:IsPlayerControlled() then
+				if self.ray > 0 then
+					local glow = CreateMOPixel("Mine Laser Particle");
+					glow.Pos = endPos;
+					MovableMan:AddParticle(glow);
+					
+					glow = CreateMOPixel("Mine Laser Particle");
+					glow.Pos = endPos;
+					MovableMan:AddParticle(glow);
+					PrimitiveMan:DrawLinePrimitive(endPos, endPos, 13);
+				end
+				
+				local maxi = vec.Magnitude / GetPPM() * 1.5
+				for i = 1, maxi do
+					if math.random(1,3) >= 2 then
+						local glow = CreateMOPixel("Mine Laser Beam "..math.random(1,3));
+						glow.Pos = self.Pos + vec * math.max(math.min((1 / maxi * i) + RangeRand(-1.0,1.0) * 0.03, 1), 0);
+						glow.EffectRotAngle = self.RotAngle;
+						MovableMan:AddParticle(glow);
+					end
+				end
+			end
+			
+			self.targetingLaserTimer:Reset()
+		end
+	end
+	
 	if self.FiredFrame then
 		--self.angVel = self.angVel - RangeRand(0.7,1.1) * 15
 		
@@ -351,14 +415,28 @@ function Update(self)
 			self.Missile.RotAngle = self.Missile.Vel.AbsRadAngle
 			self.Missile.Team = self.parent.Team
 			self.Missile.IgnoresTeamHits = true
+			self.Missile:SetNumberValue("TargetMode", 1)
+			self.Missile:SetNumberValue("TargetX", self.targetingPos.X)
+			self.Missile:SetNumberValue("TargetY", self.targetingPos.Y)
+			if self.targetingMOID then
+				self.Missile:SetNumberValue("TargetID", self.targetingMOID)
+			end
+			
 			MovableMan:AddParticle(self.Missile)
 		else
 			self.Missile = CreateAEmitter("Projectile Liberator", "Heat.rte")
 			self.Missile.Pos = self.MuzzlePos;
-			self.Missile.Vel = self.Vel + Vector(20*self.FlipFactor,0):RadRotate(self.RotAngle)
+			self.Missile.Vel = self.Vel + Vector(15*self.FlipFactor,-2):RadRotate(self.RotAngle)
 			self.Missile.RotAngle = self.Missile.Vel.AbsRadAngle
 			self.Missile.Team = self.parent.Team
 			self.Missile.IgnoresTeamHits = true
+			self.Missile:SetNumberValue("TargetMode", 0)
+			self.Missile:SetNumberValue("TargetX", self.targetingPos.X)
+			self.Missile:SetNumberValue("TargetY", self.targetingPos.Y)
+			if self.targetingMOID then
+				self.Missile:SetNumberValue("TargetID", self.targetingMOID)
+			end
+			
 			MovableMan:AddParticle(self.Missile)
 		end
 		
