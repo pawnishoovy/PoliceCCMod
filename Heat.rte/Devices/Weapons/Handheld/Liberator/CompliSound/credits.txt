@@ -1,0 +1,11 @@
+add weap_rpapa7_fire_plr_01 GrnCannonShot2DA (first bas cutoff)
+
+mech Wpn_TRL_1P_Fire_FlapClose_2ch_v1_01 Wpn_TRL_1P_Fire_Mech_2ch_v2_01 weap_hellfire_fire_plr_rail_01
+
+reflection atmolaunchers GrnCannonTail2DA
+
+rocketstart: GrnSkiffMissileFireA, weap_apache_rocket_plr_fire_01 (mono)
+
+rocketloop: ArchWingMovementForwardBurnLoopB
+
+maneuverburst: NechroMechJumpBoostStartC, weap_apache_plr_missile_pop_01
