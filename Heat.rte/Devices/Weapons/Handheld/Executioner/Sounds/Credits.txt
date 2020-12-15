@@ -1,0 +1,12 @@
+MagOut - m99_foley_mag_out
+
+
+Prepare - wfoly_plr_sn_mike14_reload_xmaglrg_rattle wfoly_plr_sn_mike14_reload_xmag_rattle wfoly_plr_ar_kilo433_reload_empty_magin_v2_01 m99_foley_mag_in wfoly_sn_alpha50_reload_empty_magin_v2_01
+
+MagIn - m99_foley_mag_hit wfoly_sn_alpha50_reload_empty_magin_v2_02 wfoly_plr_sn_hdromeo_ballistics_raise_first_magin_01
+
+BoltBack - wfoly_plr_lm_mgolf34_raise_first_boltopen_01
+
+ChargeUp - titanfall 2 chargerifle
+
+BoltForward - wfoly_plr_lm_mgolf34_reload_boltclose_01 wfoly_plr_sh_oscar12_reload_empty_xmag_charge_01

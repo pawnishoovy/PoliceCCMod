@@ -1,0 +1,10 @@
+Add - TennoSniperShotA, weaponpunchshotgunfour
+
+AddHiAdd - m99_tail_bass_01
+
+Pre - m99_trigger_01
+
+Mech - TennoSniperRifleMechA, GrnKuvaLichRifleMechA
+
+Reflection - wpn_krabersniper_1p_wpnfire_lsrstail_2ch_v1_01 weap_refl_sniper_urb_ext_dist_lsrs_01
+ReflectionHiAdd - weap_refl_sniper_urb_ext_dist_lr_01 (1 sec in, fade in)
