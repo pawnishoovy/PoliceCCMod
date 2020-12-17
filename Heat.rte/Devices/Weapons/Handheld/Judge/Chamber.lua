@@ -244,6 +244,21 @@ function Update(self)
 				Bullet.IgnoresTeamHits = true
 				MovableMan:AddParticle(Bullet);
 			end
+			for i = 1, 2 do
+				local Effect = CreateMOSParticle("Tiny Smoke Ball 1", "Base.rte")
+				if Effect then
+					Effect.Pos = self.MuzzlePos;
+					Effect.Vel = (self.Vel + Vector(RangeRand(-20,20), RangeRand(-20,20)) + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 30
+					MovableMan:AddParticle(Effect)
+				end
+			end
+			
+			local Effect = CreateMOSParticle("Side Thruster Blast Ball 1", "Base.rte")
+			if Effect then
+				Effect.Pos = self.MuzzlePos;
+				Effect.Vel = (self.Vel + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 10
+				MovableMan:AddParticle(Effect)
+			end
 		end
 		
 		
@@ -251,22 +266,6 @@ function Update(self)
 			if self.reflectionSound:IsBeingPlayed() then
 				self.reflectionSound:Stop(-1)
 			end
-		end
-		
-		for i = 1, 2 do
-			local Effect = CreateMOSParticle("Tiny Smoke Ball 1", "Base.rte")
-			if Effect then
-				Effect.Pos = self.MuzzlePos;
-				Effect.Vel = (self.Vel + Vector(RangeRand(-20,20), RangeRand(-20,20)) + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 30
-				MovableMan:AddParticle(Effect)
-			end
-		end
-		
-		local Effect = CreateMOSParticle("Side Thruster Blast Ball 1", "Base.rte")
-		if Effect then
-			Effect.Pos = self.MuzzlePos;
-			Effect.Vel = (self.Vel + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 10
-			MovableMan:AddParticle(Effect)
 		end
 
 		local outdoorRays = 0;
@@ -429,6 +428,21 @@ function Update(self)
 					Bullet.Team = self.parent.Team
 					Bullet.IgnoresTeamHits = true
 					MovableMan:AddParticle(Bullet);
+				end
+				for i = 1, 2 do
+					local Effect = CreateMOSParticle("Tiny Smoke Ball 1", "Base.rte")
+					if Effect then
+						Effect.Pos = self.MuzzlePos;
+						Effect.Vel = (self.Vel + Vector(RangeRand(-20,20), RangeRand(-20,20)) + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 30
+						MovableMan:AddParticle(Effect)
+					end
+				end
+				
+				local Effect = CreateMOSParticle("Side Thruster Blast Ball 1", "Base.rte")
+				if Effect then
+					Effect.Pos = self.MuzzlePos;
+					Effect.Vel = (self.Vel + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 10
+					MovableMan:AddParticle(Effect)
 				end
 			end
 			if self.Magazine.RoundCount > 0 then
