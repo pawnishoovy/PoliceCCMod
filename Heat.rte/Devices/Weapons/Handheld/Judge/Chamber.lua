@@ -58,7 +58,7 @@ function Create(self)
 	self.Mode = 0;
 	self.searchRange = FrameMan.PlayerScreenWidth * 0.3;
 	self.searchTimer = Timer();
-	self.searchTimer:SetSimTimeLimitMS(250);
+	self.searchTimer:SetSimTimeLimitMS(100);
 	self.Target = nil;
 	
 	
@@ -332,14 +332,23 @@ function Update(self)
 	if self.parent then
 	
 		if self.Target then
-			self.targetDist = SceneMan:ShortestDistance(self.Pos, self.Target.Pos, SceneMan.SceneWrapsX)
+		
+			-- bias towards head if we have one
+			-- we can't just target it cuz we will often miss upwards then
+			if self.TargetHead then
+				local betweenPosition = self.Target.Pos + (SceneMan:ShortestDistance(self.Target.Pos, self.TargetHead.Pos, SceneMan.SceneWrapsX) / 1.3);
+				self.targetDist = SceneMan:ShortestDistance(self.Pos, betweenPosition, SceneMan.SceneWrapsX);
+			else
+				self.targetDist = SceneMan:ShortestDistance(self.Pos, self.Target.Pos, SceneMan.SceneWrapsX);
+			end
+			
 			if self.HFlipped then
 				self.targetAngle = (self.targetDist.AbsDegAngle-180)*-1;
 			else
 				self.targetAngle = self.targetDist.AbsDegAngle;
 			end
 			local selfAngle = (self.RotAngle*self.FlipFactor) * (180/math.pi);
-			if (self.targetAngle) - selfAngle > -30 and (self.targetAngle) - selfAngle < 30 then
+			if (self.targetAngle) - selfAngle > -45 and (self.targetAngle) - selfAngle < 45 then
 				self.rotationTarget = (self.targetAngle) - selfAngle;
 			else
 				self.Target = nil;
@@ -451,12 +460,12 @@ function Update(self)
 					self.searchTimer:Reset();
 					
 					if self.Target == nil
-					or (not MovableMan:ValidMO(self.Target))
 					or self.Target:IsDead()
-					or self.targetDist.Magnitude > 800
+					or self.targetDist.Magnitude > 450
 					or SceneMan:CastObstacleRay(self.MuzzlePos, SceneMan:ShortestDistance(self.MuzzlePos, self.Target.Pos, SceneMan.SceneWrapsX), Vector(), Vector(), self.Target.ID, self.Target.Team, rte.airID, 10) >= 0 then
 		
 						local searchPos = self.Pos + Vector(self.searchRange * 0.8 * self.FlipFactor, 0):RadRotate(self.RotAngle);
+						self.TargetHead = nil;
 						self.Target = nil;
 
 						for actor in MovableMan.Actors do
@@ -468,7 +477,7 @@ function Update(self)
 									Angle = (Angle-180)*-1;
 								end
 								local selfAngle = (self.RotAngle*self.FlipFactor) * (180/math.pi);
-								if (Angle) - selfAngle > -30 and (Angle) - selfAngle < 30
+								if (Angle) - selfAngle > -45 and (Angle) - selfAngle < 45
 								and (SceneMan:ShortestDistance(searchPos, actor.Pos, SceneMan.SceneWrapsX).Magnitude - actor.Radius) < self.searchRange
 								and SceneMan:CastObstacleRay(self.MuzzlePos, SceneMan:ShortestDistance(self.MuzzlePos, actor.Pos, SceneMan.SceneWrapsX), Vector(), Vector(), actor.ID, actor.Team, rte.airID, 10) < 0 then
 
@@ -493,11 +502,11 @@ function Update(self)
 									local screen = ActivityMan:GetActivity():ScreenOfPlayer(ToActor(self.parent):GetController().Player);
 									PrimitiveMan:DrawBoxPrimitive(screen, actor.Pos + topLeft, actor.Pos + bottomRight, 149);
 									
-									if ToActor(actor).Head then
-										self.Target = ToActor(actor).Head;
-									else
-										self.Target = actor;
+									if IsAHuman(actor) and ToAHuman(actor).Head then
+										self.TargetHead = ToAHuman(actor).Head;
 									end
+									
+									self.Target = actor;
 									self.targetSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Judge/Sounds/Target" .. math.random(1, 2) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
 									break;
 								end
