@@ -1,0 +1,14 @@
+ManualAdd - wpn_wingman_1p_wpnfire_shot_6ch_v1_01 TnoBladedPistolShotA mk17_core_single_01_FA381F5C
+
+ManualMech - TennoDblBarShotgunMechA (100ms)
+
+ManualReflection - RevolverPistolTail2DA GrnKohmPistolTailC
+
+Pre - RevolverPistolMech2DA
+
+
+AutoAdd - TnoBladedPistolShotC
+
+AutoMech - DexFurisMechA
+
+AutoReflectio - weap_refl_pistol_urb_ext_dist_lsrs_01 345ms

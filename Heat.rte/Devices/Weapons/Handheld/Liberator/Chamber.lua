@@ -364,7 +364,7 @@ function Update(self)
 			local rayVec = Vector(700 * self.FlipFactor, 0):RadRotate(self.RotAngle)
 			
 			local endPos = point + rayVec; -- This value is going to be overriden by function below, this is the end of the ray
-			self.ray = SceneMan:CastObstacleRay(point, rayVec, Vector(0, 0), endPos, actor.ID, self.Team, 0, 2) -- Do the hitscan stuff, raycast
+			self.ray = SceneMan:CastObstacleRay(point, rayVec, Vector(0, 0), endPos, self.parent.ID, self.Team, 0, 2) -- Do the hitscan stuff, raycast
 			local vec = SceneMan:ShortestDistance(point,endPos,SceneMan.SceneWrapsX);
 			
 			local moCheckPos = endPos + Vector(rayVec.X, rayVec.Y):SetMagnitude(math.random(1,2))
