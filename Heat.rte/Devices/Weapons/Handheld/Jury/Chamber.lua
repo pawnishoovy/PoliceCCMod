@@ -59,7 +59,10 @@ function Create(self)
 	self.shrapnelFireTimer = Timer();
 	self.shrapnelFireTimeMS = 100;
 	self.shrapnelActivated = false;
-	self.shrapnelFiring = falsE;
+	self.shrapnelFiring = false;
+	
+	self.shrapnelHUDReady = false
+	self.shrapnelHUDTimer = Timer()
 	
 	self.magOutPrepareDelay = 1000;
 	self.magOutAfterDelay = 800;
@@ -330,7 +333,10 @@ function Update(self)
 			if self.Magazine.RoundCount > 0 then
 				if self.canShrapnel == false and self.Magazine.RoundCount <= self.shrapnelThreshold then
 					self.canShrapnel = true;
-					self.shrapnelReadySound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/ShrapnelReady" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);	
+					self.shrapnelReadySound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/ShrapnelReady" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					
+					self.shrapnelHUDReady = true
+					self.shrapnelHUDTimer:Reset()
 				end
 			else
 				self.chamberOnReload = true;
@@ -476,6 +482,7 @@ function Update(self)
 					if Effect then
 						Effect.Pos = self.MuzzlePos;
 						Effect.Vel = (self.Vel + Vector(RangeRand(-20,20), RangeRand(-20,20)) + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 20
+						Effect.Lifetime = Effect.Lifetime * 3
 						MovableMan:AddParticle(Effect)
 					end
 				end
@@ -485,6 +492,7 @@ function Update(self)
 					if Effect then
 						Effect.Pos = self.MuzzlePos;
 						Effect.Vel = (self.Vel + Vector(RangeRand(-20,20), RangeRand(-20,20)) + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 10
+						Effect.Lifetime = Effect.Lifetime * 3
 						MovableMan:AddParticle(Effect)
 					end
 				end
@@ -548,20 +556,20 @@ function Update(self)
 	-- Animation + HUD
 	if self.parent then	
 		
-		-- local ctrl = self.parent:GetController();
-		-- local screen = ActivityMan:GetActivity():ScreenOfPlayer(ctrl.Player);
-		-- if self.parent:IsPlayerControlled() and (ctrl:IsState(Controller.PIE_MENU_ACTIVE) or (self.shrapnelHUDReady and not self.shrapnelHUDTimer:IsPastSimMS(1000))) then
-			-- local pos = self.parent.AboveHUDPos + Vector(0, 24)
+		local ctrl = self.parent:GetController();
+		local screen = ActivityMan:GetActivity():ScreenOfPlayer(ctrl.Player);
+		if self.parent:IsPlayerControlled() and (ctrl:IsState(Controller.PIE_MENU_ACTIVE) or (self.shrapnelHUDReady and not self.shrapnelHUDTimer:IsPastSimMS(1000))) then
+			local pos = self.parent.AboveHUDPos + Vector(0, 24)
 			
-			-- if self.shrapnelHUDReady and not ctrl:IsState(Controller.PIE_MENU_ACTIVE) and not self.shrapnelHUDTimer:IsPastSimMS(2000) then
-				-- PrimitiveMan:DrawTextPrimitive(screen, pos + Vector(0, 10), "Nade Launcher Ready!", true, 1);
-			-- elseif self.shrapnelLoaded then
-				-- PrimitiveMan:DrawTextPrimitive(screen, pos, "Underbarrel Nade: Ready", true, 1);
-				-- PrimitiveMan:DrawTextPrimitive(screen, pos + Vector(0, 10), "Press O to fire", true, 1);
-			-- else
-				-- PrimitiveMan:DrawTextPrimitive(screen, pos, "Underbarrel Nade: Loading...", true, 1);
-			-- end
-		-- end
+			if self.shrapnelHUDReady and not ctrl:IsState(Controller.PIE_MENU_ACTIVE) and not self.shrapnelHUDTimer:IsPastSimMS(2000) then
+				PrimitiveMan:DrawTextPrimitive(screen, pos + Vector(0, 10), "Shrapnel-shot Ready!", true, 1);
+			elseif self.canShrapnel then
+				PrimitiveMan:DrawTextPrimitive(screen, pos, "Shrapnel-shot: Ready", true, 1);
+				PrimitiveMan:DrawTextPrimitive(screen, pos + Vector(0, 10), "Press O to fire", true, 1);
+			else
+				PrimitiveMan:DrawTextPrimitive(screen, pos, "Shrapnel-shot: Loading...", true, 1);
+			end
+		end
 		
 		self.horizontalAnim = math.floor(self.horizontalAnim / (1 + TimerMan.DeltaTimeSecs * 24.0) * 1000) / 1000
 		self.verticalAnim = math.floor(self.verticalAnim / (1 + TimerMan.DeltaTimeSecs * 15.0) * 1000) / 1000
@@ -612,6 +620,10 @@ function Update(self)
 		local fire = false
 		if self.parent:IsPlayerControlled() then
 			if UInputMan:KeyPressed(15) then
+				fire = true
+			end
+		elseif self.Magazine then -- AI
+			if self.canShrapnel == true and not self:IsReloading() and self.Magazine.UniqueID % 3 == 0 and self.Magazine.Age > 500 and self.Magazine.RoundCount > 70 and self.parent:GetController():IsState(Controller.WEAPON_FIRE) == true then -- Hacks
 				fire = true
 			end
 		end
