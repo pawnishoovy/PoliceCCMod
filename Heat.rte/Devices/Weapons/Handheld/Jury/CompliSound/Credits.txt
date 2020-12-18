@@ -1,0 +1,17 @@
+Add - GorgonFireShotA
+
+Mech - GorgonFireMechSingleC
+
+Reflection - weap_refl_ar_urb_ext_dist_lsrs_01 (204ms)  ProteaSMGTailA (170)
+
+
+shrapnel
+
+Add - GrineerHandShotgunShotA
+
+Mech - GorgonFireSweetnerA GorgonFireMechA
+
+Reflection - refl_explo_urban_cls_front_lrg_01 GrineerHandShotgunTailA
+
+Pre - GrineerHandShotgunMechA
+
