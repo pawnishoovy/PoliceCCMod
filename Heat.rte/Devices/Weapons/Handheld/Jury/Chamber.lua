@@ -55,7 +55,7 @@ function Create(self)
 	
 	
 	self.canShrapnel = false;
-	self.shrapnelThreshold = 41;
+	self.shrapnelThreshold = 40;
 	self.shrapnelFireTimer = Timer();
 	self.shrapnelFireTimeMS = 100;
 	self.shrapnelActivated = false;
@@ -65,7 +65,7 @@ function Create(self)
 	self.shrapnelHUDTimer = Timer()
 	
 	self.magOutPrepareDelay = 1000;
-	self.magOutAfterDelay = 800;
+	self.magOutAfterDelay = 1000;
 	self.magInPrepareDelay = 900;
 	self.magInAfterDelay = 200;
 	self.magHitPrepareDelay = 480;
@@ -163,7 +163,7 @@ function Update(self)
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/MagIn";
 			
-			self.rotationTarget = 10;
+			self.rotationTarget = -3;
 			
 		elseif self.reloadPhase == 2 then
 			self.reloadDelay = self.magHitPrepareDelay;
@@ -173,7 +173,7 @@ function Update(self)
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/MagHit";
 			
-			self.rotationTarget = 10;
+			self.rotationTarget = -2;
 			
 		elseif self.reloadPhase == 3 then
 			self.Frame = 0;
@@ -184,7 +184,7 @@ function Update(self)
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/BoltBack";	
 
-			self.rotationTarget = 5;
+			self.rotationTarget = -4;
 		
 		elseif self.reloadPhase == 4 then
 			self.Frame = 3;
@@ -194,7 +194,7 @@ function Update(self)
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/BoltForward";
 			
-			self.rotationTarget = 2;
+			self.rotationTarget = -3;
 			
 		end
 		
