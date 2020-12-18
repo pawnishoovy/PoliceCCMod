@@ -433,7 +433,7 @@ function Update(self)
 				for i = 1, 1 do
 					local Bullet = CreateMOPixel("Particle Judge", "Heat.rte")
 					Bullet.Pos = self.MuzzlePos;
-					Bullet.Vel = self.Vel + Vector(130*self.FlipFactor,0):RadRotate(self.RotAngle)
+					Bullet.Vel = Vector(180*self.FlipFactor,0):RadRotate(self.RotAngle)
 					Bullet.Team = self.parent.Team
 					Bullet.IgnoresTeamHits = true
 					MovableMan:AddParticle(Bullet);
