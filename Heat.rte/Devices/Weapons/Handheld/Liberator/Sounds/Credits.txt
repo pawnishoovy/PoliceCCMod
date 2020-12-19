@@ -1,3 +1,11 @@
 outslow: NechroMechStepArmDownA tone_jog_servo_2ch_v2_14(clunk - 5)
 
 inslow: steparmup ronin_servo_tech_3P_2ch_v1_01 (clunk -5)
+
+
+rocketin: ReloadGrnCannonInsertA wfoly_la_juliet_reload_rocketin_01
+
+
+boltbackprepare: wfoly_plr_sn_hdromeo_drop_down wfoly_lm_kilo121_raise_first_boltopen_01, k98 bolt open (850)
+
+boltback: GrnHeavyGrenadeLauncherReloadA wfoly_lm_kilo121_raise_first_boltopen_01, k98 bolt open

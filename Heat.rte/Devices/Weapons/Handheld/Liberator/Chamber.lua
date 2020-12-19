@@ -37,6 +37,8 @@ function Create(self)
 	self.canSmoke = false
 	
 	
+	self.ammoCount = 5;	
+	
 	self.mechanismState = 0;
 	-- 0: inside (launching upwards)
 	-- 1: outside (launching forwards)
@@ -54,24 +56,21 @@ function Create(self)
 	
 	self.reloadTimer = Timer();
 	
-	self.magOutPrepareDelay = 500;
-	self.magOutAfterDelay = 800;
-	self.magInPrepareDelay = 450;
-	self.magInAfterDelay = 250;
-	self.boltBackPrepareDelay = 500;
-	self.boltBackAfterDelay = 150;
-	self.boltForwardPrepareDelay = 150;
-	self.boltForwardAfterDelay = 400;
+	self.rocketInPrepareDelay = 890;
+	self.rocketInAfterDelay = 500;
+	self.boltBackPrepareDelay = 850;
+	self.boltBackAfterDelay = 430;
+	self.boltForwardPrepareDelay = 430;
+	self.boltForwardAfterDelay = 800;
 	
 	-- phases:
-	-- 0 magout
-	-- 1 magin
-	-- 2 boltback
-	-- 3 boltforward
+	-- 0 rocketIn
+	-- 1 boltback
+	-- 2 boltforward
 	
 	self.reloadPhase = 0;
 	
-	self.ReloadTime = 9999;
+	self.ReloadTime = 99999;
 	
 	-- Progressive Recoil System 
 	self.recoilAcc = 0 -- for sinous
@@ -202,41 +201,48 @@ function Update(self)
 	
 	-- PAWNIS RELOAD ANIMATION HERE
 	if self:IsReloading() then
+	
+		local ctrl = self.parent:GetController();
+		local screen = ActivityMan:GetActivity():ScreenOfPlayer(ctrl.Player);
+	
+		if self.Reloading ~= true then
+			self.Reloading = true;
+			self.reloadCycle = true;
+			self.ReloadTime = 99999;
+		end
 
 		if self.reloadPhase == 0 then
-			self.reloadDelay = self.magOutPrepareDelay;
-			self.afterDelay = self.magOutAfterDelay;			
-			self.prepareSoundPath = nil;
+			self.reloadDelay = self.rocketInPrepareDelay;
+			self.afterDelay = self.rocketInAfterDelay;			
+			self.prepareSoundPath = 
+			"Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/RocketInPrepare";
+			self.prepareSoundVars = 3;
 			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/MagOut";
+			"Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/RocketIn";
+			self.afterSoundVars = 3;
 			
 			self.rotationTarget = 5;
 			
+			
 		elseif self.reloadPhase == 1 then
-			self.reloadDelay = self.magInPrepareDelay;
-			self.afterDelay = self.magInAfterDelay;
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/MagInPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/MagIn";
-			
-			self.rotationTarget = 10;
-			
-		elseif self.reloadPhase == 2 then
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;
-			self.prepareSoundPath = nil;
+			self.prepareSoundPath =
+			"Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/BoltBackPrepare";
+			self.prepareSoundVars = 1;
 			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/BoltBack";	
+			"Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/BoltBack";
+			self.afterSoundVars = 3;
 
 			self.rotationTarget = 5;
 		
-		elseif self.reloadPhase == 3 then
+		elseif self.reloadPhase == 2 then
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
 			self.prepareSoundPath = nil;
 			self.afterSoundPath = 
 			"Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/BoltForward";
+			self.afterSoundVars = 2;
 			
 			self.rotationTarget = 2;
 			
@@ -245,23 +251,37 @@ function Update(self)
 		if self.prepareSoundPlayed ~= true then
 			self.prepareSoundPlayed = true;
 			if self.prepareSoundPath then
-				self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. math.random(1, self.prepareSoundVars) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
 			end
 		end
 	
 		if self.reloadTimer:IsPastSimMS(self.reloadDelay) then
 		
 			if self.reloadPhase == 0 then
-				self:SetNumberValue("MagRemoved", 1);
+			
+				if self.parent:GetController():IsState(Controller.WEAPON_FIRE) then
+					self.reloadCycle = false;
+					PrimitiveMan:DrawTextPrimitive(screen, self.parent.AboveHUDPos + Vector(0, 30), "Interrupting...", true, 1);
+				end
+			
 			elseif self.reloadPhase == 1 then
-				self:RemoveNumberValue("MagRemoved");
-			elseif self.reloadPhase == 2 then
+			
+				if self.parent:GetController():IsState(Controller.WEAPON_FIRE) then
+					self.reloadCycle = false;
+					PrimitiveMan:DrawTextPrimitive(screen, self.parent.AboveHUDPos + Vector(0, 30), "Interrupting...", true, 1);
+				end
 			
 				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
 
 				end
 
-			elseif self.reloadPhase == 3 then
+			elseif self.reloadPhase == 2 then
+			
+				if self.parent:GetController():IsState(Controller.WEAPON_FIRE) then
+					self.reloadCycle = false;
+					PrimitiveMan:DrawTextPrimitive(screen, self.parent.AboveHUDPos + Vector(0, 30), "Interrupting...", true, 1);
+				end
+			
 				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
 
 				end
@@ -271,36 +291,30 @@ function Update(self)
 			
 				if self.reloadPhase == 0 then
 					self.phaseOnStop = 1;
-					-- local fake
-					-- fake = CreateMOSRotating("Fake Magazine MOSRotating Liberator");
-					-- fake.Pos = self.Pos + Vector(1 * self.FlipFactor, 0):RadRotate(self.RotAngle);
-					-- fake.Vel = self.Vel + Vector(0.5*self.FlipFactor, 3):RadRotate(self.RotAngle);
-					-- fake.RotAngle = self.RotAngle;
-					-- fake.AngularVel = self.AngularVel + (-1*self.FlipFactor);
-					-- fake.HFlipped = self.HFlipped;
-					-- MovableMan:AddParticle(fake);
 					
 					self.angVel = self.angVel + 2;
 					self.verticalAnim = self.verticalAnim + 1
 					
 				elseif self.reloadPhase == 1 then
-					if self.chamberOnReload then
-						self.phaseOnStop = 2;
-					else
-						self.ReloadTime = 0; -- done! no after delay if non-chambering reload.
-						self.reloadPhase = 0;
-						self.phaseOnStop = nil;
-					end
+				
+					self.phaseOnStop = 2;
+
 					self.angVel = self.angVel - 2;
 					self.verticalAnim = self.verticalAnim - 1	
-					self:RemoveNumberValue("MagRemoved");
 					
 				elseif self.reloadPhase == 2 then
 					self.horizontalAnim = self.horizontalAnim - 1;
 					self.angVel = self.angVel - 2;
-				elseif self.reloadPhase == 3 then
-					self.horizontalAnim = self.horizontalAnim + 1;
-					self.angVel = self.angVel + 4;
+				
+					if self.ammoCount < 5 then
+						self.ammoCount = self.ammoCount + 1;
+						if self.ammoCount == 5 then
+							self.reloadCycle = false;
+						end
+					else
+						self.reloadCycle = false;
+					end
+					
 					self.phaseOnStop = nil;
 				else
 					self.phaseOnStop = nil;
@@ -308,41 +322,39 @@ function Update(self)
 			
 				self.afterSoundPlayed = true;
 				if self.afterSoundPath then
-					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. math.random(1, self.afterSoundVars) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
 				end
 			end
 			if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay) then
 				self.reloadTimer:Reset();
 				self.afterSoundPlayed = false;
 				self.prepareSoundPlayed = false;
-				if self.chamberOnReload and self.reloadPhase == 1 then
-					self.reloadPhase = self.reloadPhase + 1;
-				elseif self.reloadPhase == 1 or self.reloadPhase == 3 then
-					self.ReloadTime = 0;
-					self.reloadPhase = 0;
+				if self.reloadPhase == 2 then
+					if self.reloadCycle == true then
+						self.reloadPhase = 0; -- keep reloading
+					else
+						self.ReloadTime = 0;
+						self.reloadPhase = 0;
+						self.Reloading = false;
+					end
 				else
 					self.reloadPhase = self.reloadPhase + 1;
 				end
 			end
 		end		
 	else
-		
 		self.reloadTimer:Reset();
 		self.afterSoundPlayed = false;
 		self.prepareSoundPlayed = false;
-		if self.reloadPhase == 3 then
-			self.reloadPhase = 2;
-		end
 		if self.phaseOnStop then
 			self.reloadPhase = self.phaseOnStop;
 			self.phaseOnStop = nil;
 		end
-		self.ReloadTime = 9999;
+		self.ReloadTime = 99999;
 	end
 	
 	if self:DoneReloading() == true then
-		self.Magazine.RoundCount = 14
-		self.chamberOnReload = false;
+		self.Magazine.RoundCount = self.ammoCount;
 	end
 	
 	-- PAWNIS RELOAD ANIMATION HERE
@@ -442,6 +454,13 @@ function Update(self)
 		
 		self.canSmoke = true
 		self.smokeTimer:Reset()
+		
+		if self.Magazine then
+			self.ammoCount = 0 + self.Magazine.RoundCount; -- +0 to avoid reference bullshit and save it as a number properly
+			if self.ammoCount == 0 then
+				self:Reload();
+			end
+		end
 		
 		if self.reflectionSound then
 			if self.reflectionSound:IsBeingPlayed() then
