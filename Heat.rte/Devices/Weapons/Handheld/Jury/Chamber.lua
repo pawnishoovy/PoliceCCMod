@@ -324,6 +324,7 @@ function Update(self)
 					if self.shrapnelReload == true then
 						self.shrapnelReload = false;
 						self.shrapnelUnreadyPlayed = false;
+						self.shrapnelAnimTimer:Reset();
 					else
 						self.shrapnelUnreadyPlayed = true;
 					end
