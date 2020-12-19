@@ -111,6 +111,32 @@ function Update(self)
 	
 		self:Deactivate();
 		
+		if self.mechanismState == 1 then
+			if self.mechanismSwitchTimer:IsPastSimMS(self.mechanismSwitchActiveDelay) then
+				self.Frame = 0;
+			elseif self.mechanismSwitchTimer:IsPastSimMS(self.mechanismSwitchActiveDelay / 5 * 4) then
+				self.Frame = 1;
+			elseif self.mechanismSwitchTimer:IsPastSimMS(self.mechanismSwitchActiveDelay / 5 * 3) then
+				self.Frame = 2;
+			elseif self.mechanismSwitchTimer:IsPastSimMS(self.mechanismSwitchActiveDelay / 5 * 2) then
+				self.Frame = 3;
+			elseif self.mechanismSwitchTimer:IsPastSimMS(self.mechanismSwitchActiveDelay / 5 * 1) then
+				self.Frame = 4;
+			end
+		else
+			if self.mechanismSwitchTimer:IsPastSimMS(self.mechanismSwitchActiveDelay) then
+				self.Frame = 4;
+			elseif self.mechanismSwitchTimer:IsPastSimMS(self.mechanismSwitchActiveDelay / 5 * 4) then
+				self.Frame = 3;
+			elseif self.mechanismSwitchTimer:IsPastSimMS(self.mechanismSwitchActiveDelay / 5 * 3) then
+				self.Frame = 2;
+			elseif self.mechanismSwitchTimer:IsPastSimMS(self.mechanismSwitchActiveDelay / 5 * 2) then
+				self.Frame = 1;
+			elseif self.mechanismSwitchTimer:IsPastSimMS(self.mechanismSwitchActiveDelay / 5 * 1) then
+				self.Frame = 0;
+			end
+		end
+		
 		if self.mechanismSwitchTimer:IsPastSimMS(self.mechanismSwitchActiveDelay) then
 			if self.mechanismState == 1 then
 				self.mechanismState = 0;
@@ -120,6 +146,12 @@ function Update(self)
 				self.afterSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/OutSlowClunk" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
 			end
 			self.mechanismSwitching = false;
+		end
+	else
+		if self.mechanismState == 1 then
+			self.Frame = 4;
+		else
+			self.Frame = 0
 		end
 	end
 	
@@ -246,7 +278,9 @@ function Update(self)
 			
 			self.rotationTarget = 2;
 			
+			self.Frame = self.Frame + 10
 		end
+		self.rotationTarget = self.rotationTarget + -30
 		
 		if self.prepareSoundPlayed ~= true then
 			self.prepareSoundPlayed = true;
@@ -271,8 +305,10 @@ function Update(self)
 					PrimitiveMan:DrawTextPrimitive(screen, self.parent.AboveHUDPos + Vector(0, 30), "Interrupting...", true, 1);
 				end
 			
-				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
-
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay / 2 * 2) then
+					self.Frame = self.Frame + 10;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay / 2 * 1) then
+					self.Frame = self.Frame + 5;
 				end
 
 			elseif self.reloadPhase == 2 then
@@ -282,8 +318,10 @@ function Update(self)
 					PrimitiveMan:DrawTextPrimitive(screen, self.parent.AboveHUDPos + Vector(0, 30), "Interrupting...", true, 1);
 				end
 			
-				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
-
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay / 2 * 0.6) then
+					self.Frame = self.Frame - 10;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay / 2 * 0.3) then
+					self.Frame = self.Frame - 5;
 				end
 			end
 			
@@ -361,8 +399,8 @@ function Update(self)
 	
 	-- Laser
 	-- Tactical Laser!!
-	if self.parent then
-		local offset = Vector(5 * self.FlipFactor, -0.5):RadRotate(self.RotAngle)
+	if self.parent and not self:IsReloading() then
+		local offset = Vector(3 * self.FlipFactor, 3):RadRotate(self.RotAngle)
 		local point = self.Pos + offset
 		
 		--PrimitiveMan:DrawCirclePrimitive(point, 1, 13);
@@ -406,7 +444,7 @@ function Update(self)
 				for i = 1, maxi do
 					if math.random(1,3) >= 2 then
 						local glow = CreateMOPixel("Mine Laser Beam "..math.random(1,3));
-						glow.Pos = self.Pos + vec * math.max(math.min((1 / maxi * i) + RangeRand(-1.0,1.0) * 0.03, 1), 0);
+						glow.Pos = point + vec * math.max(math.min((1 / maxi * i) + RangeRand(-1.0,1.0) * 0.03, 1), 0);
 						glow.EffectRotAngle = self.RotAngle;
 						MovableMan:AddParticle(glow);
 					end
@@ -422,7 +460,7 @@ function Update(self)
 		
 		if self.mechanismState == 0 then
 			self.Missile = CreateAEmitter("Projectile Liberator", "Heat.rte")
-			self.Missile.Pos = self.Pos;
+			self.Missile.Pos = self.Pos + Vector(-7 * self.FlipFactor, -8):RadRotate(self.RotAngle);
 			self.Missile.Vel = self.Vel + Vector(0,-20):RadRotate(self.RotAngle)
 			self.Missile.RotAngle = self.Missile.Vel.AbsRadAngle
 			self.Missile.Team = self.parent.Team
@@ -450,10 +488,10 @@ function Update(self)
 			end
 			
 			MovableMan:AddParticle(self.Missile)
+			
+			self.canSmoke = true
+			self.smokeTimer:Reset()
 		end
-		
-		self.canSmoke = true
-		self.smokeTimer:Reset()
 		
 		if self.Magazine then
 			self.ammoCount = 0 + self.Magazine.RoundCount; -- +0 to avoid reference bullshit and save it as a number properly

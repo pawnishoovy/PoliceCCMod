@@ -629,7 +629,7 @@ function Update(self)
 				PrimitiveMan:DrawTextPrimitive(screen, pos, "Shrapnel-shot: Ready", true, 1);
 				PrimitiveMan:DrawTextPrimitive(screen, pos + Vector(0, 10), "Press O to fire", true, 1);
 			else
-				PrimitiveMan:DrawTextPrimitive(screen, pos, "Shrapnel-shot: Loading...", true, 1);
+				PrimitiveMan:DrawTextPrimitive(screen, pos, "Shrapnel-shot: Not Ready", true, 1);
 			end
 		end
 		
@@ -680,15 +680,16 @@ function Update(self)
 		self.SharpStanceOffset = Vector(self.originalSharpStanceOffset.X, self.originalSharpStanceOffset.Y) + stance
 		
 		local fire = false
-		if self.parent:IsPlayerControlled() then
+		if self.parent:IsPlayerControlled() and ctrl.Player ~= -1 then
 			if UInputMan:KeyPressed(15) then
 				fire = true
 			end
 		elseif self.Magazine then -- AI
-			if self.canShrapnel == true and not self:IsReloading() and self.Magazine.UniqueID % 3 == 0 and self.Magazine.Age > 500 and self.Magazine.RoundCount > 70 and self.parent:GetController():IsState(Controller.WEAPON_FIRE) == true then -- Hacks
+			if self.canShrapnel == true and not self:IsReloading() and self.Magazine.UniqueID % 3 == 0 and self.Magazine.Age > 500 and ctrl:IsState(Controller.WEAPON_FIRE) == true then -- Hacks
 				fire = true
 			end
 		end
+		
 		
 		if fire then
 			if self.canShrapnel == true and not self:IsReloading() then

@@ -149,7 +149,7 @@ function Update(self)
 		
 		local angToTarget = dif.AbsRadAngle
 		
-		local velCurrent = self.Vel
+		local velCurrent = self.Vel-- + SceneMan.GlobalAcc
 		local velTarget = Vector(100, 0):RadRotate(angToTarget)
 		local velDif = velTarget - velCurrent
 		
@@ -158,7 +158,7 @@ function Update(self)
 		-- Frotate self.hoverDirection
 		local min_value = -math.pi;
 		local max_value = math.pi;
-		local value = angToTarget - self.RotAngle
+		local value = velDif.AbsRadAngle - self.RotAngle
 		local result;
 		
 		local range = max_value - min_value;

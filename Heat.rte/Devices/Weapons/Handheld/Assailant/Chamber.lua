@@ -508,12 +508,12 @@ function Update(self)
 		
 		-- Nade launcher piggybacking off self.parent here
 		local fire = false
-		if self.parent:IsPlayerControlled() then
+		if self.parent:IsPlayerControlled() and ctrl.Player ~= -1 then
 			if UInputMan:KeyPressed(15) then
 				fire = true
 			end
 		elseif self.Magazine then -- AI
-			if self.grenadeLoaded == true and not self:IsReloading() and self.Magazine.UniqueID % 3 == 0 and self.Magazine.Age > 500 and self.parent:GetController():IsState(Controller.WEAPON_FIRE) == true then -- Hacks
+			if self.grenadeLoaded == true and not self:IsReloading() and self.Magazine.UniqueID % 3 == 0 and self.Magazine.Age > 500 and ctrl:IsState(Controller.WEAPON_FIRE) == true then -- Hacks
 				fire = true
 			end
 		end
