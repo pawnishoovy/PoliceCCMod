@@ -61,6 +61,9 @@ function Create(self)
 	self.shrapnelActivated = false;
 	self.shrapnelFiring = false;
 	
+	self.shrapnelAnimTimer = Timer();
+	self.shrapnelUnreadyPlayed = true;
+	
 	self.shrapnelHUDReady = false
 	self.shrapnelHUDTimer = Timer()
 	
@@ -100,7 +103,6 @@ function Create(self)
 end
 
 function Update(self)
-	self.Frame = 0;
 	self.rotationTarget = 0 -- ZERO IT FIRST AAAA!!!!!
 	
 	if self.ID == self.RootID then
@@ -144,6 +146,9 @@ function Update(self)
 	
 	-- PAWNIS RELOAD ANIMATION HERE
 	if self:IsReloading() then
+		
+		self.Reloading = true;
+		self.canShrapnel = false;
 
 		if self.reloadPhase == 0 then
 			self.reloadDelay = self.magOutPrepareDelay;
@@ -176,7 +181,6 @@ function Update(self)
 			self.rotationTarget = -2;
 			
 		elseif self.reloadPhase == 3 then
-			self.Frame = 0;
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;
 			self.prepareSoundPath = 
@@ -187,7 +191,6 @@ function Update(self)
 			self.rotationTarget = -4;
 		
 		elseif self.reloadPhase == 4 then
-			self.Frame = 3;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
 			self.prepareSoundPath = nil;
@@ -213,24 +216,48 @@ function Update(self)
 				self:RemoveNumberValue("MagRemoved");
 			elseif self.reloadPhase == 3 then
 			
-				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
-					self.Frame = 3;
-				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
-					self.Frame = 2;
-				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
-					self.Frame = 1;
+				if self.shrapnelReload == true then
+					if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
+						self.Frame = 9;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
+						self.Frame = 8;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+						self.Frame = 7;
+					end
+				else
+					if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
+						self.Frame = 3;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
+						self.Frame = 2;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+						self.Frame = 1;
+					end
 				end
 
 			elseif self.reloadPhase == 4 then
-				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
-					self.Frame = 0;
-				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
-					self.Frame = 1;
-				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
-					self.Frame = 2;
-				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.3)) then
-					self.Frame = 3;
+			
+				if self.shrapnelReload == true then
+					if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
+						self.Frame = 5;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
+						self.Frame = 6;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+						self.Frame = 7;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.3)) then
+						self.Frame = 8;
+					end
+				else
+					if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
+						self.Frame = 0;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
+						self.Frame = 1;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+						self.Frame = 2;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.3)) then
+						self.Frame = 3;
+					end
 				end
+				
 			end
 			
 			if self.afterSoundPlayed ~= true then
@@ -259,8 +286,6 @@ function Update(self)
 					if self.chamberOnReload then
 						self.phaseOnStop = 3;
 					else
-						self.ReloadTime = 0; -- done! no after delay if non-chambering reload.
-						self.reloadPhase = 0;
 						self.phaseOnStop = nil;
 					end
 					self.angVel = self.angVel - 5;
@@ -294,6 +319,14 @@ function Update(self)
 				elseif self.reloadPhase == 2 or self.reloadPhase == 4 then
 					self.ReloadTime = 0;
 					self.reloadPhase = 0;
+					self.Reloading = false;
+					self.canShrapnel = false;
+					if self.shrapnelReload == true then
+						self.shrapnelReload = false;
+						self.shrapnelUnreadyPlayed = false;
+					else
+						self.shrapnelUnreadyPlayed = true;
+					end
 				else
 					self.reloadPhase = self.reloadPhase + 1;
 				end
@@ -301,12 +334,17 @@ function Update(self)
 		end		
 	else
 		
+		if self.Reloading == true then
+			if self.shrapnelReload == true then
+				self.Frame = 5;
+			else
+				self.Frame = 0;
+			end
+		end
+				
 		self.reloadTimer:Reset();
 		self.afterSoundPlayed = false;
 		self.prepareSoundPlayed = false;
-		if self.reloadPhase == 3 then
-			self.reloadPhase = 2;
-		end
 		if self.phaseOnStop then
 			self.reloadPhase = self.phaseOnStop;
 			self.phaseOnStop = nil;
@@ -323,7 +361,6 @@ function Update(self)
 	end	
 	
 	if self.FiredFrame then
-		self.Frame = 3;
 		self.angVel = self.angVel - RangeRand(0.7,1.1) * 5
 		
 		self.canSmoke = true
@@ -334,6 +371,9 @@ function Update(self)
 				if self.canShrapnel == false and self.Magazine.RoundCount <= self.shrapnelThreshold then
 					self.canShrapnel = true;
 					self.shrapnelReadySound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/ShrapnelReady" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					
+					self.shrapnelAnimTimer:Reset();
+					self.shrapnelReload = true;
 					
 					self.shrapnelHUDReady = true
 					self.shrapnelHUDTimer:Reset()
@@ -422,6 +462,26 @@ function Update(self)
 		end
 	end
 	
+	if self.canShrapnel then	
+		if self.shrapnelAnimTimer:IsPastSimMS(100) then
+			self.Frame = 5;
+		else
+			self.Frame = 4;
+		end
+	elseif (not self.shrapnelReload) and (not self.Reloading) then
+	
+		if self.shrapnelUnreadyPlayed == false then
+			self.shrapnelUnreadySound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/ShrapnelUnready" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			self.shrapnelUnreadyPlayed = true;
+		end
+		
+		if self.shrapnelAnimTimer:IsPastSimMS(100) then
+			self.Frame = 0;
+		else
+			self.Frame = 4;
+		end
+	end
+	
 	if self.shrapnelActivated and self.canShrapnel and (not self.shrapnelFiring) and (not self:IsReloading()) then
 	
 		self.shrapnelActivated = false;
@@ -446,13 +506,14 @@ function Update(self)
 				self.recoilStrength = 40;
 				self.recoilDamping = 0.6;
 				
-				self.Frame = 3;
+				self.Frame = 5;
 				self.angVel = self.angVel - RangeRand(0.7,1.1) * 15;
 				
 				self.canSmoke = true;
 				self.smokeTimer:Reset();
 				
 				self.chamberOnReload = true;
+				self.shrapnelReload = false;
 				
 				for i = 1, self.Magazine.RoundCount do
 					local Bullet = CreateMOPixel("Particle Jury", "Heat.rte")
