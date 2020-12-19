@@ -57,10 +57,10 @@ function Create(self)
 	self.reloadTimer = Timer();
 	
 	self.rocketInPrepareDelay = 890;
-	self.rocketInAfterDelay = 500;
+	self.rocketInAfterDelay = 200;
 	self.boltBackPrepareDelay = 850;
-	self.boltBackAfterDelay = 430;
-	self.boltForwardPrepareDelay = 430;
+	self.boltBackAfterDelay = 330;
+	self.boltForwardPrepareDelay = 330;
 	self.boltForwardAfterDelay = 800;
 	
 	-- phases:
@@ -305,9 +305,9 @@ function Update(self)
 					PrimitiveMan:DrawTextPrimitive(screen, self.parent.AboveHUDPos + Vector(0, 30), "Interrupting...", true, 1);
 				end
 			
-				if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay / 2 * 2) then
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay / 5 * 2) then
 					self.Frame = self.Frame + 10;
-				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay / 2 * 1) then
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay / 5 * 1) then
 					self.Frame = self.Frame + 5;
 				end
 
@@ -318,9 +318,9 @@ function Update(self)
 					PrimitiveMan:DrawTextPrimitive(screen, self.parent.AboveHUDPos + Vector(0, 30), "Interrupting...", true, 1);
 				end
 			
-				if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay / 2 * 0.6) then
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay / 5 * 0.6) then
 					self.Frame = self.Frame - 10;
-				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay / 2 * 0.3) then
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay / 5 * 0.3) then
 					self.Frame = self.Frame - 5;
 				end
 			end
