@@ -1,0 +1,8 @@
+Add - weap_mike203_fire_plr_01 weap_mike203_fire_plr_lfe_01 GrnGrenadeLauncherShot2DA
+
+Mech - GrnGrenadeLauncherMech2DA
+
+Reflection - weap_mike203_fire_plr_atmos_01 weap_refl_shotgun_urb_ext_dist_lsrs_01
+weap_refl_ar_urb_ext_dist_lsrs_06 (-5, -30 speed, 200ms)
+ 
+Pre - GrnGrenadeLauncherShot2DA Toz194_Trigger_01
