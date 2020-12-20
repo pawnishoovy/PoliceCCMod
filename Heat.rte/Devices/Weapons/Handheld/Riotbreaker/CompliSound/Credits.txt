@@ -13,7 +13,8 @@ EXPLO:
 wex_exp_urb_int_close_front_plr_01
 concussion_expl_body_01
 concussion_expl_lfe_01
+concussion_expl_trans_01
 frag_expl_env_metal_ext_01
 frag_expl_lfe_01
 
-cut 54ms from the delays, line up frags
+cut from the delays, line up frags
