@@ -56,8 +56,8 @@ function Create(self)
 	self.boltForwardFirstShellAfterDelay = 600;
 	self.shellInPrepareDelay = 500;
 	self.shellInAfterDelay = 600;
-	self.boltForwardPrepareDelay = 200;
-	self.boltForwardAfterDelay = 250;
+	self.boltForwardPrepareDelay = 100;
+	self.boltForwardAfterDelay = 125;
 	
 	-- phases:
 	-- 0 boltback
@@ -85,7 +85,7 @@ end
 
 function Update(self)
 	self.rotationTarget = 0 -- ZERO IT FIRST AAAA!!!!!
-		self.delayedFireEnabled = true -- IMPORTANT
+	self.delayedFireEnabled = true -- IMPORTANT
 	
 	if self.ID == self.RootID then
 		self.parent = nil;
@@ -494,11 +494,13 @@ function Update(self)
 							self.reloadPhase = 4;
 						end
 						if self.Casing then
-							-- local shell
-							-- shell = CreateMOSParticle("Shell Shotgun");
-							-- shell.Pos = self.Pos+Vector(-3 * self.FlipFactor,-1):RadRotate(self.RotAngle);
-							-- shell.Vel = self.Vel+Vector(-math.random(2,4)*self.FlipFactor,-math.random(3,4)):RadRotate(self.RotAngle);
-							-- MovableMan:AddParticle(shell);
+							local shell
+							shell = CreateAEmitter("Casing Riotbreaker");
+							shell.Pos = self.Pos+Vector(1 * self.FlipFactor,-1):RadRotate(self.RotAngle);
+							shell.Vel = self.Vel+Vector(-math.random(2,4)*self.FlipFactor,-math.random(3,4)):RadRotate(self.RotAngle);
+							shell.RotAngle = self.RotAngle
+							shell.HFlipped = self.HFlipped
+							MovableMan:AddParticle(shell);
 							
 							self.Casing = false
 						end
@@ -621,7 +623,12 @@ function Update(self)
 		
 		self.SharpLength = math.max(self.originalSharpLength - (self.recoilStr * 3 + math.abs(recoilFinal)), 0)
 		
-		self.rotationTarget = self.rotationTarget + recoilFinal -- apply the recoil
+		--self.rotationTarget = self.rotationTarget + recoilFinal -- apply the recoil
+		if self.delayedFire then -- Rotation fix
+			self.rotation = recoilFinal + (self.angVel * 3)
+		else
+			self.rotationTarget = self.rotationTarget + recoilFinal -- apply the recoil
+		end
 		-- Progressive Recoil Update			
 	
 		self.rotation = (self.rotation + self.rotationTarget * TimerMan.DeltaTimeSecs * self.rotationSpeed) / (1 + TimerMan.DeltaTimeSecs * self.rotationSpeed)
