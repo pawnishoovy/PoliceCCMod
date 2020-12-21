@@ -415,8 +415,12 @@ function Update(self)
 				if self.reloadPhase == 0 then
 					
 					if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*2)) then
-						self.Frame = 2;
+						self.Frame = 4;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.5)) then
+						self.Frame = 3;
 					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1)) then
+						self.Frame = 2;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.5)) then
 						self.Frame = 1;
 					end
 					
@@ -426,6 +430,8 @@ function Update(self)
 						self.reloadCycle = false;
 						PrimitiveMan:DrawTextPrimitive(screen, self.parent.AboveHUDPos + Vector(0, 30), "Interrupting...", true, 1);
 					end
+					
+					self.Frame = 5;
 				
 					if self.ammoCountRaised ~= true then
 						self.ammoCountRaised = true;
@@ -443,10 +449,16 @@ function Update(self)
 					
 				elseif self.reloadPhase == 2 then
 					
-					if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.5)) then
+					if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*2.0)) then
 						self.Frame = 0;
-					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1)) then
-						self.Frame = 1;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.5)) then
+						self.Frame = 9;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.0)) then
+						self.Frame = 8;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.5)) then
+						self.Frame = 7;
+					else
+						self.Frame = 6;
 					end
 					
 				elseif self.reloadPhase == 3 then
@@ -472,10 +484,14 @@ function Update(self)
 
 				elseif self.reloadPhase == 4 then
 					
-					if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.5)) then
+					if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*2)) then
 						self.Frame = 0;
-					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1)) then
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.5)) then
 						self.Frame = 1;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1)) then
+						self.Frame = 2;
+					elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.5)) then
+						self.Frame = 3;
 					end
 
 				end
@@ -639,10 +655,14 @@ function Update(self)
 		--self:SetNumberValue("MagRotation", total);
 		
 		local supportOffset = Vector(0,0)
-		if self.Frame == 1 then
+		if self.Frame == 1 or self.Frame == 9 then
 			supportOffset = Vector(-1,0)
-		elseif self.Frame == 2 then
+		elseif self.Frame == 2 or self.Frame == 8 then
+			supportOffset = Vector(-2,0)
+		elseif self.Frame == 3 or self.Frame == 7 then
 			supportOffset = Vector(-3,0)
+		elseif self.Frame == 4 or self.Frame == 6 then
+			supportOffset = Vector(-4,0)
 		end
 		if self.parent:GetController():IsState(Controller.AIM_SHARP) == true and self.parent:GetController():IsState(Controller.MOVE_LEFT) == false and self.parent:GetController():IsState(Controller.MOVE_RIGHT) == false then
 			supportOffset = supportOffset + Vector(-1,0)
