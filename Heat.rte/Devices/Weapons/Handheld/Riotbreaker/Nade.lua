@@ -20,7 +20,7 @@ function Create(self)
 	self.TrailRandomnessMulti = 1; -- Wave modulation target speed
 	self.TrailWavenessSpeed = 1; -- Wave modulation controller speed
 	
-	self.ParticleName = "Trail Nade Riotbreaker"; -- Trail's particle
+	self.ParticleName = "Tiny Smoke Ball 1"; -- Trail's particle
 end
 function Update(self)
 	
