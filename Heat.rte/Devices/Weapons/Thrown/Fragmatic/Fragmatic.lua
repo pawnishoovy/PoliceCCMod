@@ -11,6 +11,10 @@ function Create(self)
 	self.impulse = Vector()
 	self.bounceSoundTimer = Timer()	
 	
+	self.smallAngle = math.pi/6;
+	self.angleList = {};
+
+	self.clusterCount = 8;
 end
 function Update(self)
 
@@ -36,6 +40,38 @@ function Update(self)
 			
 		if self.fuze:IsPastSimMS(self.fuzeDelay) then
 			self:GibThis();
+			self.angleList = {};
+			for i = 1, 12 do
+				local angleCheck = self.smallAngle * i;
+				for i = 1, 5 do
+					local checkPos = self.Pos + Vector(i, 0):RadRotate(angleCheck);
+					if SceneMan.SceneWrapsX == true then
+						if checkPos.X > SceneMan.SceneWidth then
+							checkPos = Vector(checkPos.X - SceneMan.SceneWidth, checkPos.Y);
+						elseif checkPos.X < 0 then
+							checkPos = Vector(SceneMan.SceneWidth + checkPos.X, checkPos.Y);
+						end
+					end
+					local terrCheck = SceneMan:GetTerrMatter(checkPos.X, checkPos.Y);
+					if terrCheck ~= rte.airID then
+						break;
+					end
+					if i == 5 then
+						self.angleList[#self.angleList + 1] = angleCheck;
+					end
+				end
+			end
+			for i = 1, self.clusterCount do
+				local minibomb = CreateAEmitter("Fragmatic Grenade Fragment");
+				minibomb.Pos = self.Pos;
+				minibomb.Sharpness = math.random(26,100) * math.max(math.random(0,3), 1)
+				if #self.angleList > 0 then
+					minibomb.Vel = Vector(3000 / minibomb.Sharpness, 0):RadRotate(self.angleList[math.random(#self.angleList)] + RangeRand(-0.1, 0.1));
+				else
+					minibomb.Vel = Vector(3000 / minibomb.Sharpness, 0):DegRotate(45 * i + ((math.random() * 15) - 7.5));
+				end
+				MovableMan:AddParticle(minibomb);
+			end
 		end
 		
 	elseif self:IsActivated() and not self.fuze then
