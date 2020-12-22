@@ -91,7 +91,6 @@ function Create(self)
 end
 
 function Update(self)
-	self.Frame = 0;
 	self.rotationTarget = 0 -- ZERO IT FIRST AAAA!!!!!
 	
 	if self.ID == self.RootID then
@@ -167,12 +166,10 @@ function Update(self)
 			if self.reloadPhase == 0 then
 			elseif self.reloadPhase == 1 then
 			
-				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
-					self.Frame = 2;
-				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
-					self.Frame = 1;
-				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*3.7)) then
 					self.Frame = 0;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.5)) then
+					self.Frame = (self.Frame + 1) % 2;
 				end
 
 			end
@@ -180,6 +177,7 @@ function Update(self)
 			if self.afterSoundPlayed ~= true then
 			
 				if self.reloadPhase == 0 then
+					self.Frame = 0;
 					self.phaseOnStop = 1;
 					local fake
 					fake = CreateMOSRotating("Fake Magazine MOSRotating Judge");
@@ -229,7 +227,7 @@ function Update(self)
 	end	
 
 	if self.FiredFrame then
-		self.Frame = 2;
+		self.Frame = (self.Frame + 1) % 2;
 		
 		self.canSmoke = true
 		self.smokeTimer:Reset()
