@@ -36,6 +36,16 @@ function Create(self)
 	self.smokeDelayTimer = Timer();
 	self.canSmoke = false
 	
+	self.Mode = 0;
+	-- 0 semi
+	-- 1 burst
+	-- 2 full
+	
+	self.shotsPerBurst = 3;
+	self.coolDownDelay = 130;	
+	
+	
+	
 	self.reloadTimer = Timer();
 	
 	self.magOutPrepareDelay = 500;
@@ -60,12 +70,12 @@ function Create(self)
 	-- Progressive Recoil System 
 	self.recoilAcc = 0 -- for sinous
 	self.recoilStr = 0 -- for accumulator
-	self.recoilStrength = 13 -- multiplier for base recoil added to the self.recoilStr when firing
-	self.recoilPowStrength = 0.2 -- multiplier for self.recoilStr when firing
+	self.recoilStrength = 6 -- multiplier for base recoil added to the self.recoilStr when firing
+	self.recoilPowStrength = 0.01 -- multiplier for self.recoilStr when firing
 	self.recoilRandomUpper = 2 -- upper end of random multiplier (1 is lower)
-	self.recoilDamping = 1.0
+	self.recoilDamping = 1.4
 	
-	self.recoilMax = 5 -- in deg.
+	self.recoilMax = 3 -- in deg.
 	self.originalSharpLength = self.SharpLength
 	-- Progressive Recoil System 
 end
@@ -112,6 +122,39 @@ function Update(self)
     else
         self.lastHFlipped = self.HFlipped
     end
+	
+	-- burst
+	
+	if self.Mode == 1 then
+		if self.Magazine then
+			if self.coolDownTimer then
+				if self.coolDownTimer:IsPastSimMS(self.coolDownDelay) and not (self:IsActivated() and self.triggerPulled) then
+					self.coolDownTimer, self.shotCounter = nil;
+				else
+					self:Deactivate();
+					local parent = self:GetRootParent();
+					if parent and IsActor(parent) and not ToActor(parent):IsPlayerControlled() then
+						self.triggerPulled = false;
+					end
+				end
+			elseif self.shotCounter then
+
+				self.triggerPulled = self:IsActivated();
+					
+				self:Activate();
+				if self.FiredFrame then
+					self.shotCounter = self.shotCounter + 1;
+					if self.shotCounter >= self.shotsPerBurst then
+						self.coolDownTimer = Timer();
+					end
+				end
+			elseif self.FiredFrame then
+				self.shotCounter = 1;
+			end
+		else
+			self.coolDownTimer, self.shotCounter = nil;
+		end
+	end
 	
 	-- PAWNIS RELOAD ANIMATION HERE
 	if self:IsReloading() then
@@ -266,7 +309,7 @@ function Update(self)
 	
 	if self.FiredFrame then
 		self.Frame = 1;
-		self.angVel = self.angVel - RangeRand(0.7,1.1) * 15
+		self.angVel = self.angVel - RangeRand(0.7,1.1) * 7
 		
 		self.canSmoke = true
 		self.smokeTimer:Reset()
@@ -397,6 +440,32 @@ function Update(self)
 		
 		self.StanceOffset = Vector(self.originalStanceOffset.X, self.originalStanceOffset.Y) + stance
 		self.SharpStanceOffset = Vector(self.originalSharpStanceOffset.X, self.originalSharpStanceOffset.Y) + stance
+		
+		if self.parent:IsPlayerControlled() then
+			if UInputMan:KeyPressed(15) then
+				if self.Mode == 0 then
+					self.autoSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Federal/Sounds/SwitchToBurst.ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.Mode = 1;
+					self.FullAuto = true;
+					self.RateOfFire = 750;
+					self.recoilStrength = 5;
+					self.recoilDamping = 1.5;
+				elseif self.Mode == 1 then
+					self.autoSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Federal/Sounds/SwitchToFull.ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.Mode = 2;	
+					self.RateOfFire = 450;
+					self.recoilStrength = 5;
+					self.recoilDamping = 1.6;					
+				else
+					self.autoSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Federal/Sounds/SwitchToSemi.ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.Mode = 0;
+					self.FullAuto = false;
+					self.recoilStrength = 7;
+					self.recoilDamping = 1.4;
+				end									
+			end
+		end	
+		
 	end
 	
 	if self.canSmoke and not self.smokeTimer:IsPastSimMS(1500) then
