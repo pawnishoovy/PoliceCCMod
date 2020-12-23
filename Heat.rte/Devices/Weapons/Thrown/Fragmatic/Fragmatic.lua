@@ -14,7 +14,7 @@ function Create(self)
 	self.smallAngle = math.pi/6;
 	self.angleList = {};
 
-	self.clusterCount = 8;
+	self.clusterCount = 4;
 end
 function Update(self)
 
