@@ -36,12 +36,13 @@ function Create(self)
 	
 	self.ParticleName = "Tiny Smoke Ball 1"; -- Trail's particle
 	
-	self.whistleSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Assailant/CompliSound/GLWhistle"..math.random(1,3)..".ogg", self.Pos, -1, 0, 130, 1, 250, false);	
+	self.whistleSound = CreateSoundContainer("GL Whistle Assailant", "Heat.rte");
+	self.whistleSound:Play(self.Pos);
 end
 function Update(self)
 	
 	if self.whistleSound then
-		self.whistleSound:SetPosition(self.Pos);
+		self.whistleSound.Pos = self.Pos;
 	end
 	
 	-- Epic smoke trail TM by filipex2000, 2020
@@ -78,7 +79,7 @@ end
 
 function Destroy(self)
 	if self.whistleSound ~= nil then
-		self.whistleSound:Stop()
+		self.whistleSound:Stop(-1)
 		self.whistleSound = nil
 	end
 end

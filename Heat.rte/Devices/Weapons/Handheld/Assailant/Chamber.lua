@@ -3,26 +3,28 @@ function Create(self)
 	self.parentSet = false;
 	
 	-- Sounds --
-	self.addSounds = {["Loop"] = nil};
-	self.addSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Assailant/CompliSound/Add"};
-	
-	self.mechSounds = {["Loop"] = nil};
-	self.mechSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Assailant/CompliSound/Mech"};
 
-	self.reflectionSounds = {["Outdoors"] = nil};
-	self.reflectionSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Assailant/CompliSound/Reflection"};
+	self.reflectionSound = CreateSoundContainer("Reflection Assailant", "Heat.rte");
 	
-	self.grenadeAddSounds = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Assailant/CompliSound/GLAdd"};
+	self.grenadeFireSound = CreateSoundContainer("GL Fire Assailant", "Heat.rte");
 	
-	self.grenadeMechSounds = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Assailant/CompliSound/GLMech"};
+	self.grenadePreSound = CreateSoundContainer("GL Pre Assailant", "Heat.rte");
 	
-	self.grenadePreSounds = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Assailant/CompliSound/GLPre"};
+	self.magOutSound = CreateSoundContainer("MagOut Assailant", "Heat.rte");
+	
+	self.magInPrepareSound = CreateSoundContainer("MagInPrepare Assailant", "Heat.rte");
+	
+	self.magInSound = CreateSoundContainer("MagIn Assailant", "Heat.rte");
+	
+	self.boltBackSound = CreateSoundContainer("BoltBack Assailant", "Heat.rte");
+	
+	self.boltForwardSound = CreateSoundContainer("BoltForward Assailant", "Heat.rte");
+	
+	self.grenadeEmptySound = CreateSoundContainer("GL Empty Assailant", "Heat.rte");
+	
+	self.grenadeRechargingSound = CreateSoundContainer("GL Recharging Assailant", "Heat.rte");
+	
+	self.grenadeRechargedSound = CreateSoundContainer("GL Recharged Assailant", "Heat.rte");
 	
 	self.lastAge = self.Age
 	
@@ -143,20 +145,19 @@ function Update(self)
 
 		if self.reloadPhase == 0 then
 			self.reloadDelay = self.magOutPrepareDelay;
-			self.afterDelay = self.magOutAfterDelay;			
+			self.afterDelay = self.magOutAfterDelay;
+			
 			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/MagOut";
+			self.afterSound = self.magOutSound;
 			
 			self.rotationTarget = 5;
 			
 		elseif self.reloadPhase == 1 then
 			self.reloadDelay = self.magInPrepareDelay;
 			self.afterDelay = self.magInAfterDelay;
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/MagInPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/MagIn";
+			
+			self.prepareSound = self.magInPrepareSound;
+			self.afterSound = self.magInSound;
 			
 			self.rotationTarget = 10;
 			
@@ -164,9 +165,9 @@ function Update(self)
 			self.Frame = 0;
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/BoltBack";	
+			
+			self.prepareSound = nil;
+			self.afterSound = self.boltBackSound;
 
 			self.rotationTarget = 5;
 		
@@ -174,9 +175,9 @@ function Update(self)
 			self.Frame = 3;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/BoltForward";
+			
+			self.prepareSound = nil;
+			self.afterSound = self.boltForwardSound;
 			
 			self.rotationTarget = 2;
 			
@@ -184,8 +185,8 @@ function Update(self)
 		
 		if self.prepareSoundPlayed ~= true then
 			self.prepareSoundPlayed = true;
-			if self.prepareSoundPath then
-				self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			if self.prepareSound then
+				self.prepareSound:Play(self.Pos);
 			end
 		end
 	
@@ -257,8 +258,8 @@ function Update(self)
 				end
 			
 				self.afterSoundPlayed = true;
-				if self.afterSoundPath then
-					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				if self.afterSound then
+					self.afterSound:Play(self.Pos);
 				end
 			end
 			if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay) then
@@ -303,7 +304,7 @@ function Update(self)
 		self.grenadeActivated = false;
 		self.grenadeFiring = true;
 		
-		AudioMan:PlaySound(self.grenadePreSounds.Path .. math.random(1, self.grenadePreSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+		self.grenadePreSound:Play(self.Pos);
 		
 		self.grenadeFireTimer:Reset();
 		self.grenadeChargeTimer:Reset();
@@ -325,8 +326,7 @@ function Update(self)
 			self.recoilStr = self.recoilStr + ((math.random(10, self.recoilRandomUpper * 10) / 10) * 0.5 * self.recoilStrength) * 3
 		end
 		
-		AudioMan:PlaySound(self.grenadeAddSounds.Path .. math.random(1, self.grenadeAddSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
-		AudioMan:PlaySound(self.grenadeMechSounds.Path .. math.random(1, self.grenadeMechSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+		self.grenadeFireSound:Play(self.Pos);
 		
 		self.grenadeFiring = false;
 		self.grenadeLoaded = false;
@@ -339,13 +339,13 @@ function Update(self)
 	
 		if self.grenadeChargeSoundPlayed == false and self.grenadeChargeTimer:IsPastSimMS(self.grenadeChargeSoundTimeMS) then
 			self.grenadeChargeSoundPlayed = true;
-			AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/GLRecharging.ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			self.grenadeRechargingSound:Play(self.Pos);
 			
 			self.horizontalAnim = self.horizontalAnim - 1;
 			self.angVel = self.angVel - 2;
 		elseif self.grenadeChargeTimer:IsPastSimMS(self.grenadeChargeTimeMS) then
 			self.grenadeLoaded = true;
-			AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/GLRecharged.ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			self.grenadeRechargedSound:Play(self.Pos);
 			
 			self.horizontalAnim = self.horizontalAnim + 1;
 			self.angVel = self.angVel + 4;
@@ -367,12 +367,6 @@ function Update(self)
 			if self.Magazine.RoundCount > 0 then			
 			else
 				self.chamberOnReload = true;
-			end
-		end
-		
-		if self.reflectionSound then
-			if self.reflectionSound:IsBeingPlayed() then
-				self.reflectionSound:Stop(-1)
 			end
 		end
 		
@@ -434,12 +428,9 @@ function Update(self)
 				indoorRays = indoorRays + 1;
 			end
 		end
-				
-		self.mechSound = AudioMan:PlaySound(self.mechSounds.Loop.Path .. math.random(1, self.mechSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);	
-		self.addSound = AudioMan:PlaySound(self.addSounds.Loop.Path .. math.random(1, self.addSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
 		
 		if outdoorRays >= self.rayThreshold then
-			self.reflectionSound = AudioMan:PlaySound(self.reflectionSounds.Outdoors.Path .. math.random(1, self.reflectionSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			self.reflectionSound:Play(self.Pos);
 		end
 	end
 	
@@ -522,7 +513,7 @@ function Update(self)
 			if self.grenadeLoaded == true and not self:IsReloading() then
 			  self.grenadeActivated = true;
 			else
-				AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Assailant/Sounds/GLEmpty.ogg", self.Pos, -1, 0, 130, 1, 450, false);
+				self.grenadeEmptySound:Play(self.Pos);
 			end
 		end
 	end
@@ -531,7 +522,7 @@ function Update(self)
 
 		if self.smokeDelayTimer:IsPastSimMS(120) then
 			
-			local poof = math.random(1,2) < 2 and CreateMOSParticle("Tiny Smoke Ball 1") or CreateMOPixel("Real Bullet Micro Smoke Ball "..math.random(1,4), "Sandstorm.rte");
+			local poof = CreateMOSParticle("Tiny Smoke Ball 1");
 			poof.Pos = self.Pos + Vector(self.MuzzleOffset.X * self.FlipFactor, self.MuzzleOffset.Y):RadRotate(self.RotAngle);
 			poof.Lifetime = poof.Lifetime * RangeRand(0.3, 1.3) * 0.9;
 			poof.Vel = self.Vel * 0.1
