@@ -1,5 +1,8 @@
 
 function Create(self)
+
+	self.beamHitSound = CreateSoundContainer("Beam Hit Cooperator", "Heat.rte");
+
 	local glow = CreateMOPixel("Glow Cooperator Beam Extra");
 	glow.Pos = self.Pos;
 	MovableMan:AddParticle(glow);
@@ -90,7 +93,7 @@ function Update(self)
 		if self.hits == 1 then
 			--AudioMan:PlaySound("FGround.rte/Effects/Special/Lasers/Sounds/LaserDissipate"..math.random(1,3)..".wav", self.Pos);
 			if math.random(1,3) < 2 then
-				AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Cooperator/Beam/Sounds/Hit"..math.random(1,4)..".wav", self.Pos);
+				self.beamHitSound:Play(self.Pos);
 			end
 			
 			local smoke = CreateMOSParticle("Small Smoke Ball 1");

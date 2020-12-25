@@ -4,15 +4,31 @@ function Create(self)
 	
 	-- Sounds --
 	
-	self.stopSounds = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Director/CompliSound/Stop"};
+	self.stopSound = CreateSoundContainer("Stop Director", "Heat.rte");
 	
-	self.startSounds = {["Variations"] = 2,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Director/CompliSound/Start"};
+	self.startSound = CreateSoundContainer("Start Director", "Heat.rte");
 
-	self.reflectionSounds = {["Outdoors"] = nil};
-	self.reflectionSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Director/CompliSound/Reflection"};
+	self.reflectionSound = CreateSoundContainer("Reflection Director", "Heat.rte");
+	
+	self.switchOnSound = CreateSoundContainer("Switch On Director", "Heat.rte");
+	
+	self.switchOnFirstSound = CreateSoundContainer("Switch On First Director", "Heat.rte");
+	
+	self.switchOffSound = CreateSoundContainer("Switch Off Director", "Heat.rte");
+	
+	self.switchOffLastSound = CreateSoundContainer("Switch Off Last Director", "Heat.rte");
+
+	self.boltBackPrepareSound = CreateSoundContainer("BoltBackPrepare Director", "Heat.rte");
+	
+	self.boltBackSound = CreateSoundContainer("BoltBack Director", "Heat.rte");
+	
+	self.magInPrepareSound = CreateSoundContainer("MagInPrepare Director", "Heat.rte");
+	
+	self.magInSound = CreateSoundContainer("MagIn Director", "Heat.rte");
+	
+	self.boltForwardPrepareSound = CreateSoundContainer("BoltForwardPrepare Director", "Heat.rte");
+	
+	self.boltForwardSound = CreateSoundContainer("BoltForward Director", "Heat.rte");
 	
 	self.lastAge = self.Age
 	
@@ -148,7 +164,7 @@ function Update(self)
 		self.Activatable = true;
 		self.Burst = false;
 		if self.shotCounter ~= 0 then
-			self.switchOffSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Director/Sounds/SwitchOffLast.ogg", self.Pos, -1, 0, 130, 1, 150, false);
+			self.switchOffSound:Play(self.Pos);
 		end
 		self.shotCounter = 0;
 		
@@ -174,17 +190,17 @@ function Update(self)
 				if self.shotCounter >= self.burstCount then
 					self.actingTimerDelay = self.burstFireDelay;
 					self.shotCounter = 0;
-					self.switchOffSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Director/Sounds/SwitchOffLast.ogg", self.Pos, -1, 0, 130, 1, 150, false);
+					self.switchOffLastSound:Play(self.Pos);
 				else
-					self.switchOffSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Director/Sounds/SwitchOff.ogg", self.Pos, -1, 0, 130, 1, 150, false);
+					self.switchOffSound:Play(self.Pos);
 				end
 			else
 				self.Activatable = true;
 				self.actingTimerDelay = self.burstFireDuration;
 				if self.actingTimerDelay == self.burstFireDelay then
-					self.switchOnSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Director/Sounds/SwitchOnFirst.ogg", self.Pos, -1, 0, 130, 1, 150, false);
+					self.switchOnFirstSound:Play(self.Pos);
 				else
-					self.switchOnSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Director/Sounds/SwitchOn.ogg", self.Pos, -1, 0, 130, 1, 150, false);
+					self.switchOnSound:Play(self.Pos);
 				end
 			end
 			self.activatableTimer:Reset();
@@ -197,30 +213,24 @@ function Update(self)
 		if self.reloadPhase == 0 then
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;			
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Director/Sounds/BoltBackPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Director/Sounds/BoltBack";
+			self.prepareSound = self.boltBackPrepareSound;
+			self.afterSound = self.boltBackSound;
 			
 			self.rotationTarget = 5;
 			
 		elseif self.reloadPhase == 1 then
 			self.reloadDelay = self.magInPrepareDelay;
 			self.afterDelay = self.magInAfterDelay;
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Director/Sounds/MagInPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Director/Sounds/MagIn";
+			self.prepareSound = self.magInPrepareSound;
+			self.afterSound = self.magInSound;
 
 			self.rotationTarget = 5;
 		
 		elseif self.reloadPhase == 2 then
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
-			self.prepareSoundPath =
-			"Heat.rte/Devices/Weapons/Handheld/Director/Sounds/BoltForwardPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Director/Sounds/BoltForward";
+			self.prepareSound = self.boltForwardPrepareSound;
+			self.afterSound = self.boltForwardSound;
 			
 			self.rotationTarget = 2;
 			
@@ -228,8 +238,8 @@ function Update(self)
 		
 		if self.prepareSoundPlayed ~= true then
 			self.prepareSoundPlayed = true;
-			if self.prepareSoundPath then
-				self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			if self.prepareSound then
+				self.prepareSound:Play(self.Pos);
 			end
 		end
 	
@@ -276,8 +286,8 @@ function Update(self)
 				end
 			
 				self.afterSoundPlayed = true;
-				if self.afterSoundPath then
-					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				if self.afterSound then
+					self.afterSound:Play(self.Pos);
 				end
 			end
 			if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay) then
@@ -307,37 +317,24 @@ function Update(self)
 	-- PAWNIS RELOAD ANIMATION HERE
 	
 	if self.prepareSound then
-		if self.prepareSound:IsBeingPlayed() then
-			self.prepareSound:SetPosition(self.Pos);
-		end
+		self.prepareSound.Pos = self.Pos;
 	end
 	
 	if self.afterSound then
-		if self.afterSound:IsBeingPlayed() then
-			self.afterSound:SetPosition(self.Pos);
-		end
+		self.afterSound.Pos = self.Pos;
 	end
 	
 	if self:IsActivated() and self.RoundInMagCount > 0 then
 	
 		if self.reflectionSound then
-			if self.reflectionSound:IsBeingPlayed() then
-				self.reflectionSound:Stop(-1)
-			end
-		end
-		if self.smokeSound then
-			if self.smokeSound:IsBeingPlayed() then
-				self.smokeSound:Stop(-1)
-			end
+			self.reflectionSound:Stop(-1)
 		end
 		if self.stopSound then
-			if self.stopSound:IsBeingPlayed() then
-				self.stopSound:Stop(-1)
-			end
+			self.stopSound:Stop(-1)
 		end
 		if self.triggerPulled ~= true then
 			self.triggerPulled = true;
-			self.startSound = AudioMan:PlaySound(self.startSounds.Path .. math.random(1, self.startSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			self.startSound:Play(self.Pos);
 		end
 		
 	else
@@ -346,7 +343,7 @@ function Update(self)
 		
 			self.triggerPulled = false;
 			
-			self.stopSound = AudioMan:PlaySound(self.stopSounds.Path .. math.random(1, self.stopSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			self.stopSound:Play(self.Pos);
 			
 			local outdoorRays = 0;
 			
@@ -392,7 +389,7 @@ function Update(self)
 			end
 			
 			if outdoorRays >= self.rayThreshold then
-				self.reflectionSound = AudioMan:PlaySound(self.reflectionSounds.Outdoors.Path .. math.random(1, self.reflectionSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+				self.reflectionSound:Play(self.Pos);
 			end
 			
 		end
@@ -467,7 +464,7 @@ function Update(self)
 
 		if self.smokeDelayTimer:IsPastSimMS(120) then
 			
-			local poof = math.random(1,2) < 2 and CreateMOSParticle("Tiny Smoke Ball 1") or CreateMOPixel("Real Bullet Micro Smoke Ball "..math.random(1,4), "Sandstorm.rte");
+			local poof = CreateMOSParticle("Tiny Smoke Ball 1");
 			poof.Pos = self.Pos + Vector(self.MuzzleOffset.X * self.FlipFactor, self.MuzzleOffset.Y):RadRotate(self.RotAngle);
 			poof.Lifetime = poof.Lifetime * RangeRand(0.3, 1.3) * 0.9;
 			poof.Vel = self.Vel * 0.1

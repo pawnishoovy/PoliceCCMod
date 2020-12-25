@@ -4,18 +4,33 @@ function Create(self)
 	
 	-- Sounds --
 	
-	self.stopSounds = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Cooperator/CompliSound/Stop"};
+	self.stopSound = CreateSoundContainer("Stop Cooperator", "Heat.rte");
 	
-	self.startSounds = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Cooperator/CompliSound/Start"};
+	self.startSound = CreateSoundContainer("Start Cooperator", "Heat.rte");
 	
-	self.lfeSounds = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Cooperator/CompliSound/LFE"};
+	self.lfeSound = CreateSoundContainer("LFE Cooperator", "Heat.rte");
 
-	self.reflectionSounds = {["Outdoors"] = nil};
-	self.reflectionSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Cooperator/CompliSound/Reflection"};
+	self.reflectionSound = CreateSoundContainer("Reflection Cooperator", "Heat.rte");
+	
+	self.smokeShortSound = CreateSoundContainer("Smoke Short Cooperator", "Heat.rte");
+	
+	self.smokeLongSound = CreateSoundContainer("Smoke Long Cooperator", "Heat.rte");
+	
+	self.magOutPrepareSound = CreateSoundContainer("MagOutPrepare Cooperator", "Heat.rte");
+	
+	self.magOutSound = CreateSoundContainer("MagOut Cooperator", "Heat.rte");
+	
+	self.magInPrepareSound = CreateSoundContainer("MagInPrepare Cooperator", "Heat.rte");
+	
+	self.magInSound = CreateSoundContainer("MagIn Cooperator", "Heat.rte");
+	
+	self.boltBackPrepareSound = CreateSoundContainer("BoltBackPrepare Cooperator", "Heat.rte");
+	
+	self.boltBackSound = CreateSoundContainer("BoltBack Cooperator", "Heat.rte");
+	
+	self.boltForwardPrepareSound = CreateSoundContainer("BoltForwardPrepare Cooperator", "Heat.rte");
+	
+	self.boltForwardSound = CreateSoundContainer("BoltForward Cooperator", "Heat.rte");
 	
 	self.lastAge = self.Age
 	
@@ -124,40 +139,32 @@ function Update(self)
 		if self.reloadPhase == 0 then
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;			
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Cooperator/Sounds/BoltBackPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Cooperator/Sounds/BoltBack";
+			self.prepareSound = self.boltBackPrepareSound;
+			self.afterSound = self.boltBackSound;
 			
 			self.rotationTarget = 5;
 			
 		elseif self.reloadPhase == 1 then
 			self.reloadDelay = self.magOutPrepareDelay;
 			self.afterDelay = self.magOutAfterDelay;
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Cooperator/Sounds/MagOutPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Cooperator/Sounds/MagOut";
+			self.prepareSound = self.magOutPrepareSound;
+			self.afterSound = self.magOutSound;
 			
 			self.rotationTarget = 10;
 			
 		elseif self.reloadPhase == 2 then
 			self.reloadDelay = self.magInPrepareDelay;
 			self.afterDelay = self.magInAfterDelay;
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Cooperator/Sounds/MagInPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Cooperator/Sounds/MagIn";
+			self.prepareSound = self.magInPrepareSound;
+			self.afterSound = self.magInSound;
 
 			self.rotationTarget = 5;
 		
 		elseif self.reloadPhase == 3 then
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
-			self.prepareSoundPath =
-			"Heat.rte/Devices/Weapons/Handheld/Cooperator/Sounds/BoltForwardPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Cooperator/Sounds/BoltForward";
+			self.prepareSound = self.boltForwardPrepareSound;
+			self.afterSound = self.boltForwardSound;
 			
 			self.rotationTarget = 2;
 			
@@ -165,8 +172,8 @@ function Update(self)
 		
 		if self.prepareSoundPlayed ~= true then
 			self.prepareSoundPlayed = true;
-			if self.prepareSoundPath then
-				self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			if self.prepareSound then
+				self.prepareSound:Play(self.Pos);
 			end
 		end
 	
@@ -223,8 +230,8 @@ function Update(self)
 				end
 			
 				self.afterSoundPlayed = true;
-				if self.afterSoundPath then
-					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				if self.afterSound then
+					self.afterSound:Play(self.Pos);
 				end
 			end
 			if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay) then
@@ -257,49 +264,29 @@ function Update(self)
 	-- PAWNIS RELOAD ANIMATION HERE
 	
 	if self.smokeSound then
-		if self.smokeSound:IsBeingPlayed() then
-			self.smokeSound:SetPosition(self.Pos);
-		end
+		self.smokeSound.Pos = self.Pos;
 	end
 	
 	if self.prepareSound then
-		if self.prepareSound:IsBeingPlayed() then
-			self.prepareSound:SetPosition(self.Pos);
-		end
+		self.prepareSound.Pos = self.Pos;
 	end
 	
 	if self.afterSound then
-		if self.afterSound:IsBeingPlayed() then
-			self.afterSound:SetPosition(self.Pos);
-		end
+		self.afterSound.Pos = self.Pos;
 	end
 	
 	if self:IsActivated() and self.RoundInMagCount > 0 then
-	
-		if self.reflectionSound then
-			if self.reflectionSound:IsBeingPlayed() then
-				self.reflectionSound:Stop(-1)
-			end
-		end
+
 		if self.smokeSound then
-			if self.smokeSound:IsBeingPlayed() then
-				self.smokeSound:Stop(-1)
-			end
+			self.smokeSound:Stop(-1)
 		end
 		if self.stopSound then
-			if self.stopSound:IsBeingPlayed() then
-				self.stopSound:Stop(-1)
-			end
-		end
-		if self.lfeStopSound then
-			if self.lfeStopSound:IsBeingPlayed() then
-				self.lfeStopSound:Stop(-1)
-			end
+			self.stopSound:Stop(-1)
 		end
 		if self.triggerPulled ~= true then
 			self.triggerPulled = true;
-			self.startSound = AudioMan:PlaySound(self.startSounds.Path .. math.random(1, self.startSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
-			self.lfeSound = AudioMan:PlaySound(self.lfeSounds.Path .. math.random(1, self.lfeSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, true);
+			self.startSound:Play(self.Pos);
+			self.lfeSound:Play(self.Pos);
 		end
 		
 	else
@@ -309,20 +296,18 @@ function Update(self)
 			self.triggerPulled = false;
 			
 			if self.lfeSound then
-				if self.lfeSound:IsBeingPlayed() then
-					AudioMan:FadeOutSound(self.lfeSound, 1000);
-				end
+				AudioMan:FadeOutSound(self.lfeSound, 1000);
 			end
 		
-			if self.shotCounter > 99 then
-				self.smokeSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Cooperator/CompliSound/SmokeLong.ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			if self.shotCounter > 59 then
+				self.smokeLongSound:Play(self.Pos);
 			else
-				self.smokeSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Cooperator/CompliSound/SmokeShort.ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				self.smokeShortSound:Play(self.Pos);
 			end
 		
 			self.shotCounter = 0;
 			
-			self.stopSound = AudioMan:PlaySound(self.stopSounds.Path .. math.random(1, self.stopSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			self.stopSound:Play(self.Pos);
 			
 			local outdoorRays = 0;
 			
@@ -368,7 +353,7 @@ function Update(self)
 			end
 			
 			if outdoorRays >= self.rayThreshold then
-				self.reflectionSound = AudioMan:PlaySound(self.reflectionSounds.Outdoors.Path .. math.random(1, self.reflectionSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+				self.reflectionSound:Play(self.Pos);
 			end
 			
 		end
@@ -436,7 +421,7 @@ function Update(self)
 
 		if self.smokeDelayTimer:IsPastSimMS(120) then
 			
-			local poof = math.random(1,2) < 2 and CreateMOSParticle("Tiny Smoke Ball 1") or CreateMOPixel("Real Bullet Micro Smoke Ball "..math.random(1,4), "Sandstorm.rte");
+			local poof = CreateMOSParticle("Tiny Smoke Ball 1");
 			poof.Pos = self.Pos + Vector(self.MuzzleOffset.X * self.FlipFactor, self.MuzzleOffset.Y):RadRotate(self.RotAngle);
 			poof.Lifetime = poof.Lifetime * RangeRand(0.3, 1.3) * 0.9;
 			poof.Vel = self.Vel * 0.1
@@ -449,8 +434,6 @@ end
 
 function Destroy(self)
 	if self.lfeSound then
-		if self.lfeSound:IsBeingPlayed() then
-			AudioMan:FadeOutSound(self.lfeSound, 1000);
-		end
+		AudioMan:FadeOutSound(self.lfeSound, 1000);
 	end
 end
