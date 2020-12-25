@@ -1,4 +1,6 @@
 function Create(self)
+
+	self.bulletCrackleSound = CreateSoundContainer("Bullet Crackle Raider", "Heat.rte");
 	
 	local offset = Vector(self.Vel.X, self.Vel.Y):SetMagnitude(30) * -1
 	
@@ -55,12 +57,11 @@ function Update(self)
 		MovableMan:AddParticle(Effect)
 	end
 	
-	if self.crackleSound then
-		if self.crackleSound:IsBeingPlayed() then
-			self.crackleSound:SetPosition(self.Pos);
-		end
+	if self.crackleSoundPlaying then
+		self.bulletCrackleSound.Pos = self.Pos;
 	else
-		self.crackleSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Raider/CompliSound/BulletCrackle" .. math.random(1, 4) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+		self.crackleSoundPlaying = true;
+		self.bulletCrackleSound:Play(self.Pos);
 	end
 
 	if self.ToDelete then

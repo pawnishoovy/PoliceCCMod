@@ -1,4 +1,9 @@
 function Create(self)
+
+	self.bounceSound = CreateSoundContainer("Bounce Riotbreaker", "Heat.rte");
+	
+	self.rollSound = CreateSoundContainer("Roll Riotbreaker", "Heat.rte");
+
 	self.detonationDelay = 3000;
 	
 	self.impactDetonation = true
@@ -69,10 +74,10 @@ end
 function OnCollideWithTerrain(self, terrainID)
 	if self.bounceSoundTimer:IsPastSimMS(50) then
 		if self.impulse.Magnitude > 25 then -- Hit
-			AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Riotbreaker/CompliSound/Bounce"..math.random(1,6)..".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			self.bounceSound:Play(self.Pos);
 			self.bounceSoundTimer:Reset()
 		elseif self.impulse.Magnitude > 11 then -- Roll
-			AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Riotbreaker/CompliSound/Roll"..math.random(1,6)..".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			self.rollSound:Play(self.Pos);
 			self.bounceSoundTimer:Reset()
 		end
 	end

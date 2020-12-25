@@ -3,17 +3,24 @@ function Create(self)
 	self.parentSet = false;
 	
 	-- Sounds --
-	self.addSounds = {["Loop"] = nil};
-	self.addSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Raider/CompliSound/MainAdd"};
-	
-	self.mechSounds = {["Loop"] = nil};
-	self.mechSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Raider/CompliSound/MainMech"};
 
-	self.reflectionSounds = {["Outdoors"] = nil};
-	self.reflectionSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Raider/CompliSound/MainReflection"};
+	self.reflectionSound = CreateSoundContainer("Reflection Raider", "Heat.rte");
+	
+	self.secondaryAddSound = CreateSoundContainer("Secondary Add Raider", "Heat.rte");
+	
+	self.burstEndTailSound = CreateSoundContainer("Burst End Tail Raider", "Heat.rte");
+	
+	self.openPrepareSound = CreateSoundContainer("OpenPrepare Raider", "Heat.rte");
+	
+	self.openSound = CreateSoundContainer("Open Raider", "Heat.rte");
+	
+	self.loadPrepareSound = CreateSoundContainer("LoadPrepare Raider", "Heat.rte");
+	
+	self.loadSound = CreateSoundContainer("Load Raider", "Heat.rte");
+	
+	self.closePrepareSound = CreateSoundContainer("ClosePrepare Raider", "Heat.rte");
+	
+	self.closeSound = CreateSoundContainer("Close Raider", "Heat.rte");
 	
 	self.lastAge = self.Age
 	
@@ -121,10 +128,8 @@ function Update(self)
 			self.Frame = 0;
 			self.reloadDelay = self.openPrepareDelay;
 			self.afterDelay = self.openAfterDelay;			
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Raider/Sounds/OpenPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Raider/Sounds/Open";
+			self.prepareSound = self.openPrepareSound;
+			self.afterSound = self.openSound;
 			
 			self.rotationTarget = 5;
 			
@@ -132,10 +137,8 @@ function Update(self)
 			self.Frame = 3;
 			self.reloadDelay = self.loadPrepareDelay;
 			self.afterDelay = self.loadAfterDelay;
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Raider/Sounds/LoadPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Raider/Sounds/Load";
+			self.prepareSound = self.loadPrepareSound;
+			self.afterSound = self.loadSound;
 			
 			self.rotationTarget = 5;
 			
@@ -143,10 +146,8 @@ function Update(self)
 			self.Frame = 3;
 			self.reloadDelay = self.closePrepareDelay;
 			self.afterDelay = self.closeAfterDelay;
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Raider/Sounds/ClosePrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Raider/Sounds/Close";
+			self.prepareSound = self.closePrepareSound;
+			self.afterSound = self.closeSound;
 
 			self.rotationTarget = 15;
 			
@@ -154,8 +155,8 @@ function Update(self)
 		
 		if self.prepareSoundPlayed ~= true then
 			self.prepareSoundPlayed = true;
-			if self.prepareSoundPath then
-				self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			if self.prepareSound then
+				self.prepareSound:Play(self.Pos);
 			end
 		end
 	
@@ -217,8 +218,8 @@ function Update(self)
 				end
 			
 				self.afterSoundPlayed = true;
-				if self.afterSoundPath then
-					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				if self.afterSound then
+					self.afterSound:Play(self.Pos);
 				end
 			end
 			if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay) then
@@ -267,11 +268,11 @@ function Update(self)
 			self.burstTimer:Reset();
 			self.shotCounter = self.shotCounter + 1;
 			
-			self.secondaryAddSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Raider/CompliSound/SecondaryAdd" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			self.secondaryAddSound:Play(self.Pos);
 			
 			if self.shotCounter == self.burstCount then
 				self.Burst = false;
-				self.burstTailSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Raider/CompliSound/BurstEndTail" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				self.burstEndTailSound:Play(self.Pos);
 			end
 			
 			-- Bullets
@@ -320,12 +321,6 @@ function Update(self)
 		self.Burst = true;
 		self.shotCounter = 0;
 		self.burstTimer:Reset();
-		
-		if self.reflectionSound then
-			if self.reflectionSound:IsBeingPlayed() then
-				self.reflectionSound:Stop(-1)
-			end
-		end
 		
 		for i = 1, 2 do
 			local Effect = CreateMOSParticle("Tiny Smoke Ball 1", "Base.rte")
@@ -385,12 +380,9 @@ function Update(self)
 				indoorRays = indoorRays + 1;
 			end
 		end
-				
-		self.mechSound = AudioMan:PlaySound(self.mechSounds.Loop.Path .. math.random(1, self.mechSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);	
-		self.addSound = AudioMan:PlaySound(self.addSounds.Loop.Path .. math.random(1, self.addSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
-		
+
 		if outdoorRays >= self.rayThreshold then
-			self.reflectionSound = AudioMan:PlaySound(self.reflectionSounds.Outdoors.Path .. math.random(1, self.reflectionSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			self.reflectionSound:Play(self.Pos);
 		end
 	end
 	
@@ -446,7 +438,7 @@ function Update(self)
 
 		if self.smokeDelayTimer:IsPastSimMS(120) then
 			
-			local poof = CreateMOSParticle("Tiny Smoke Ball 1")
+			local poof = CreateMOSParticle("Tiny Smoke Ball 1");
 			poof.Pos = self.Pos + Vector(self.MuzzleOffset.X * self.FlipFactor, self.MuzzleOffset.Y):RadRotate(self.RotAngle);
 			poof.Lifetime = poof.Lifetime * RangeRand(0.3, 1.3) * 0.9;
 			poof.Vel = self.Vel * 0.1

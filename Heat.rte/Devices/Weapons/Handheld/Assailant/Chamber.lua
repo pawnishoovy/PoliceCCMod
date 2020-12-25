@@ -147,7 +147,7 @@ function Update(self)
 			self.reloadDelay = self.magOutPrepareDelay;
 			self.afterDelay = self.magOutAfterDelay;
 			
-			self.prepareSoundPath = nil;
+			self.prepareSound = nil;
 			self.afterSound = self.magOutSound;
 			
 			self.rotationTarget = 5;

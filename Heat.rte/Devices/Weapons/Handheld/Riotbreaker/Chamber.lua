@@ -3,20 +3,21 @@ function Create(self)
 	self.parentSet = false;
 	
 	-- Sounds --
-	self.preSounds = {["Variations"] =3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Riotbreaker/CompliSound/Pre"};
+	self.preSound = CreateSoundContainer("Pre Riotbreaker", "Heat.rte");
+
+	self.reflectionSound = CreateSoundContainer("Reflection Riotbreaker", "Heat.rte");
 	
-	self.addSounds = {["Loop"] = nil};
-	self.addSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Riotbreaker/CompliSound/Add"};
+	self.boltBackSound = CreateSoundContainer("BoltBack Riotbreaker", "Heat.rte");
 	
-	self.mechSounds = {["Loop"] = nil};
-	self.mechSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Riotbreaker/CompliSound/Mech"};
+	self.boltBackReloadSound = CreateSoundContainer("BoltBackReload Riotbreaker", "Heat.rte");
 	
-	self.reflectionSounds = {["Outdoors"] = nil};
-	self.reflectionSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Riotbreaker/CompliSound/Reflection"};
+	self.boltForwardSound = CreateSoundContainer("BoltForward Riotbreaker", "Heat.rte");
+	
+	self.shellInsertBreechSound = CreateSoundContainer("ShellInsertBreech Riotbreaker", "Heat.rte");
+	
+	self.shellInsertPrepareSound = CreateSoundContainer("ShellInsertPrepare Riotbreaker", "Heat.rte");
+	
+	self.shellInsertSound = CreateSoundContainer("ShellInsert Riotbreaker", "Heat.rte");
 	
 	self.FireTimer = Timer();
 	self:SetNumberValue("DelayedFireTimeMS", 20)
@@ -171,18 +172,6 @@ function Update(self)
 				self:Reload();
 			end
 		end
-		
-		if self.noiseEndSound then
-			if self.noiseEndSound:IsBeingPlayed() then
-				self.noiseEndSound:Stop(-1)
-			end
-		end
-		
-		if self.reflectionSound then
-			if self.reflectionSound:IsBeingPlayed() then
-				self.reflectionSound:Stop(-1)
-			end
-		end
 
 		local outdoorRays = 0;
 		
@@ -227,11 +216,8 @@ function Update(self)
 			end
 		end
 		
-		self.mechSound = AudioMan:PlaySound(self.mechSounds.Loop.Path .. math.random(1, self.mechSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
-		self.addSound = AudioMan:PlaySound(self.addSounds.Loop.Path .. math.random(1, self.addSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
-		
 		if outdoorRays >= self.rayThreshold then
-			self.reflectionSound = AudioMan:PlaySound(self.reflectionSounds.Outdoors.Path .. math.random(1, self.reflectionSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			self.reflectionSound:Play(self.Pos);
 		end
 
 	end
@@ -320,66 +306,48 @@ function Update(self)
 				self.reloadDelay = self.boltBackPrepareDelay;
 				self.afterDelay = self.boltBackAfterDelay;
 				
-				self.prepareSoundPath = nil;
-				self.prepareSoundVars = 1;
+				self.prepareSound = nil;
 				if self:IsReloading() then
-					self.afterSoundPath = 
-					"Heat.rte/Devices/Weapons/Handheld/Riotbreaker/Sounds/BoltBackReload";
-					self.afterSoundVars = 3;
-					self.rotationTarget = 5
+					self.afterSound = self.boltBackReloadSound;
+					self.rotationTarget = 5;
 				else
-					self.afterSoundPath = 
-					"Heat.rte/Devices/Weapons/Handheld/Riotbreaker/Sounds/BoltBack";
-					self.afterSoundVars = 3;
-					self.rotationTarget = 2
+					self.afterSound = self.boltBackSound;
+					self.rotationTarget = 2;
 				end
 				
 			elseif self.reloadPhase == 1 then
 				self.reloadDelay = self.firstShellInPrepareDelay
 				self.afterDelay = self.firstShellInAfterDelay
-				self.prepareSoundPath = nil;
-				self.prepareSoundVars = 1;
-				self.afterSoundPath = 
-				"Heat.rte/Devices/Weapons/Handheld/Riotbreaker/Sounds/ShellInsertBreech";
-				self.afterSoundVars = 1;
+				self.prepareSound = nil;
+				self.afterSound = self.shellInsertBreechSound;
 				
 			elseif self.reloadPhase == 2 then
 				self.reloadDelay = self.boltForwardFirstShellPrepareDelay;
 				self.afterDelay = self.boltForwardFirstShellAfterDelay;
-				self.prepareSoundPath = nil;
-				self.prepareSoundVars = 1;
-				self.afterSoundPath = 
-				"Heat.rte/Devices/Weapons/Handheld/Riotbreaker/Sounds/BoltForward";
-				self.afterSoundVars = 3;
+				self.prepareSound = nil;
+				self.afterSound = self.boltForwardSound;
 				
 				self.rotationTarget = -10
 			elseif self.reloadPhase == 3 then
 				self.reloadDelay = self.shellInPrepareDelay;
 				self.afterDelay = self.shellInAfterDelay;
-				self.prepareSoundPath = 
-				"Heat.rte/Devices/Weapons/Handheld/Riotbreaker/Sounds/ShellInsertPrepare";
-				self.prepareSoundVars = 3;
-				self.afterSoundPath = 
-				"Heat.rte/Devices/Weapons/Handheld/Riotbreaker/Sounds/ShellInsert";
-				self.afterSoundVars = 3;
+				self.prepareSound = self.shellInsertPrepareSound;
+				self.afterSound = self.shellInsertSound;
 				
 				self.rotationTarget = 10 * self.reloadTimer.ElapsedSimTimeMS / (self.reloadDelay + self.afterDelay)
 			elseif self.reloadPhase == 4 then
 				self.reloadDelay = self.boltForwardPrepareDelay;
 				self.afterDelay = self.boltForwardAfterDelay;
-				self.prepareSoundPath = nil;
-				self.prepareSoundVars = 1;
-				self.afterSoundPath = 
-				"Heat.rte/Devices/Weapons/Handheld/Riotbreaker/Sounds/BoltForward";
-				self.afterSoundVars = 3;
+				self.prepareSound = nil;
+				self.afterSound = self.boltForwardSound;
 				
 				self.rotationTarget = -5
 			end
 			
 			if self.prepareSoundPlayed ~= true then
 				self.prepareSoundPlayed = true;
-				if self.prepareSoundPath then
-					self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. math.random(1, self.prepareSoundVars) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				if self.prepareSound then
+					self.prepareSound:Play(self.Pos);
 				end
 			end
 			
@@ -407,8 +375,8 @@ function Update(self)
 					end
 				
 					self.afterSoundPlayed = true;
-					if self.afterSoundPath then
-						self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. math.random(1, self.afterSoundVars) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					if self.afterSound then
+						self.afterSound:Play(self.Pos);
 					end
 				end
 			
