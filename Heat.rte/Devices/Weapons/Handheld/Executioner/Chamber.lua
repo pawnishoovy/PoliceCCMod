@@ -3,36 +3,31 @@ function Create(self)
 	self.parentSet = false;
 	
 	-- Sounds --
-	self.preSounds = {["Variations"] = 1,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Executioner/CompliSound/Pre"};		
+	self.preSound = CreateSoundContainer("Pre Executioner", "Heat.rte");	
 	
-	self.addSounds = {["Loop"] = nil};
-	self.addSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Executioner/CompliSound/Add"};
+	self.addMedAddSound = CreateSoundContainer("Add Med Add Executioner", "Heat.rte");
 	
-	self.addMedAddSounds = {["Loop"] = nil};
-	self.addMedAddSounds.Loop = {["Variations"] = 1,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Executioner/CompliSound/AddMedAdd"};
-	
-	self.addHiAddSounds = {["Loop"] = nil};
-	self.addHiAddSounds.Loop = {["Variations"] = 1,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Executioner/CompliSound/AddHiAdd"};
-	
-	self.mechSounds = {["Loop"] = nil};
-	self.mechSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Executioner/CompliSound/Mech"};
+	self.addHiAddSound = CreateSoundContainer("Add Hi Add Executioner", "Heat.rte");
 
-	self.reflectionSounds = {["Outdoors"] = nil};
-	self.reflectionSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Executioner/CompliSound/Reflection"};
+	self.reflectionSound = CreateSoundContainer("Reflection Executioner", "Heat.rte");
 	
-	self.reflectionMedAddSounds = {["Outdoors"] = nil};
-	self.reflectionMedAddSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Executioner/CompliSound/ReflectionMedAdd"};
+	self.reflectionMedAddSound = CreateSoundContainer("Reflection Med Add Executioner", "Heat.rte");
 	
-	self.reflectionHiAddSounds = {["Outdoors"] = nil};
-	self.reflectionHiAddSounds.Outdoors = {["Variations"] = 2,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Executioner/CompliSound/ReflectionHiAdd"};
+	self.reflectionHiAddSound = CreateSoundContainer("Reflection Hi Add Executioner", "Heat.rte");
+	
+	self.magOutSound = CreateSoundContainer("MagOut Executioner", "Heat.rte");
+	
+	self.magInPrepareSound = CreateSoundContainer("MagInPrepare Executioner", "Heat.rte");
+	
+	self.magInSound = CreateSoundContainer("MagIn Executioner", "Heat.rte");
+	
+	self.boltBackSound = CreateSoundContainer("BoltBack Executioner", "Heat.rte");
+	
+	self.boltForwardSound = CreateSoundContainer("BoltForward Executioner", "Heat.rte");
+	
+	self.chargeUpSound = CreateSoundContainer("Charge Up Executioner", "Heat.rte");
+	
+	self.chargeInterruptSound = CreateSoundContainer("Charge Interrupt Executioner", "Heat.rte");
 	
 	self.FireTimer = Timer();
 	self:SetNumberValue("DelayedFireTimeMS", 50)	
@@ -150,29 +145,24 @@ function Update(self)
 		if self.Charging == true then
 			self.Charging = false;
 			if self.chargeUpSound then
-				if self.chargeUpSound:IsBeingPlayed() then
-					self.chargeUpSound:Stop(-1);
-					self.chargeInterruptSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Executioner/Sounds/ChargeInterrupt1.ogg", self.Pos, -1, 0, 130, 1, 250, false);
-				end
+				self.chargeUpSound:Stop(-1);
+				self.chargeInterruptSound:Play(self.Pos);
 			end
 		end
 
 		if self.reloadPhase == 0 then
 			self.reloadDelay = self.magOutPrepareDelay;
 			self.afterDelay = self.magOutAfterDelay;			
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Executioner/Sounds/MagOut";
+			self.prepareSound = nil;
+			self.afterSound = self.magOutSound;
 			
 			self.rotationTarget = 5;
 			
 		elseif self.reloadPhase == 1 then
 			self.reloadDelay = self.magInPrepareDelay;
 			self.afterDelay = self.magInAfterDelay;
-			self.prepareSoundPath =
-			"Heat.rte/Devices/Weapons/Handheld/Executioner/Sounds/MagInPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Executioner/Sounds/MagIn";
+			self.prepareSound = self.magInPrepareSound;
+			self.afterSound = self.magInSound;
 			
 			self.rotationTarget = 10;
 			
@@ -180,9 +170,8 @@ function Update(self)
 			self.Frame = 0;
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Executioner/Sounds/BoltBack";	
+			self.prepareSound = nil;
+			self.afterSound = self.boltBackSound;
 
 			self.rotationTarget = 5;
 		
@@ -190,9 +179,8 @@ function Update(self)
 			self.Frame = 1;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Executioner/Sounds/BoltForward";
+			self.prepareSound = nil;
+			self.afterSound = self.boltForwardSound;
 			
 			self.rotationTarget = 2;
 			
@@ -200,8 +188,8 @@ function Update(self)
 		
 		if self.prepareSoundPlayed ~= true then
 			self.prepareSoundPlayed = true;
-			if self.prepareSoundPath then
-				self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			if self.prepareSound then
+				self.prepareSound:Play(self.Pos);
 			end
 		end
 	
@@ -257,8 +245,8 @@ function Update(self)
 				end
 			
 				self.afterSoundPlayed = true;
-				if self.afterSoundPath then
-					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				if self.afterSound then
+					self.afterSound:Play(self.Pos);
 				end
 			end
 			if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay) then
@@ -273,7 +261,7 @@ function Update(self)
 					self:SetNumberValue("Charge", 0);
 					self.Charging = true;
 					self.shieldActivationTimer:Reset();
-					self.chargeUpSound = AudioMan:PlaySound(self.shieldChargeUpSounds.Path .. math.random(1, self.shieldChargeUpSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.chargeUpSound:Play(self.Pos);
 				else
 					self.reloadPhase = self.reloadPhase + 1;
 				end
@@ -281,9 +269,7 @@ function Update(self)
 		end		
 	else
 		if self.chargeUpSound then
-			if self.chargeUpSound:IsBeingPlayed() then
-				self.chargeUpSound:SetPosition(self.Pos);
-			end
+			self.chargeUpSound.Pos = self.Pos;
 		end
 		self.reloadTimer:Reset();
 		self.afterSoundPlayed = false;
@@ -304,9 +290,7 @@ function Update(self)
 		self.Charging = false;
 	else
 		if self.chargeInteruptSound then
-			if self.chargeInteruptSound:IsBeingPlayed() then
-				self.chargeInteruptSound:SetPosition(self.Pos);
-			end
+			self.chargeInteruptSound.Pos = self.Pos;
 		end
 		self:SetNumberValue("ActivateShield", 0);
 	end
@@ -399,20 +383,18 @@ function Update(self)
 			end
 		end
 				
-		self.mechSound = AudioMan:PlaySound(self.mechSounds.Loop.Path .. math.random(1, self.mechSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);	
-		self.addSound = AudioMan:PlaySound(self.addSounds.Loop.Path .. math.random(1, self.addSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
 		if self:GetNumberValue("Charge") == 3 then
-			self.addAddSound = AudioMan:PlaySound(self.addHiAddSounds.Loop.Path .. math.random(1, self.addHiAddSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			self.addHiAddSound:Play(self.Pos);
 		elseif self:GetNumberValue("Charge") == 2 then
-			self.addAddSound = AudioMan:PlaySound(self.addMedAddSounds.Loop.Path .. math.random(1, self.addMedAddSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			self.addMedAddSound:Play(self.Pos);
 		end
 		
 		if outdoorRays >= self.rayThreshold then
-			self.reflectionSound = AudioMan:PlaySound(self.reflectionSounds.Outdoors.Path .. math.random(1, self.reflectionSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			self.reflectionSound:Play(self.Pos);
 			if self:GetNumberValue("Charge") == 3 then
-				self.reflectionAddSound = AudioMan:PlaySound(self.reflectionHiAddSounds.Outdoors.Path .. math.random(1, self.reflectionHiAddSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+				self.reflectionHiAddSound:Play(self.Pos);
 			elseif self:GetNumberValue("Charge") == 2 then
-				self.reflectionAddSound = AudioMan:PlaySound(self.reflectionMedAddSounds.Outdoors.Path .. math.random(1, self.reflectionMedAddSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+				self.reflectionMedAddSound:Play(self.Pos);
 			end
 		end
 	end
@@ -469,7 +451,7 @@ function Update(self)
 
 		if self.smokeDelayTimer:IsPastSimMS(120) then
 			
-			local poof = math.random(1,2) < 2 and CreateMOSParticle("Tiny Smoke Ball 1") or CreateMOPixel("Real Bullet Micro Smoke Ball "..math.random(1,4), "Sandstorm.rte");
+			local poof = CreateMOSParticle("Tiny Smoke Ball 1");
 			poof.Pos = self.Pos + Vector(self.MuzzleOffset.X * self.FlipFactor, self.MuzzleOffset.Y):RadRotate(self.RotAngle);
 			poof.Lifetime = poof.Lifetime * RangeRand(0.3, 1.3) * 0.9;
 			poof.Vel = self.Vel * 0.1

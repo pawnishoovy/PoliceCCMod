@@ -2,8 +2,11 @@ function Create(self)
 	self.Frame = 0;
 	self.parent = nil;
 	self.soundLowPlayed = false;
+	self.soundLow = CreateSoundContainer("Charge Low Executioner", "Heat.rte");
 	self.soundMedPlayed = false;
+	self.soundMed = CreateSoundContainer("Charge Medium Executioner", "Heat.rte");
 	self.soundHiPlayed = false;
+	self.soundHi = CreateSoundContainer("Charge High Executioner", "Heat.rte");
 	
 end
 
@@ -34,19 +37,19 @@ function Update(self)
 				self.Frame = 1;
 				self:RemoveWounds(self.WoundCount);
 				if self.soundHiPlayed == false then
-					self.hiSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Executioner/Sounds/ChargeHigh" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.soundHi:Play(self.Pos);
 					self.soundHiPlayed = true;
 				end
 			elseif self.WoundCount > 6 then
 				self.parent:SetNumberValue("Charge", 2);
 				if self.soundMedPlayed == false then
-					self.medSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Executioner/Sounds/ChargeMedium1.ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.soundMed:Play(self.Pos);
 					self.soundMedPlayed = true;
 				end
 			elseif self.WoundCount > 3 then
 				self.parent:SetNumberValue("Charge", 1);
 				if self.soundLowPlayed == false then
-					self.lowSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Executioner/Sounds/ChargeLow1.ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.soundLow:Play(self.Pos);
 					self.soundLowPlayed = true;
 				end
 			end
