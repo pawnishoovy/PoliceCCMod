@@ -1,4 +1,7 @@
 function Create(self)
+
+	self.maneuverBurstSound = CreateSoundContainer("Maneuver Burst Liberator", "Heat.rte");
+
 	self.boosterTimer = Timer()
 	self.boosterDelay = (self:GetNumberValue("TargetMode") == 1 and 700 or 100) + math.random(-30,30)
 	self.booster = false
@@ -129,7 +132,7 @@ function Update(self)
 				
 				self.Vel = self.Vel * 0.7
 				
-				AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Liberator/CompliSound/ManeuverBurst" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				self.maneuverBurstSound:Play(self.Pos);
 				self.maneuverTimer:Reset()
 			end
 			

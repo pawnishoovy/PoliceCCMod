@@ -3,32 +3,38 @@ function Create(self)
 	self.parentSet = false;
 	
 	-- Sounds --
-	self.addSounds = {["Loop"] = nil};
-	self.addSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Jury/CompliSound/Add"};
-	
-	self.mechSounds = {["Loop"] = nil};
-	self.mechSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Jury/CompliSound/Mech"};
 
-	self.reflectionSounds = {["Outdoors"] = nil};
-	self.reflectionSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Jury/CompliSound/Reflection"};
+	self.addSound = CreateSoundContainer("Add Jury", "Heat.rte");
 	
-	self.shrapnelAddSounds = {["Loop"] = nil};
-	self.shrapnelAddSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Jury/CompliSound/ShrapnelAdd"};
+	self.mechSound = CreateSoundContainer("Mech Jury", "Heat.rte");
 	
-	self.shrapnelMechSounds = {["Loop"] = nil};
-	self.shrapnelMechSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Jury/CompliSound/ShrapnelMech"};
+	self.reflectionSound = CreateSoundContainer("Reflection Jury", "Heat.rte");
+	
+	self.shrapnelFireSound = CreateSoundContainer("Fire Shrapnel Jury", "Heat.rte");
 
-	self.shrapnelReflectionSounds = {["Outdoors"] = nil};
-	self.shrapnelReflectionSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Jury/CompliSound/ShrapnelReflection"};
+	self.shrapnelReflectionSound = CreateSoundContainer("Reflection Shrapnel Jury", "Heat.rte");
 	
-	self.shrapnelPreSounds = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Jury/CompliSound/ShrapnelPre"};
+	self.shrapnelPreSound = CreateSoundContainer("Pre Shrapnel Jury", "Heat.rte");
+	
+	self.magOutPrepareSound = CreateSoundContainer("MagOutPrepare Jury", "Heat.rte");
+	
+	self.magOutSound = CreateSoundContainer("MagOut Jury", "Heat.rte");
+	
+	self.magInPrepareSound = CreateSoundContainer("MagInPrepare Jury", "Heat.rte");
+	
+	self.magInSound = CreateSoundContainer("MagIn Jury", "Heat.rte");
+	
+	self.magHitPrepareSound = CreateSoundContainer("MagHitPrepare Jury", "Heat.rte");
+	
+	self.magHitSound = CreateSoundContainer("MagHit Jury", "Heat.rte");
+	
+	self.boltBackSound = CreateSoundContainer("BoltBack Jury", "Heat.rte");
+	
+	self.boltForwardSound = CreateSoundContainer("BoltForward Jury", "Heat.rte");
+	
+	self.shrapnelReadySound = CreateSoundContainer("Shrapnel Ready Jury", "Heat.rte");
+	
+	self.shrapnelUnreadySound = CreateSoundContainer("Shrapnel Unready Jury", "Heat.rte");
 	
 	self.lastAge = self.Age
 	
@@ -153,49 +159,40 @@ function Update(self)
 		if self.reloadPhase == 0 then
 			self.reloadDelay = self.magOutPrepareDelay;
 			self.afterDelay = self.magOutAfterDelay;			
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/MagOutPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/MagOut";
+			self.prepareSound = self.magOutPrepareSound;
+			self.afterSound = self.magOutSound;
 			
 			self.rotationTarget = 5;
 			
 		elseif self.reloadPhase == 1 then
 			self.reloadDelay = self.magInPrepareDelay;
 			self.afterDelay = self.magInAfterDelay;
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/MagInPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/MagIn";
+			self.prepareSound = self.magInPrepareSound;
+			self.afterSound = self.magInSound;
 			
 			self.rotationTarget = -3;
 			
 		elseif self.reloadPhase == 2 then
 			self.reloadDelay = self.magHitPrepareDelay;
 			self.afterDelay = self.magHitAfterDelay;
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/MagHitPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/MagHit";
+			self.prepareSound = self.magHitPrepareSound;
+			self.afterSound = self.magHitSound;
 			
 			self.rotationTarget = -2;
 			
 		elseif self.reloadPhase == 3 then
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/BoltBackPrepare";	
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/BoltBack";	
+			self.prepareSound = self.boltForwardPrepareSound;
+			self.afterSound = self.boltBackSound;
 
 			self.rotationTarget = -4;
 		
 		elseif self.reloadPhase == 4 then
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/BoltForward";
+			self.prepareSound = nil;
+			self.afterSound = self.boltForwardSound;
 			
 			self.rotationTarget = -3;
 			
@@ -203,8 +200,8 @@ function Update(self)
 		
 		if self.prepareSoundPlayed ~= true then
 			self.prepareSoundPlayed = true;
-			if self.prepareSoundPath then
-				self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			if self.prepareSound then
+				self.prepareSound:Play(self.Pos);
 			end
 		end
 	
@@ -303,8 +300,8 @@ function Update(self)
 				end
 			
 				self.afterSoundPlayed = true;
-				if self.afterSoundPath then
-					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				if self.afterSound then
+					self.afterSound:Play(self.Pos);
 				end
 			end
 			if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay) then
@@ -371,7 +368,7 @@ function Update(self)
 			if self.Magazine.RoundCount > 0 then
 				if self.canShrapnel == false and self.Magazine.RoundCount <= self.shrapnelThreshold then
 					self.canShrapnel = true;
-					self.shrapnelReadySound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/ShrapnelReady" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.shrapnelReadySound:Play(self.Pos);
 					
 					self.shrapnelAnimTimer:Reset();
 					self.shrapnelReload = true;
@@ -381,18 +378,6 @@ function Update(self)
 				end
 			else
 				self.chamberOnReload = true;
-			end
-		end
-		
-		if self.reflectionSound then
-			if self.reflectionSound:IsBeingPlayed() then
-				self.reflectionSound:Stop(-1)
-			end
-		end
-		
-		if self.mechSound then
-			if self.mechSound:IsBeingPlayed() then
-				self.mechSound:Stop(-1)
 			end
 		end
 		
@@ -454,12 +439,12 @@ function Update(self)
 				indoorRays = indoorRays + 1;
 			end
 		end
-				
-		self.mechSound = AudioMan:PlaySound(self.mechSounds.Loop.Path .. math.random(1, self.mechSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);	
-		self.addSound = AudioMan:PlaySound(self.addSounds.Loop.Path .. math.random(1, self.addSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+		
+		self.addSound:Play(self.Pos);
+		self.mechSound:Play(self.Pos);
 		
 		if outdoorRays >= self.rayThreshold then
-			self.reflectionSound = AudioMan:PlaySound(self.reflectionSounds.Outdoors.Path .. math.random(1, self.reflectionSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			self.reflectionSound:Play(self.Pos);
 		end
 	end
 	
@@ -469,10 +454,10 @@ function Update(self)
 		else
 			self.Frame = 4;
 		end
-	elseif (not self.shrapnelReload) and (not self.Reloading) then
+	elseif (not self.shrapnelReload) then
 	
 		if self.shrapnelUnreadyPlayed == false then
-			self.shrapnelUnreadySound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Jury/Sounds/ShrapnelUnready" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			self.shrapnelUnreadySound:Play(self.Pos);
 			self.shrapnelUnreadyPlayed = true;
 		end
 		
@@ -488,7 +473,7 @@ function Update(self)
 		self.shrapnelActivated = false;
 		self.shrapnelFiring = true;
 		
-		AudioMan:PlaySound(self.shrapnelPreSounds.Path .. math.random(1, self.shrapnelPreSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+		self.shrapnelPreSound:Play(self.Pos);
 		
 		self.shrapnelFireTimer:Reset();
 		
@@ -602,11 +587,10 @@ function Update(self)
 					end
 				end
 						
-				self.mechSound = AudioMan:PlaySound(self.shrapnelMechSounds.Loop.Path .. math.random(1, self.shrapnelMechSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);	
-				self.addSound = AudioMan:PlaySound(self.shrapnelAddSounds.Loop.Path .. math.random(1, self.shrapnelAddSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+				self.shrapnelFireSound:Play(self.Pos);
 				
 				if outdoorRays >= self.rayThreshold then
-					self.reflectionSound = AudioMan:PlaySound(self.shrapnelReflectionSounds.Outdoors.Path .. math.random(1, self.shrapnelReflectionSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+					self.shrapnelReflectionSound:Play(self.Pos);
 				end
 			end
 		end
@@ -705,7 +689,7 @@ function Update(self)
 
 		if self.smokeDelayTimer:IsPastSimMS(120) then
 			
-			local poof = CreateMOSParticle("Tiny Smoke Ball 1")
+			local poof = CreateMOSParticle("Tiny Smoke Ball 1");
 			poof.Pos = self.Pos + Vector(self.MuzzleOffset.X * self.FlipFactor, self.MuzzleOffset.Y):RadRotate(self.RotAngle);
 			poof.Lifetime = poof.Lifetime * RangeRand(0.3, 1.3) * 0.9;
 			poof.Vel = self.Vel * 0.1

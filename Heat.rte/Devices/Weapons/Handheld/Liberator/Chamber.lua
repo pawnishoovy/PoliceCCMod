@@ -3,17 +3,25 @@ function Create(self)
 	self.parentSet = false;
 	
 	-- Sounds --
-	self.addSounds = {["Loop"] = nil};
-	self.addSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Liberator/CompliSound/Add"};
+	self.reflectionSound = CreateSoundContainer("Reflection Liberator", "Heat.rte");
 	
-	self.mechSounds = {["Loop"] = nil};
-	self.mechSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Liberator/CompliSound/Mech"};
-
-	self.reflectionSounds = {["Outdoors"] = nil};
-	self.reflectionSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Liberator/CompliSound/Reflection"};
+	self.rocketInPrepareSound = CreateSoundContainer("RocketInPrepare Liberator", "Heat.rte");
+	
+	self.rocketInSound = CreateSoundContainer("RocketIn Liberator", "Heat.rte");
+	
+	self.boltBackPrepareSound = CreateSoundContainer("BoltBackPrepare Liberator", "Heat.rte");
+	
+	self.boltBackSound = CreateSoundContainer("BoltBack Liberator", "Heat.rte");
+	
+	self.boltForwardSound = CreateSoundContainer("BoltForward Liberator", "Heat.rte");
+	
+	self.outSlowSound = CreateSoundContainer("Out Slow Liberator", "Heat.rte");
+	
+	self.outSlowClunkSound = CreateSoundContainer("Out Slow Clunk Liberator", "Heat.rte");
+	
+	self.inSlowSound = CreateSoundContainer("In Slow Liberator", "Heat.rte");
+	
+	self.inSlowClunkSound = CreateSoundContainer("In Slow Clunk Liberator", "Heat.rte");
 	
 	self.lastAge = self.Age
 	
@@ -140,10 +148,10 @@ function Update(self)
 		if self.mechanismSwitchTimer:IsPastSimMS(self.mechanismSwitchActiveDelay) then
 			if self.mechanismState == 1 then
 				self.mechanismState = 0;
-				self.afterSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/InSlowClunk" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				self.inSlowClunkSound:Play(self.Pos);
 			else
 				self.mechanismState = 1;
-				self.afterSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/OutSlowClunk" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				self.outSlowClunkSound:Play(self.Pos);
 			end
 			self.mechanismSwitching = false;
 		end
@@ -189,14 +197,14 @@ function Update(self)
 					self.mechanismSwitchTimer:Reset();
 					self.mechanismSwitching = true;
 					self.mechanismSwitchActiveDelay = self.mechanismSwitchInDelay;
-					self.afterSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/InSlow" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.inSlowSound:Play(self.Pos);
 				end
 			else
 				if self.mechanismState == 0 then
 					self.mechanismSwitchTimer:Reset();
 					self.mechanismSwitching = true;
 					self.mechanismSwitchActiveDelay = self.mechanismSwitchOutDelay;
-					self.afterSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/OutSlow" .. math.random(1, 3) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.outSlowSound:Play(self.Pos);
 				end
 			end
 		end
@@ -246,12 +254,8 @@ function Update(self)
 		if self.reloadPhase == 0 then
 			self.reloadDelay = self.rocketInPrepareDelay;
 			self.afterDelay = self.rocketInAfterDelay;			
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/RocketInPrepare";
-			self.prepareSoundVars = 3;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/RocketIn";
-			self.afterSoundVars = 3;
+			self.prepareSound = self.rocketInPrepareSound;
+			self.afterSound = self.rocketInSound;
 			
 			self.rotationTarget = 5;
 			
@@ -259,22 +263,16 @@ function Update(self)
 		elseif self.reloadPhase == 1 then
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;
-			self.prepareSoundPath =
-			"Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/BoltBackPrepare";
-			self.prepareSoundVars = 1;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/BoltBack";
-			self.afterSoundVars = 3;
+			self.prepareSound = self.boltBackPrepareSound;
+			self.afterSound = self.boltBackSound;
 
 			self.rotationTarget = 5;
 		
 		elseif self.reloadPhase == 2 then
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Liberator/Sounds/BoltForward";
-			self.afterSoundVars = 2;
+			self.prepareSound = nil;
+			self.afterSound = self.boltForwardSound;
 			
 			self.rotationTarget = 2;
 			
@@ -284,8 +282,8 @@ function Update(self)
 		
 		if self.prepareSoundPlayed ~= true then
 			self.prepareSoundPlayed = true;
-			if self.prepareSoundPath then
-				self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. math.random(1, self.prepareSoundVars) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			if self.prepareSound then
+				self.prepareSound:Play(self.Pos);
 			end
 		end
 	
@@ -359,8 +357,8 @@ function Update(self)
 				end
 			
 				self.afterSoundPlayed = true;
-				if self.afterSoundPath then
-					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. math.random(1, self.afterSoundVars) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				if self.afterSound then
+					self.afterSound:Play(self.Pos);
 				end
 			end
 			if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay) then
@@ -564,12 +562,9 @@ function Update(self)
 				indoorRays = indoorRays + 1;
 			end
 		end
-				
-		self.mechSound = AudioMan:PlaySound(self.mechSounds.Loop.Path .. math.random(1, self.mechSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);	
-		self.addSound = AudioMan:PlaySound(self.addSounds.Loop.Path .. math.random(1, self.addSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
 		
 		if outdoorRays >= self.rayThreshold then
-			self.reflectionSound = AudioMan:PlaySound(self.reflectionSounds.Outdoors.Path .. math.random(1, self.reflectionSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			self.reflectionSound:Play(self.Pos);
 		end
 	end
 	
@@ -625,7 +620,7 @@ function Update(self)
 
 		if self.smokeDelayTimer:IsPastSimMS(120) then
 			
-			local poof = CreateMOSParticle("Tiny Smoke Ball 1")
+			local poof = CreateMOSParticle("Tiny Smoke Ball 1");
 			poof.Pos = self.Pos + Vector(self.MuzzleOffset.X * self.FlipFactor, self.MuzzleOffset.Y):RadRotate(self.RotAngle);
 			poof.Lifetime = poof.Lifetime * RangeRand(0.3, 1.3) * 0.9;
 			poof.Vel = self.Vel * 0.1
