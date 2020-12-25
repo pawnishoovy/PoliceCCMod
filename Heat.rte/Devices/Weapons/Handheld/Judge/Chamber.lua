@@ -3,32 +3,27 @@ function Create(self)
 	self.parentSet = false;
 	
 	-- Sounds --
-	self.preSounds = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Judge/CompliSound/Pre"};		
+	self.preSound = CreateSoundContainer("Pre Judge", "Heat.rte");
 	
-	self.manualAddSounds = {["Loop"] = nil};
-	self.manualAddSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Judge/CompliSound/ManualAdd"};
+	self.fireManualSound = CreateSoundContainer("Fire Manual Judge", "Heat.rte");
 	
-	self.manualMechSounds = {["Loop"] = nil};
-	self.manualMechSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Judge/CompliSound/ManualMech"};
-
-	self.manualReflectionSounds = {["Outdoors"] = nil};
-	self.manualReflectionSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Judge/CompliSound/ManualReflection"};
+	self.fireAutoSound = CreateSoundContainer("Fire Auto Judge", "Heat.rte");
 	
-	self.autoAddSounds = {["Loop"] = nil};
-	self.autoAddSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Judge/CompliSound/AutoAdd"};
+	self.manualReflectionSound = CreateSoundContainer("Reflection Manual Judge", "Heat.rte");
 	
-	self.autoMechSounds = {["Loop"] = nil};
-	self.autoMechSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Judge/CompliSound/AutoMech"};
-
-	self.autoReflectionSounds = {["Outdoors"] = nil};
-	self.autoReflectionSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Judge/CompliSound/AutoReflection"};
+	self.autoReflectionSound = CreateSoundContainer("Reflection Auto Judge", "Heat.rte");
+	
+	self.magInPrepareSound = CreateSoundContainer("MagInPrepare Judge", "Heat.rte");
+	
+	self.magInSound = CreateSoundContainer("MagIn Judge", "Heat.rte");
+	
+	self.chamberSpinSound = CreateSoundContainer("ChamberSpin Judge", "Heat.rte");
+	
+	self.autoOnSound = CreateSoundContainer("Auto On Judge", "Heat.rte");
+	
+	self.autoOffSound = CreateSoundContainer("Auto Off Judge", "Heat.rte");
+	
+	self.targetSound = CreateSoundContainer("Target Judge", "Heat.rte");
 	
 	self.FireTimer = Timer();
 	self:SetNumberValue("DelayedFireTimeMS", 25)	
@@ -138,26 +133,23 @@ function Update(self)
 		if self.reloadPhase == 0 then
 			self.reloadDelay = self.magInPrepareDelay;
 			self.afterDelay = self.magInAfterDelay;
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Judge/Sounds/MagInPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Judge/Sounds/MagIn";
+			self.prepareSound = self.magInPrepareSound;
+			self.afterSound = self.magInSound;
 			
 			self.rotationTarget = -5;
 			
 		elseif self.reloadPhase == 1 then
 			self.reloadDelay = self.chamberSpinPrepareDelay;
 			self.afterDelay = self.chamberSpinAfterDelay;
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Judge/Sounds/ChamberSpin";
+			self.prepareSound = nil;
+			self.afterSound = self.chamberSpinSound;
 			
 		end
 		
 		if self.prepareSoundPlayed ~= true then
 			self.prepareSoundPlayed = true;
-			if self.prepareSoundPath then
-				self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			if self.prepareSound then
+				self.prepareSound:Play(self.Pos);
 			end
 		end
 	
@@ -198,8 +190,8 @@ function Update(self)
 				end
 			
 				self.afterSoundPlayed = true;
-				if self.afterSoundPath then
-					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				if self.afterSound then
+					self.afterSound:Play(self.Pos);
 				end
 			end
 			if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay) then
@@ -310,18 +302,16 @@ function Update(self)
 		end
 		
 		if self.Mode == 0 then
-			self.addSound = AudioMan:PlaySound(self.manualAddSounds.Loop.Path .. math.random(1, self.manualAddSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
-			self.mechSound = AudioMan:PlaySound(self.manualMechSounds.Loop.Path .. math.random(1, self.manualMechSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			self.fireManualSound:Play(self.Pos);
 		else
-			self.addSound = AudioMan:PlaySound(self.autoAddSounds.Loop.Path .. math.random(1, self.autoAddSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
-			self.mechSound = AudioMan:PlaySound(self.autoMechSounds.Loop.Path .. math.random(1, self.autoMechSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			self.fireAutoSound:Play(self.Pos);
 		end
 		
 		if outdoorRays >= self.rayThreshold then
 			if self.Mode == 0 then
-				self.reflectionSound = AudioMan:PlaySound(self.manualReflectionSounds.Outdoors.Path .. math.random(1, self.manualReflectionSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+				self.manualReflectionSound:Play(self.Pos);
 			else
-				self.reflectionSound = AudioMan:PlaySound(self.autoReflectionSounds.Outdoors.Path .. math.random(1, self.autoReflectionSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+				self.autoReflectionSound:Play(self.Pos);
 			end
 		end
 	end
@@ -403,7 +393,7 @@ function Update(self)
 		if self.parent:IsPlayerControlled() then
 			if UInputMan:KeyPressed(15) then
 				if self.Mode == 0 then
-					self.autoSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Judge/Sounds/AutoOn.ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.autoOnSound:Play(self.Pos);
 					self.Mode = 1;
 					self.RateOfFire = 650;
 					self.FullAuto = true;
@@ -412,7 +402,7 @@ function Update(self)
 					self.SharpLength = 50;
 					self.originalSharpLength = self.SharpLength;
 				else
-					self.autoSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Judge/Sounds/AutoOff.ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.autoOffSound:Play(self.Pos);
 					self.Mode = 0;
 					self.RateOfFire = 200;
 					self.FullAuto = false;			
@@ -505,7 +495,7 @@ function Update(self)
 									end
 									
 									self.Target = actor;
-									self.targetSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Judge/Sounds/Target" .. math.random(1, 2) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+									self.targetSound:Play(self.Pos);
 									break;
 								end
 							end
@@ -525,7 +515,7 @@ function Update(self)
 
 		if self.smokeDelayTimer:IsPastSimMS(120) then
 			
-			local poof = math.random(1,2) < 2 and CreateMOSParticle("Tiny Smoke Ball 1") or CreateMOPixel("Real Bullet Micro Smoke Ball "..math.random(1,4), "Sandstorm.rte");
+			local poof = CreateMOSParticle("Tiny Smoke Ball 1");
 			poof.Pos = self.Pos + Vector(self.MuzzleOffset.X * self.FlipFactor, self.MuzzleOffset.Y):RadRotate(self.RotAngle);
 			poof.Lifetime = poof.Lifetime * RangeRand(0.3, 1.3) * 0.9;
 			poof.Vel = self.Vel * 0.1

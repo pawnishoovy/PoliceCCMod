@@ -3,17 +3,23 @@ function Create(self)
 	self.parentSet = false;
 	
 	-- Sounds --
-	self.addSounds = {["Loop"] = nil};
-	self.addSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Federal/CompliSound/Add"};
+	self.reflectionSound = CreateSoundContainer("Reflection Federal", "Heat.rte");
 	
-	self.mechSounds = {["Loop"] = nil};
-	self.mechSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Federal/CompliSound/Mech"};
-
-	self.reflectionSounds = {["Outdoors"] = nil};
-	self.reflectionSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Federal/CompliSound/Reflection"};
+	self.magOutSound = CreateSoundContainer("MagOut Federal", "Heat.rte");
+	
+	self.magInPrepareSound = CreateSoundContainer("MagInPrepare Federal", "Heat.rte");
+	
+	self.magInSound = CreateSoundContainer("MagIn Federal", "Heat.rte");
+	
+	self.boltBackSound = CreateSoundContainer("BoltBack Federal", "Heat.rte");
+	
+	self.boltForwardSound = CreateSoundContainer("BoltForward Federal", "Heat.rte");
+	
+	self.switchToBurstSound = CreateSoundContainer("Switch To Burst Federal", "Heat.rte");
+	
+	self.switchToFullSound = CreateSoundContainer("Switch To Full Federal", "Heat.rte");
+	
+	self.switchToSemiSound = CreateSoundContainer("Switch To Semi Federal", "Heat.rte");
 	
 	self.lastAge = self.Age
 	
@@ -162,19 +168,16 @@ function Update(self)
 		if self.reloadPhase == 0 then
 			self.reloadDelay = self.magOutPrepareDelay;
 			self.afterDelay = self.magOutAfterDelay;			
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Federal/Sounds/MagOut";
+			self.prepareSound = nil;
+			self.afterSound = self.magOutSound;
 			
 			self.rotationTarget = 5;
 			
 		elseif self.reloadPhase == 1 then
 			self.reloadDelay = self.magInPrepareDelay;
 			self.afterDelay = self.magInAfterDelay;
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Federal/Sounds/MagInPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Federal/Sounds/MagIn";
+			self.prepareSound = self.magInPrepareSound;
+			self.afterSound = self.magInSound;
 			
 			self.rotationTarget = 10;
 			
@@ -182,9 +185,8 @@ function Update(self)
 			self.Frame = 0;
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Federal/Sounds/BoltBack";	
+			self.prepareSound = nil;
+			self.afterSound = self.boltBackSound;
 
 			self.rotationTarget = 5;
 		
@@ -192,9 +194,8 @@ function Update(self)
 			self.Frame = 1;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Federal/Sounds/BoltForward";
+			self.prepareSound = nil;
+			self.afterSound = self.boltForwardSound;
 			
 			self.rotationTarget = 2;
 			
@@ -202,8 +203,8 @@ function Update(self)
 		
 		if self.prepareSoundPlayed ~= true then
 			self.prepareSoundPlayed = true;
-			if self.prepareSoundPath then
-				self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			if self.prepareSound then
+				self.prepareSound:Play(self.Pos);
 			end
 		end
 	
@@ -265,8 +266,8 @@ function Update(self)
 				end
 			
 				self.afterSoundPlayed = true;
-				if self.afterSoundPath then
-					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				if self.afterSound then
+					self.afterSound:Play(self.Pos);
 				end
 			end
 			if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay) then
@@ -318,12 +319,6 @@ function Update(self)
 			if self.Magazine.RoundCount > 0 then			
 			else
 				self.chamberOnReload = true;
-			end
-		end
-		
-		if self.reflectionSound then
-			if self.reflectionSound:IsBeingPlayed() then
-				self.reflectionSound:Stop(-1)
 			end
 		end
 		
@@ -385,12 +380,9 @@ function Update(self)
 				indoorRays = indoorRays + 1;
 			end
 		end
-				
-		self.mechSound = AudioMan:PlaySound(self.mechSounds.Loop.Path .. math.random(1, self.mechSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);	
-		self.addSound = AudioMan:PlaySound(self.addSounds.Loop.Path .. math.random(1, self.addSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
 		
 		if outdoorRays >= self.rayThreshold then
-			self.reflectionSound = AudioMan:PlaySound(self.reflectionSounds.Outdoors.Path .. math.random(1, self.reflectionSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			self.reflectionSound:Play(self.Pos);
 		end
 	end
 	
@@ -444,20 +436,20 @@ function Update(self)
 		if self.parent:IsPlayerControlled() then
 			if UInputMan:KeyPressed(15) then
 				if self.Mode == 0 then
-					self.autoSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Federal/Sounds/SwitchToBurst.ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.switchToBurstSound:Play(self.Pos);
 					self.Mode = 1;
 					self.FullAuto = true;
 					self.RateOfFire = 750;
 					self.recoilStrength = 5;
 					self.recoilDamping = 1.5;
 				elseif self.Mode == 1 then
-					self.autoSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Federal/Sounds/SwitchToFull.ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.switchToFullSound:Play(self.Pos);
 					self.Mode = 2;	
 					self.RateOfFire = 450;
 					self.recoilStrength = 5;
 					self.recoilDamping = 1.6;					
 				else
-					self.autoSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Federal/Sounds/SwitchToSemi.ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.switchToSemiSound:Play(self.Pos);
 					self.Mode = 0;
 					self.FullAuto = false;
 					self.recoilStrength = 7;
@@ -472,7 +464,7 @@ function Update(self)
 
 		if self.smokeDelayTimer:IsPastSimMS(120) then
 			
-			local poof = math.random(1,2) < 2 and CreateMOSParticle("Tiny Smoke Ball 1") or CreateMOPixel("Real Bullet Micro Smoke Ball "..math.random(1,4), "Sandstorm.rte");
+			local poof = CreateMOSParticle("Tiny Smoke Ball 1");
 			poof.Pos = self.Pos + Vector(self.MuzzleOffset.X * self.FlipFactor, self.MuzzleOffset.Y):RadRotate(self.RotAngle);
 			poof.Lifetime = poof.Lifetime * RangeRand(0.3, 1.3) * 0.9;
 			poof.Vel = self.Vel * 0.1
