@@ -3,25 +3,28 @@ function Create(self)
 	self.parentSet = false;
 	
 	-- Sounds --
-	self.addSounds = {["Loop"] = nil};
-	self.addSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Centress/CompliSound/Add"};
 	
-	self.mechSounds = {["Loop"] = nil};
-	self.mechSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Centress/CompliSound/Mech"};
+	self.addSound = CreateSoundContainer("Add Centress", "Heat.rte");
 	
-	self.mechLowSounds = {["Loop"] = nil};
-	self.mechLowSounds.Loop = {["Variations"] = 5,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Centress/CompliSound/MechLow"};
+	self.mechSound = CreateSoundContainer("Mech Centress", "Heat.rte");
 	
-	self.mechLastSounds = {["Loop"] = nil};
-	self.mechLastSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Centress/CompliSound/MechLast"};
+	self.mechLowSound = CreateSoundContainer("Mech Low Centress", "Heat.rte");
+	
+	self.mechLastSound = CreateSoundContainer("Mech Last Centress", "Heat.rte");
 
-	self.reflectionSounds = {["Outdoors"] = nil};
-	self.reflectionSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Centress/CompliSound/Reflection"};
+	self.reflectionSound = CreateSoundContainer("Reflection Centress", "Heat.rte");
+	
+	self.magOutSound = CreateSoundContainer("MagOut Centress", "Heat.rte");
+	
+	self.magOutFullSound = CreateSoundContainer("MagOutFull Centress", "Heat.rte");
+	
+	self.magInPrepareSound = CreateSoundContainer("MagInPrepare Centress", "Heat.rte");
+	
+	self.magInSound = CreateSoundContainer("MagIn Centress", "Heat.rte");
+	
+	self.boltBackSound = CreateSoundContainer("BoltBack Centress", "Heat.rte");
+	
+	self.boltForwardSound = CreateSoundContainer("BoltForward Centress", "Heat.rte");
 	
 	self.lastAge = self.Age
 	
@@ -127,13 +130,11 @@ function Update(self)
 		if self.reloadPhase == 0 then
 			self.reloadDelay = self.magOutPrepareDelay;
 			self.afterDelay = self.magOutAfterDelay;
-			self.prepareSoundPath = nil;
+			self.prepareSound = nil;
 			if self.chamberOnReload then
-				self.afterSoundPath = 
-				"Heat.rte/Devices/Weapons/Handheld/Centress/Sounds/MagOut";
+				self.afterSound = self.magOutSound;
 			else
-				self.afterSoundPath = 
-				"Heat.rte/Devices/Weapons/Handheld/Centress/Sounds/MagOutFull";
+				self.afterSound = self.magOutFullSound;
 			end
 			
 			self.rotationTarget = 5;
@@ -141,10 +142,8 @@ function Update(self)
 		elseif self.reloadPhase == 1 then
 			self.reloadDelay = self.magInPrepareDelay;
 			self.afterDelay = self.magInAfterDelay;
-			self.prepareSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Centress/Sounds/MagInPrepare";
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Centress/Sounds/MagIn";
+			self.prepareSound = self.magInPrepareSound;
+			self.afterSound = self.magInSound;
 			
 			self.rotationTarget = 10;
 			
@@ -152,9 +151,8 @@ function Update(self)
 			self.Frame = 0;
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Centress/Sounds/BoltBack";	
+			self.prepareSound = nil;
+			self.afterSound = self.boltBackSound;	
 
 			self.rotationTarget = 20;
 		
@@ -162,9 +160,8 @@ function Update(self)
 			self.Frame = 2;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
-			"Heat.rte/Devices/Weapons/Handheld/Centress/Sounds/BoltForward";
+			self.prepareSound = nil;
+			self.afterSound = self.boltForwardSound;
 			
 			self.rotationTarget = 18;
 			
@@ -172,8 +169,8 @@ function Update(self)
 		
 		if self.prepareSoundPlayed ~= true then
 			self.prepareSoundPlayed = true;
-			if self.prepareSoundPath then
-				self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			if self.prepareSound then
+				self.prepareSound:Play(self.Pos);
 			end
 		end
 	
@@ -225,6 +222,7 @@ function Update(self)
 					else
 						self.ReloadTime = 0; -- done! no after delay if non-chambering reload.
 						self.reloadPhase = 0;
+						self.mechLastSound = CreateSoundContainer("Mech Last Centress", "Heat.rte");
 						self.phaseOnStop = nil;
 					end
 					self.angVel = self.angVel - 2;
@@ -243,8 +241,8 @@ function Update(self)
 				end
 			
 				self.afterSoundPlayed = true;
-				if self.afterSoundPath then
-					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				if self.afterSound then
+					self.afterSound:Play(self.Pos);
 				end
 			end
 			if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay) then
@@ -256,6 +254,7 @@ function Update(self)
 				elseif self.reloadPhase == 1 or self.reloadPhase == 3 then
 					self.ReloadTime = 0;
 					self.reloadPhase = 0;
+					self.mechLastSound = CreateSoundContainer("Mech Last Centress", "Heat.rte");
 				else
 					self.reloadPhase = self.reloadPhase + 1;
 				end
@@ -296,21 +295,15 @@ function Update(self)
 			if self.Magazine.RoundCount > 0 then
 				self.magOutPrepareDelay = 300;
 				if self.Magazine.RoundCount < 6 then
-					self.mechLowSound = AudioMan:PlaySound(self.mechLowSounds.Loop.Path .. (6 - self.Magazine.RoundCount) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.mechLowSound:Play(self.Pos);
 				else
-					self.mechSound = AudioMan:PlaySound(self.mechSounds.Loop.Path .. math.random(1, self.mechSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.mechSound:Play(self.Pos);
 				end
 			else
 				self.magOutPrepareDelay = 1;
 				self:Reload();
 				self.chamberOnReload = true;
-				self.mechLastSound = AudioMan:PlaySound(self.mechLastSounds.Loop.Path .. math.random(1, self.mechLastSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
-			end
-		end
-		
-		if self.reflectionSound then
-			if self.reflectionSound:IsBeingPlayed() then
-				self.reflectionSound:Stop(-1)
+				self.mechLastSound:Play(self.Pos);
 			end
 		end
 		
@@ -372,11 +365,11 @@ function Update(self)
 				indoorRays = indoorRays + 1;
 			end
 		end
-					
-		self.addSound = AudioMan:PlaySound(self.addSounds.Loop.Path .. math.random(1, self.addSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+		
+		self.addSound:Play(self.Pos);
 		
 		if outdoorRays >= self.rayThreshold then
-			self.reflectionSound = AudioMan:PlaySound(self.reflectionSounds.Outdoors.Path .. math.random(1, self.reflectionSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			self.reflectionSound:Play(self.Pos);
 		end
 	end
 	
@@ -432,7 +425,7 @@ function Update(self)
 
 		if self.smokeDelayTimer:IsPastSimMS(120) then
 			
-			local poof = math.random(1,2) < 2 and CreateMOSParticle("Tiny Smoke Ball 1") or CreateMOPixel("Real Bullet Micro Smoke Ball "..math.random(1,4), "Sandstorm.rte");
+			local poof = CreateMOSParticle("Tiny Smoke Ball 1");
 			poof.Pos = self.Pos + Vector(self.MuzzleOffset.X * self.FlipFactor, self.MuzzleOffset.Y):RadRotate(self.RotAngle);
 			poof.Lifetime = poof.Lifetime * RangeRand(0.3, 1.3) * 0.9;
 			poof.Vel = self.Vel * 0.1
