@@ -8,6 +8,8 @@ function Create(self)
 	glow.Pos = self.Pos;
 	MovableMan:AddParticle(glow);
 	
+	--self.lightingHitSound = CreateSoundContainer("Lighting Hit Taser", "Heat.rte");
+	
 	self.pointCount = math.floor(500 * RangeRand(0.9,1.1) + 0.5);	-- Number of points
 	self.spiralScale = 10 * RangeRand(0.85,1.15);	-- Size of the spiral
 	self.skipPoints = 5;
