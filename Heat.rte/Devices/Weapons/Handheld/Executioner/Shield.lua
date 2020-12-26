@@ -28,11 +28,9 @@ function Update(self)
 	elseif IsHDFirearm(self.parent) then
 		self:ClearForces();
 		self:ClearImpulseForces();
-		
-		self.Frame = math.random(0,1)
-		
+
 		if self.parent:GetNumberValue("ShieldActive") == 1 and (self.Frame < 2) then
-			
+			self.Frame = math.random(0,1)
 			if self.WoundCount > 9 then
 				self.parent:SetNumberValue("Charge", 3);
 				self.Frame = 2;
@@ -81,7 +79,6 @@ function Update(self)
 			glow.EffectRotAngle = self.HFlipped and (self.RotAngle + math.pi) or (self.RotAngle);
 			MovableMan:AddParticle(glow);
 		end
-		print(self.Frame)
 		--self.Frame = 1
 		--self.RotAngle = self.parent.RotAngle;
 	end

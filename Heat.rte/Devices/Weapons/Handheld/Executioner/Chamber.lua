@@ -167,7 +167,6 @@ function Update(self)
 			self.rotationTarget = 10;
 			
 		elseif self.reloadPhase == 2 then
-			self.Frame = 0;
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;
 			self.prepareSound = nil;
@@ -176,7 +175,7 @@ function Update(self)
 			self.rotationTarget = 5;
 		
 		elseif self.reloadPhase == 3 then
-			self.Frame = 1;
+			self.Frame = 2;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
 			self.prepareSound = nil;
@@ -201,14 +200,24 @@ function Update(self)
 				self:RemoveNumberValue("MagRemoved");
 			elseif self.reloadPhase == 2 then
 			
-				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
+					self.Frame = 2;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
 					self.Frame = 1;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.3)) then
+					self.Frame = 0;
 				end
 
 			elseif self.reloadPhase == 3 then
+			
 				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
 					self.Frame = 0;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.4)) then
+					self.Frame = 1;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.2)) then
+					self.Frame = 2;
 				end
+				
 			end
 			
 			if self.afterSoundPlayed ~= true then
@@ -297,7 +306,7 @@ function Update(self)
 	-- PAWNIS RELOAD ANIMATION HERE
 	
 	if self.FiredFrame then
-		self.Frame = 1;
+		self.Frame = 2;
 		self.angVel = self.angVel - RangeRand(0.7,1.1) * 15
 		
 		self.canSmoke = true
