@@ -125,8 +125,8 @@ function Update(self)
 		if self.reloadPhase == 0 then
 			self.reloadDelay = self.magOutPrepareDelay;
 			self.afterDelay = self.magOutAfterDelay;			
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
+			self.prepareSound = nil;
+			self.afterSound = 
 			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/MagOut";
 			
 			self.rotationTarget = 5;
@@ -134,9 +134,9 @@ function Update(self)
 		elseif self.reloadPhase == 1 then
 			self.reloadDelay = self.magInPrepareDelay;
 			self.afterDelay = self.magInAfterDelay;
-			self.prepareSoundPath =
+			self.prepareSound =
 			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/MagInPrepare";
-			self.afterSoundPath = 
+			self.afterSound = 
 			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/MagIn";
 			
 			self.rotationTarget = 10;
@@ -145,8 +145,8 @@ function Update(self)
 			self.Frame = 0;
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
+			self.prepareSound = nil;
+			self.afterSound = 
 			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/BoltBack";	
 
 			self.rotationTarget = 5;
@@ -155,8 +155,8 @@ function Update(self)
 			self.Frame = 1;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
-			self.prepareSoundPath = nil;
-			self.afterSoundPath = 
+			self.prepareSound = nil;
+			self.afterSound = 
 			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/BoltForward";
 			
 			self.rotationTarget = 2;
@@ -165,8 +165,8 @@ function Update(self)
 		
 		if self.prepareSoundPlayed ~= true then
 			self.prepareSoundPlayed = true;
-			if self.prepareSoundPath then
-				self.prepareSound = AudioMan:PlaySound(self.prepareSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			if self.prepareSound then
+				self.prepareSound = AudioMan:PlaySound(self.prepareSound .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
 			end
 		end
 	
@@ -228,8 +228,8 @@ function Update(self)
 				end
 			
 				self.afterSoundPlayed = true;
-				if self.afterSoundPath then
-					self.afterSound = AudioMan:PlaySound(self.afterSoundPath .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				if self.afterSound then
+					self.afterSound = AudioMan:PlaySound(self.afterSound .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
 				end
 			end
 			if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay) then
@@ -409,7 +409,7 @@ function Update(self)
 
 		if self.smokeDelayTimer:IsPastSimMS(120) then
 			
-			local poof = CreateMOSParticle("Tiny Smoke Ball 1")
+			local poof = math.random(1,2) < 2 and CreateMOSParticle("Tiny Smoke Ball 1") or CreateMOPixel("Real Bullet Micro Smoke Ball "..math.random(1,4), "Sandstorm.rte");
 			poof.Pos = self.Pos + Vector(self.MuzzleOffset.X * self.FlipFactor, self.MuzzleOffset.Y):RadRotate(self.RotAngle);
 			poof.Lifetime = poof.Lifetime * RangeRand(0.3, 1.3) * 0.9;
 			poof.Vel = self.Vel * 0.1

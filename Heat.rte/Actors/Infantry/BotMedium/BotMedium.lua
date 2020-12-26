@@ -18,22 +18,16 @@ function Create(self)
 	self.baseRTE = "Heat.rte";
 	
 	self.movementSounds = {
-	Land = self.baseRTE.."/Actors/Infantry/BotMedium/Sounds/Movement/Land/Land",
-	Jump = self.baseRTE.."/Actors/Infantry/BotMedium/Sounds/Movement/Jump/Jump",
-	Crouch = self.baseRTE.."/Actors/Infantry/BotMedium/Sounds/Movement/Crouch/Crouch",
-	Stand = self.baseRTE.."/Actors/Infantry/BotMedium/Sounds/Movement/Stand/Stand",
-	Step = self.baseRTE.."/Actors/Infantry/BotMedium/Sounds/Movement/Step/Step"};
+	Land = CreateSoundContainer("Land BotMedium", "Heat.rte"),
+	Jump = CreateSoundContainer("Jump BotMedium", "Heat.rte"),
+	Crouch = CreateSoundContainer("Crouch BotMedium", "Heat.rte"),
+	Stand = CreateSoundContainer("Stand BotMedium", "Heat.rte"),
+	Step = CreateSoundContainer("Step BotMedium", "Heat.rte")};
 	
-	self.movementSoundVariations = {Land = 5,
-	Jump = 5,
-	Crouch = 3,
-	Stand = 3,
-	Step = 5};
+	self.jumpJetSound = CreateSoundContainer("Jumpjet Start Heat", "Heat.rte");
 	
-	self.voiceSounds = {Pain = 
-	self.RTE.."/Actors/Shared/Sounds/VO/Pain/Pain"};
-	
-	self.voiceSoundVariations = {Pain =	5};
+	self.voiceSounds = {
+	Pain = CreateSoundContainer("VO Pain Heat", "Heat.rte")};
 
 	self.altitude = 0;
 	self.wasInAir = false;
@@ -120,9 +114,7 @@ function Update(self)
 	end
 	
 	if self.voiceSound then
-		if self.voiceSound:IsBeingPlayed() then
-			self.voiceSound:SetPosition(self.Pos);
-		end
+		self.voiceSound.Pos = self.Pos;
 	end
 	
 	if (self:IsDead() ~= true) then

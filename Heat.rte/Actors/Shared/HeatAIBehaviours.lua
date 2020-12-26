@@ -1,10 +1,12 @@
 HeatAIBehaviours = {};
 
-function HeatAIBehaviours.createSoundEffect(self, effectName, variations)
-	if effectName ~= nil then
-		self.soundEffect = AudioMan:PlaySound(effectName .. math.random(1, variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 400, false);	
-	end
-end
+-- function HeatAIBehaviours.createSoundEffect(self, effectName, variations)
+	-- if effectName ~= nil then
+		-- self.soundEffect = AudioMan:PlaySound(effectName .. math.random(1, variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 400, false);	
+	-- end
+-- end
+
+-- no longer needed as of pre3!
 
 function HeatAIBehaviours.createEmotion(self, emotion, priority, duration, canOverridePriority)
 	if canOverridePriority == nil then
@@ -18,19 +20,19 @@ function HeatAIBehaviours.createEmotion(self, emotion, priority, duration, canOv
 	end
 	if emotion then
 		
-			self.emotionApplied = false; -- applied later in handleheadframes
-			self.Emotion = emotion;
-			if duration then
-				self.emotionTimer:Reset();
-				self.emotionDuration = duration;
-			else
-				self.emotionDuration = 0; -- will follow voiceSound length
-			end
-			self.lastEmotionPriority = priority;
+		self.emotionApplied = false; -- applied later in handleheadframes
+		self.Emotion = emotion;
+		if duration then
+			self.emotionTimer:Reset();
+			self.emotionDuration = duration;
+		else
+			self.emotionDuration = 0; -- will follow voiceSound length
+		end
+		self.lastEmotionPriority = priority;
 	end
 end
 
-function HeatAIBehaviours.createVoiceSoundEffect(self, effectName, variations, priority, emotion, canOverridePriority)
+function HeatAIBehaviours.createVoiceSoundEffect(self, soundContainer, priority, emotion, canOverridePriority)
 	if canOverridePriority == nil then
 		canOverridePriority = false;
 	end
@@ -40,7 +42,7 @@ function HeatAIBehaviours.createVoiceSoundEffect(self, effectName, variations, p
 	else
 		usingPriority = priority;
 	end
-	if self.Head and effectName ~= nil then
+	if self.Head and soundContainer ~= nil then
 		if self.voiceSound then
 			if self.voiceSound:IsBeingPlayed() then
 				if self.lastPriority <= usingPriority then
@@ -48,7 +50,8 @@ function HeatAIBehaviours.createVoiceSoundEffect(self, effectName, variations, p
 						HeatAIBehaviours.createEmotion(self, emotion, priority, 0, canOverridePriority);
 					end
 					self.voiceSound:Stop();
-					self.voiceSound = AudioMan:PlaySound(effectName .. math.random(1, variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+					self.voiceSound = soundContainer;
+					soundContainer:Play(self.Pos)
 					self.lastPriority = priority;
 					return true;
 				end
@@ -56,7 +59,8 @@ function HeatAIBehaviours.createVoiceSoundEffect(self, effectName, variations, p
 				if emotion then
 					HeatAIBehaviours.createEmotion(self, emotion, priority, 0, canOverridePriority);
 				end
-				self.voiceSound = AudioMan:PlaySound(effectName .. math.random(1, variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+				self.voiceSound = soundContainer;
+				soundContainer:Play(self.Pos)
 				self.lastPriority = priority;
 				return true;
 			end
@@ -64,12 +68,14 @@ function HeatAIBehaviours.createVoiceSoundEffect(self, effectName, variations, p
 			if emotion then
 				HeatAIBehaviours.createEmotion(self, emotion, priority, 0, canOverridePriority);
 			end
-			self.voiceSound = AudioMan:PlaySound(effectName .. math.random(1, variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			self.voiceSound = soundContainer;
+			soundContainer:Play(self.Pos)
 			self.lastPriority = priority;
 			return true;
 		end
 	end
 end
+
 function HeatAIBehaviours.handleMovement(self)
 	
 	local crouching = self.controller:IsState(Controller.BODY_CROUCH)
@@ -107,8 +113,7 @@ function HeatAIBehaviours.handleMovement(self)
 				--PrimitiveMan:DrawTextPrimitive(footPos, mat.PresetName, true, 0);
 				if self.feetContact[i] == false then
 					self.feetContact[i] = true
-					if self.feetTimers[i]:IsPastSimMS(self.footstepTime) and movement then						
-						-- HeatAIBehaviours.createSoundEffect(self, self.movementSounds.Step, self.movementSoundVariations.Step);												
+					if self.feetTimers[i]:IsPastSimMS(self.footstepTime) and movement then																	
 						self.feetTimers[i]:Reset()
 					end
 				end
@@ -133,7 +138,7 @@ function HeatAIBehaviours.handleMovement(self)
 			elseif self.controller:IsState(Controller.MOVE_RIGHT) == true then
 				jumpVec.X = jumpWalkX
 			end
-			HeatAIBehaviours.createSoundEffect(self, self.movementSounds.Jump, self.movementSoundVariations.Jump);
+			self.movementSounds.Jump:Play(self.Pos);
 			if math.abs(self.Vel.X) > jumpWalkX * 2.0 then
 				self.Vel = Vector(self.Vel.X, self.Vel.Y + jumpVec.Y)
 			else
@@ -148,7 +153,7 @@ function HeatAIBehaviours.handleMovement(self)
 			self.isJumping = false
 			self.wasInAir = false;
 			if self.Vel.Y > 0 and self.moveSoundTimer:IsPastSimMS(500) then
-				HeatAIBehaviours.createSoundEffect(self, self.movementSounds.Land, self.movementSoundVariations.Land);
+				self.movementSounds.Land:Play(self.Pos);
 				self.moveSoundTimer:Reset();
 			end
 		end
@@ -167,15 +172,11 @@ function HeatAIBehaviours.handleMovement(self)
 			boosting = self.controller:IsState(Controller.BODY_JUMPSTART) and SceneMan:ShortestDistance(self.Pos,self:GetLastAIWaypoint(),SceneMan.SceneWrapsX).Y < -5
 		end
 		
-		if self.jumpJetSound then
-			if self.jumpJetSound:IsBeingPlayed() then
-				self.jumpJetSound:SetPosition(self.Jetpack.Pos);
-			end
-		end
+		self.jumpJetSound.Pos = self.Jetpack.Pos;
 		
 		if boosting and self.boosterReady then
 		
-			self.jumpJetSound = AudioMan:PlaySound("Heat.rte/Actors/Shared/Sounds/Jumpjet/JumpjetStart" .. math.random(1, 3) .. ".ogg", self.Jetpack.Pos, -1, 0, 130, 1, 400, false);
+			self.jumpJetSound:Play(self.Pos);
 			
 			self.Vel = Vector(self.Vel.X, self.Vel.Y):RadRotate(-self.RotAngle)
 			self.Vel = Vector(self.Vel.X, self.Vel.Y * 0.5)
@@ -212,17 +213,17 @@ function HeatAIBehaviours.handleMovement(self)
 
 	if (crouching) then
 		if (not self.wasCrouching and self.moveSoundTimer:IsPastSimMS(600)) then
-			HeatAIBehaviours.createSoundEffect(self, self.movementSounds.Crouch, self.movementSoundVariations.Crouch);
+			self.movementSounds.Crouch:Play(self.Pos);
 		end
 		if (moving) then
 			if (self.moveSoundWalkTimer:IsPastSimMS(700)) then
-				SecurityAIBehaviours.createSoundEffect(self, self.movementSounds.Step, self.movementSoundVariations.Step);
+				self.movementSounds.Step:Play(self.Pos);
 				self.moveSoundWalkTimer:Reset();
 			end
 		end
 	else
 		if (self.wasCrouching and self.moveSoundTimer:IsPastSimMS(600)) then
-			HeatAIBehaviours.createSoundEffect(self, self.movementSounds.Stand, self.movementSoundVariations.Stand);
+			self.movementSounds.Stand:Play(self.Pos);
 			self.moveSoundTimer:Reset();
 		end
 	end
@@ -249,7 +250,7 @@ function HeatAIBehaviours.handleHealth(self)
 		if (wasInjured or wasHeavilyInjured) and self.Head then
 			
 			if self.Health > 0 then
-				HeatAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Pain, self.voiceSoundVariations.Pain, 5)
+				HeatAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Pain, 5)
 			end
 		end
 	end

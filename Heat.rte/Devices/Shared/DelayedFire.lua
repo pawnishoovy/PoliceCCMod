@@ -62,8 +62,8 @@ function Update(self)
 				elseif not self.activated and not self.delayedFire and (self.Chamber == nil or self.Chamber == false) and self.fireDelayTimer:IsPastSimMS(1 / (self.RateOfFire / 60) * 1000) then
 					self.activated = true
 					
-					if self.preSounds then
-						AudioMan:PlaySound(self.preSounds.Path .. math.random(1, self.preSounds.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+					if self.preSound then
+						self.preSound:Play(self.Pos);
 					end
 					
 					self.fireDelayTimer:Reset()

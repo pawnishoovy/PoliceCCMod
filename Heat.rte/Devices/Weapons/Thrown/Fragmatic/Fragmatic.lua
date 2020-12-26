@@ -1,7 +1,15 @@
 function Create(self)
+
+	self.beepSound = CreateSoundContainer("Beep Fragmatic", "Heat.rte");
+	self.imminentSound = CreateSoundContainer("Imminent Beep Fragmatic", "Heat.rte");
+	self.pullPinSound = CreateSoundContainer("Pull Pin Fragmatic", "Heat.rte");
+	
+	self.bounceSound = CreateSoundContainer("Grenade Bounce Heat", "Heat.rte");
+	self.rollSound = CreateSoundContainer("Grenade Roll Heat", "Heat.rte");
+	
 	self.Beeps = 0;
 	self.beepDelay = 330;
-	self.Pitch = 1;
+	self.beepSound.Pitch = 1;
 	self.imminentPlayed = false;
 	self.fuzeDelay = 5000;
 	self.payload = CreateMOSRotating("Fragmatic Grenade Payload", "Heat.rte");
@@ -21,20 +29,22 @@ function Update(self)
 	self.impulse = (self.Vel - self.lastVel) / TimerMan.DeltaTimeSecs * self.Vel.Magnitude * 0.1
 	self.lastVel = Vector(self.Vel.X, self.Vel.Y)
 
-
+	self.beepSound.Pos = self.Pos;
+	self.imminentSound.Pos = self.Pos;
+	
 	if self.fuze then
 		if self.beepTimer:IsPastSimMS(self.beepDelay) then
 			self.beepTimer:Reset();
 			
 			self.beepDelay = self.beepDelay - 8;
-			self.Pitch = self.Pitch * 1.03;
+			self.beepSound.Pitch = self.beepSound.Pitch * 1.03;
 			self.Beeps = self.Beeps + 1;
 			
 			if self.Beeps < 16 then
-				AudioMan:PlaySound("Heat.rte/Devices/Weapons/Thrown/Fragmatic/Sounds/Beep.ogg", self.Pos, -1, 0, 100, self.Pitch, 250, false);
+				self.beepSound:Play(self.Pos);
 			else
 				self.beepDelay = 9999;
-				AudioMan:PlaySound("Heat.rte/Devices/Weapons/Thrown/Fragmatic/Sounds/ImminentBeep.ogg", self.Pos, -1, 0, 100, 1, 250, false);
+				self.imminentSound:Play(self.Pos);
 			end
 		end
 			
@@ -75,7 +85,7 @@ function Update(self)
 		end
 		
 	elseif self:IsActivated() and not self.fuze then
-		AudioMan:PlaySound("Heat.rte/Devices/Weapons/Thrown/Fragmatic/Sounds/PullPin.ogg", self.Pos, -1, 0, 100, 1, 250, false);
+		self.pullPinSound:Play(self.Pos);
 		self.beepTimer = Timer();
 		self.fuze = Timer();
 	end
@@ -84,10 +94,10 @@ end
 function OnCollideWithTerrain(self, terrainID)
 	if self.bounceSoundTimer:IsPastSimMS(50) then
 		if self.impulse.Magnitude > 25 then -- Hit
-			AudioMan:PlaySound("Heat.rte/Devices/Shared/Sounds/Grenade/Bounce"..math.random(1,8)..".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			self.bounceSound:Play(self.Pos);
 			self.bounceSoundTimer:Reset()
 		elseif self.impulse.Magnitude > 11 then -- Roll
-			AudioMan:PlaySound("Heat.rte/Devices/Shared/Sounds/Grenade/Roll"..math.random(1,5)..".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+			self.rollSound:Play(self.Pos);
 			self.bounceSoundTimer:Reset()
 		end
 	end
