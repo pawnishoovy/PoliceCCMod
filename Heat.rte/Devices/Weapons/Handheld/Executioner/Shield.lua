@@ -26,15 +26,16 @@ function Update(self)
 		end
 
 	elseif IsHDFirearm(self.parent) then
-	
 		self:ClearForces();
 		self:ClearImpulseForces();
 		
-		if self.parent:GetNumberValue("ShieldActive") == 1 and (self.Frame == 0) then
+		self.Frame = math.random(0,1)
+		
+		if self.parent:GetNumberValue("ShieldActive") == 1 and (self.Frame < 2) then
 			
 			if self.WoundCount > 9 then
 				self.parent:SetNumberValue("Charge", 3);
-				self.Frame = 1;
+				self.Frame = 2;
 				self:RemoveWounds(self.WoundCount);
 				if self.soundHiPlayed == false then
 					self.soundHi:Play(self.Pos);
@@ -64,15 +65,24 @@ function Update(self)
 			if self.WoundCount > 0 then
 				self:RemoveWounds(self.WoundCount);
 			end
-			self.Frame = 1;
+			self.Frame = 2;
 			if self.parent:GetNumberValue("ActivateShield") == 1 then
 				self.parent:SetNumberValue("ActivateShield", 0);
-				self.Frame = 0;
+				self.Frame = math.random(0,1)
 				self.soundLowPlayed = false;
 				self.soundMedPlayed = false;
 				self.soundHiPlayed = false;
 			end
 		end
+		
+		if self.Frame < 2 then
+			local glow = CreateMOPixel("Shield Executioner Glow "..math.random(1,4));
+			glow.Pos = self.Pos + Vector(RangeRand(-1,1), RangeRand(-1,0))
+			glow.EffectRotAngle = self.HFlipped and (self.RotAngle + math.pi) or (self.RotAngle);
+			MovableMan:AddParticle(glow);
+		end
+		print(self.Frame)
+		--self.Frame = 1
 		--self.RotAngle = self.parent.RotAngle;
 	end
 	
