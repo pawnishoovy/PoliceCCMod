@@ -123,11 +123,11 @@ function Update(self)
 		
 		HeatAIBehaviours.handleHealth(self);
 		
-		HeatAIBehaviours.handleVoicelines(self);
-		
 		HeatAIBehaviours.handleHeadFrames(self);
 
 	else
+	
+		HeatAIBehaviours.handleHeadLoss(self);
 	
 		HeatAIBehaviours.handleMovement(self);
 		

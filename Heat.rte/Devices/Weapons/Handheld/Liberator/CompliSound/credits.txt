@@ -9,3 +9,6 @@ rocketstart: GrnSkiffMissileFireA, weap_apache_rocket_plr_fire_01 (mono)
 rocketloop: ArchWingMovementForwardBurnLoopB
 
 maneuverburst: NechroMechJumpBoostStartC, weap_apache_plr_missile_pop_01
+
+
+explode: codmw rocket

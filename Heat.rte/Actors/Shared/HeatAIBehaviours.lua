@@ -241,16 +241,18 @@ end
 function HeatAIBehaviours.handleHealth(self)
 
 	local healthTimerReady = self.healthUpdateTimer:IsPastSimMS(750);
-	local wasInjured = self.Health < (self.oldHealth - 25);
+	local wasInjured = self.Health < (self.oldHealth - 10);
 
 	if (healthTimerReady or wasInjured) then
 		self.oldHealth = self.Health;
 		self.healthUpdateTimer:Reset();
 		
-		if (wasInjured or wasHeavilyInjured) and self.Head then
+		if (wasInjured) and self.Head then
 			
 			if self.Health > 0 then
 				HeatAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Pain, 5)
+			else
+				HeatAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Death, 6)
 			end
 		end
 	end
@@ -273,6 +275,11 @@ function HeatAIBehaviours.handleHeadFrames(self)
 
 end
 
-function HeatAIBehaviours.handleVoicelines(self)
-
+function HeatAIBehaviours.handleHeadLoss(self)
+	if not (self.Head) then
+		self.voiceSounds = {};
+		if (self.voiceSound) then
+			self.voiceSound:Stop(-1);
+		end
+	end
 end
