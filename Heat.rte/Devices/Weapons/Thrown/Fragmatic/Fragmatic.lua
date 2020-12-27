@@ -7,6 +7,8 @@ function Create(self)
 	self.bounceSound = CreateSoundContainer("Grenade Bounce Heat", "Heat.rte");
 	self.rollSound = CreateSoundContainer("Grenade Roll Heat", "Heat.rte");
 	
+	self.Frame = 2;
+	
 	self.Beeps = 0;
 	self.beepDelay = 330;
 	self.beepSound.Pitch = 1;
@@ -36,6 +38,8 @@ function Update(self)
 		if self.beepTimer:IsPastSimMS(self.beepDelay) then
 			self.beepTimer:Reset();
 			
+			self.Frame = 1;
+			
 			self.beepDelay = self.beepDelay - 8;
 			self.beepSound.Pitch = self.beepSound.Pitch * 1.03;
 			self.Beeps = self.Beeps + 1;
@@ -46,6 +50,8 @@ function Update(self)
 				self.beepDelay = 9999;
 				self.imminentSound:Play(self.Pos);
 			end
+		elseif self.Beeps < 16 then
+			self.Frame = 0;
 		end
 			
 		if self.fuze:IsPastSimMS(self.fuzeDelay) then
