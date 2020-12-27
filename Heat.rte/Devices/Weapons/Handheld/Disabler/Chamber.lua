@@ -3,23 +3,18 @@ function Create(self)
 	self.parentSet = false;
 	
 	-- Sounds --
-	self.preSounds = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Disabler/CompliSound/Pre"};		
-	
-	self.addSounds = {["Loop"] = nil};
-	self.addSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Disabler/CompliSound/Add"};
-	
-	self.mechSounds = {["Loop"] = nil};
-	self.mechSounds.Loop = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Disabler/CompliSound/Mech"};
 
-	self.reflectionSounds = {["Outdoors"] = nil};
-	self.reflectionSounds.Outdoors = {["Variations"] = 3,
-	["Path"] = "Heat.rte/Devices/Weapons/Handheld/Disabler/CompliSound/Reflection"};
+	self.reflectionSound = CreateSoundContainer("Reflection Disabler", "Heat.rte");
 	
-	self.FireTimer = Timer();
-	self:SetNumberValue("DelayedFireTimeMS", 90)	
+	self.magOutSound = CreateSoundContainer("MagOut Disabler", "Heat.rte");
+	
+	self.magInPrepareSound = CreateSoundContainer("MagInPrepare Disabler", "Heat.rte");
+	
+	self.magInSound = CreateSoundContainer("MagIn Disabler", "Heat.rte");
+	
+	self.boltBackSound = CreateSoundContainer("BoltBack Disabler", "Heat.rte");
+	
+	self.boltForwardSound = CreateSoundContainer("BoltForward Disabler", "Heat.rte");
 	
 	self.lastAge = self.Age
 	
@@ -44,14 +39,14 @@ function Create(self)
 	
 	self.reloadTimer = Timer();
 	
-	self.magOutPrepareDelay = 700;
-	self.magOutAfterDelay = 950;
+	self.magOutPrepareDelay = 500;
+	self.magOutAfterDelay = 800;
 	self.magInPrepareDelay = 450;
-	self.magInAfterDelay = 360;
-	self.boltBackPrepareDelay = 700;
-	self.boltBackAfterDelay = 150;
-	self.boltForwardPrepareDelay = 150;
-	self.boltForwardAfterDelay = 700;
+	self.magInAfterDelay = 250;
+	self.boltBackPrepareDelay = 500;
+	self.boltBackAfterDelay = 200;
+	self.boltForwardPrepareDelay = 250;
+	self.boltForwardAfterDelay = 400;
 	
 	-- phases:
 	-- 0 magout
@@ -66,12 +61,12 @@ function Create(self)
 	-- Progressive Recoil System 
 	self.recoilAcc = 0 -- for sinous
 	self.recoilStr = 0 -- for accumulator
-	self.recoilStrength = 23 -- multiplier for base recoil added to the self.recoilStr when firing
-	self.recoilPowStrength = 0.2 -- multiplier for self.recoilStr when firing
+	self.recoilStrength = 14 -- multiplier for base recoil added to the self.recoilStr when firing
+	self.recoilPowStrength = 0.1 -- multiplier for self.recoilStr when firing
 	self.recoilRandomUpper = 2 -- upper end of random multiplier (1 is lower)
-	self.recoilDamping = 1.0
+	self.recoilDamping = 1.2
 	
-	self.recoilMax = 20 -- in deg.
+	self.recoilMax = 1 -- in deg.
 	self.originalSharpLength = self.SharpLength
 	-- Progressive Recoil System 
 end
@@ -124,20 +119,19 @@ function Update(self)
 
 		if self.reloadPhase == 0 then
 			self.reloadDelay = self.magOutPrepareDelay;
-			self.afterDelay = self.magOutAfterDelay;			
+			self.afterDelay = self.magOutAfterDelay;
+			
 			self.prepareSound = nil;
-			self.afterSound = 
-			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/MagOut";
+			self.afterSound = self.magOutSound;
 			
 			self.rotationTarget = 5;
 			
 		elseif self.reloadPhase == 1 then
 			self.reloadDelay = self.magInPrepareDelay;
 			self.afterDelay = self.magInAfterDelay;
-			self.prepareSound =
-			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/MagInPrepare";
-			self.afterSound = 
-			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/MagIn";
+			
+			self.prepareSound = self.magInPrepareSound;
+			self.afterSound = self.magInSound;
 			
 			self.rotationTarget = 10;
 			
@@ -145,19 +139,19 @@ function Update(self)
 			self.Frame = 0;
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;
+			
 			self.prepareSound = nil;
-			self.afterSound = 
-			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/BoltBack";	
+			self.afterSound = self.boltBackSound;
 
 			self.rotationTarget = 5;
 		
 		elseif self.reloadPhase == 3 then
-			self.Frame = 1;
+			self.Frame = 3;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
+			
 			self.prepareSound = nil;
-			self.afterSound = 
-			"Heat.rte/Devices/Weapons/Handheld/Disabler/Sounds/BoltForward";
+			self.afterSound = self.boltForwardSound;
 			
 			self.rotationTarget = 2;
 			
@@ -166,7 +160,7 @@ function Update(self)
 		if self.prepareSoundPlayed ~= true then
 			self.prepareSoundPlayed = true;
 			if self.prepareSound then
-				self.prepareSound = AudioMan:PlaySound(self.prepareSound .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+				self.prepareSound:Play(self.Pos);
 			end
 		end
 	
@@ -178,13 +172,23 @@ function Update(self)
 				self:RemoveNumberValue("MagRemoved");
 			elseif self.reloadPhase == 2 then
 			
-				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
+					self.Frame = 3;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
+					self.Frame = 2;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
 					self.Frame = 1;
 				end
 
 			elseif self.reloadPhase == 3 then
-				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
 					self.Frame = 0;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
+					self.Frame = 1;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+					self.Frame = 2;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.3)) then
+					self.Frame = 3;
 				end
 			end
 			
@@ -194,7 +198,7 @@ function Update(self)
 					self.phaseOnStop = 1;
 					local fake
 					fake = CreateMOSRotating("Fake Magazine MOSRotating Disabler");
-					fake.Pos = self.Pos + Vector(1 * self.FlipFactor, 0):RadRotate(self.RotAngle);
+					fake.Pos = self.Pos + Vector(-7 * self.FlipFactor, 2):RadRotate(self.RotAngle);
 					fake.Vel = self.Vel + Vector(0.5*self.FlipFactor, 3):RadRotate(self.RotAngle);
 					fake.RotAngle = self.RotAngle;
 					fake.AngularVel = self.AngularVel + (-1*self.FlipFactor);
@@ -229,7 +233,7 @@ function Update(self)
 			
 				self.afterSoundPlayed = true;
 				if self.afterSound then
-					self.afterSound = AudioMan:PlaySound(self.afterSound .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);
+					self.afterSound:Play(self.Pos);
 				end
 			end
 			if self.reloadTimer:IsPastSimMS(self.reloadDelay + self.afterDelay) then
@@ -262,17 +266,16 @@ function Update(self)
 	end
 	
 	if self:DoneReloading() == true and self.chamberOnReload then
-		self.Magazine.RoundCount = 7
+		self.Magazine.RoundCount = 25
 		self.chamberOnReload = false;
 	elseif self:DoneReloading() then
-		self.Magazine.RoundCount = 8
+		self.Magazine.RoundCount = 26
 		self.chamberOnReload = false;
 	end	
-	-- PAWNIS RELOAD ANIMATION HERE
 	
 	if self.FiredFrame then
-		self.Frame = 1;
-		self.angVel = self.angVel - RangeRand(0.7,1.1) * 15
+		self.Frame = 3;
+		self.angVel = self.angVel - RangeRand(0.7,1.1) * 5
 		
 		self.canSmoke = true
 		self.smokeTimer:Reset()
@@ -281,12 +284,6 @@ function Update(self)
 			if self.Magazine.RoundCount > 0 then			
 			else
 				self.chamberOnReload = true;
-			end
-		end
-		
-		if self.reflectionSound then
-			if self.reflectionSound:IsBeingPlayed() then
-				self.reflectionSound:Stop(-1)
 			end
 		end
 		
@@ -348,17 +345,15 @@ function Update(self)
 				indoorRays = indoorRays + 1;
 			end
 		end
-				
-		self.mechSound = AudioMan:PlaySound(self.mechSounds.Loop.Path .. math.random(1, self.mechSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 250, false);	
-		self.addSound = AudioMan:PlaySound(self.addSounds.Loop.Path .. math.random(1, self.addSounds.Loop.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
 		
 		if outdoorRays >= self.rayThreshold then
-			self.reflectionSound = AudioMan:PlaySound(self.reflectionSounds.Outdoors.Path .. math.random(1, self.reflectionSounds.Outdoors.Variations) .. ".ogg", self.Pos, -1, 0, 130, 1, 450, false);
+			self.reflectionSound:Play(self.Pos);
 		end
 	end
 	
-	-- Animation
+	-- Animation + HUD
 	if self.parent then
+		
 		self.horizontalAnim = math.floor(self.horizontalAnim / (1 + TimerMan.DeltaTimeSecs * 24.0) * 1000) / 1000
 		self.verticalAnim = math.floor(self.verticalAnim / (1 + TimerMan.DeltaTimeSecs * 15.0) * 1000) / 1000
 		
@@ -409,7 +404,7 @@ function Update(self)
 
 		if self.smokeDelayTimer:IsPastSimMS(120) then
 			
-			local poof = math.random(1,2) < 2 and CreateMOSParticle("Tiny Smoke Ball 1") or CreateMOPixel("Real Bullet Micro Smoke Ball "..math.random(1,4), "Sandstorm.rte");
+			local poof = CreateMOSParticle("Tiny Smoke Ball 1");
 			poof.Pos = self.Pos + Vector(self.MuzzleOffset.X * self.FlipFactor, self.MuzzleOffset.Y):RadRotate(self.RotAngle);
 			poof.Lifetime = poof.Lifetime * RangeRand(0.3, 1.3) * 0.9;
 			poof.Vel = self.Vel * 0.1

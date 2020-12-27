@@ -1,7 +1,11 @@
-Add - TennoDrakeRifle, pkm_bass_loop
+Add - BratonMKOneReduxFireShotA, mike4, HMG_DShK_core_loop_01
 
-Mech - TennoLeverActionRifle (cut off beginning)
+Mech - BratonMKOneReduxFireMechA
 
-Reflection - TennoDrakeRifle, tail_open_field_close_sniper (shortened)
+Reflection - weap_refl_ar_urb_ext_close_front_02, noise_field_end
 
-Pre - TennoLeverActionRifle (cut off beginning)
+gl:
+
+weap_mike203_fire_plr_lfe_01, GrnHeavyGrenadeLauncherMechC GrnHeavyGrenadeLauncherThunkA
+
+concussion nade
