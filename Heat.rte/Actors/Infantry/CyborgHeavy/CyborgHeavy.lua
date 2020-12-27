@@ -18,16 +18,17 @@ function Create(self)
 	self.baseRTE = "Heat.rte";
 	
 	self.movementSounds = {
-	Land = CreateSoundContainer("Land BotLight", "Heat.rte"),
-	Jump = CreateSoundContainer("Jump BotLight", "Heat.rte"),
-	Crouch = CreateSoundContainer("Crouch BotLight", "Heat.rte"),
-	Stand = CreateSoundContainer("Stand BotLight", "Heat.rte"),
-	Step = CreateSoundContainer("Step BotLight", "Heat.rte")};
+	Land = CreateSoundContainer("Land CyborgHeavy", "Heat.rte"),
+	Jump = CreateSoundContainer("Jump CyborgHeavy", "Heat.rte"),
+	Crouch = CreateSoundContainer("Crouch CyborgHeavy", "Heat.rte"),
+	Stand = CreateSoundContainer("Stand CyborgHeavy", "Heat.rte"),
+	Step = CreateSoundContainer("Step CyborgHeavy", "Heat.rte")};
 	
 	self.jumpJetSound = CreateSoundContainer("Jumpjet Start Heat", "Heat.rte");
 	
 	self.voiceSounds = {
-	Pain = CreateSoundContainer("VO Pain Heat", "Heat.rte")};
+	Pain = CreateSoundContainer("VO Pain CyborgHeavy", "Heat.rte"),
+	Death = CreateSoundContainer("VO Death CyborgHeavy", "Heat.rte")};
 
 	self.altitude = 0;
 	self.wasInAir = false;
@@ -128,7 +129,7 @@ function Update(self)
 	else
 	
 		HeatAIBehaviours.handleHeadLoss(self);
-	
+		
 		HeatAIBehaviours.handleMovement(self);
 		
 	end
