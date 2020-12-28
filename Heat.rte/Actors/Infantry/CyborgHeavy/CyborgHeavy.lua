@@ -2,14 +2,14 @@
 dofile("Base.rte/Constants.lua")
 require("AI/NativeHumanAI")  --dofile("Base.rte/AI/NativeHumanAI.lua")
 package.path = package.path .. ";Heat.rte/?.lua";
-require("Actors/Shared/HeatAIBehaviours")
+require("Actors/Infantry/CyborgHeavy/CyborgAIBehaviours")
 
 function Create(self)
 	self.AI = NativeHumanAI:Create(self)
 	--You can turn features on and off here
 	self.armSway = true;
 	self.automaticEquip = true;
-	self.alternativeGib = true;
+	self.alternativeGib = false;
 	self.visibleInventory = true;
 	
 	-- Start modded code --
@@ -24,11 +24,14 @@ function Create(self)
 	Stand = CreateSoundContainer("Stand CyborgHeavy", "Heat.rte"),
 	Step = CreateSoundContainer("Step CyborgHeavy", "Heat.rte")};
 	
-	self.jumpJetSound = CreateSoundContainer("Jumpjet Start Heat", "Heat.rte");
+	self.jumpJetSound = CreateSoundContainer("Jumpjet Start Cyborg", "Heat.rte");
 	
 	self.voiceSounds = {
 	Pain = CreateSoundContainer("VO Pain CyborgHeavy", "Heat.rte"),
-	Death = CreateSoundContainer("VO Death CyborgHeavy", "Heat.rte")};
+	Death = CreateSoundContainer("VO Death CyborgHeavy", "Heat.rte"),
+	Hold = CreateSoundContainer("VO Hold CyborgHeavy", "Heat.rte"),
+	Suppressed = CreateSoundContainer("VO Suppressed CyborgHeavy", "Heat.rte"),
+	Intimidate = CreateSoundContainer("VO Intimidate CyborgHeavy", "Heat.rte")};
 
 	self.altitude = 0;
 	self.wasInAir = false;
@@ -37,6 +40,14 @@ function Create(self)
 	self.moveSoundWalkTimer = Timer();
 	self.wasCrouching = false;
 	self.wasMoving = false;
+	
+	self.Suppression = 0;
+	self.Suppressed = false;
+	
+	self.suppressionUpdateTimer = Timer();
+	
+	self.suppressedVoicelineTimer = Timer();
+	self.suppressedVoicelineDelay = 5000;
 	
 	self.healthUpdateTimer = Timer();
 	self.oldHealth = self.Health;
@@ -48,6 +59,20 @@ function Create(self)
 	
 	self.blinkTimer = Timer();
 	self.blinkDelay = math.random(5000, 11000);
+	
+	self.holdVoiceLineTimer = Timer();
+	self.holdVoiceLineDelay = 15000;
+	
+	self.spotVoiceLineTimer = Timer();
+	self.spotVoiceLineDelay = 15000;
+	
+	 -- in MS
+	self.spotDelayMin = 4000;
+	self.spotDelayMax = 8000;
+	
+	 -- in percent
+	self.spotIgnoreDelayChance = 10;
+	self.spotNoVoicelineChance = 15;
 
 	-- fil jump
 	
@@ -79,7 +104,7 @@ function OnCollideWithTerrain(self, terrainID)
 	self.terrainCollided = true;
 	self.terrainCollidedWith = terrainID;
 	--if self.Dying or self.Status == Actor.DEAD or self.Status == Actor.DYING then
-	--	HeatAIBehaviours.handleRagdoll(self)
+	--	CyborgAIBehaviours.handleRagdoll(self)
 	--end
 end
 
@@ -111,7 +136,7 @@ function Update(self)
 	end
 	
 	if (UInputMan:KeyPressed(24)) and self:IsPlayerControlled() then
-		self.Health = self.Health -6
+		self.Health = self.Health -2
 	end
 	
 	if self.voiceSound then
@@ -120,17 +145,25 @@ function Update(self)
 	
 	if (self:IsDead() ~= true) then
 		
-		HeatAIBehaviours.handleMovement(self);
+		CyborgAIBehaviours.handleMovement(self);
 		
-		HeatAIBehaviours.handleHealth(self);
+		CyborgAIBehaviours.handleHealth(self);
 		
-		HeatAIBehaviours.handleHeadFrames(self);
+		CyborgAIBehaviours.handleSuppression(self);
+		
+		CyborgAIBehaviours.handleAITargetLogic(self);
+		
+		CyborgAIBehaviours.handleVoicelines(self);
+		
+		CyborgAIBehaviours.handleHeadFrames(self);
 
 	else
 	
-		HeatAIBehaviours.handleHeadLoss(self);
+		CyborgAIBehaviours.handleDying(self)
+	
+		CyborgAIBehaviours.handleHeadLoss(self);
 		
-		HeatAIBehaviours.handleMovement(self);
+		CyborgAIBehaviours.handleMovement(self);
 		
 	end
 	
