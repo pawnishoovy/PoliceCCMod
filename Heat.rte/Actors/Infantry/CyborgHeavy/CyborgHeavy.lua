@@ -31,6 +31,7 @@ function Create(self)
 	Death = CreateSoundContainer("VO Death CyborgHeavy", "Heat.rte"),
 	Hold = CreateSoundContainer("VO Hold CyborgHeavy", "Heat.rte"),
 	Suppressed = CreateSoundContainer("VO Suppressed CyborgHeavy", "Heat.rte"),
+	Battlecry = CreateSoundContainer("VO Battlecry CyborgHeavy", "Heat.rte"),
 	Intimidate = CreateSoundContainer("VO Intimidate CyborgHeavy", "Heat.rte")};
 
 	self.altitude = 0;
@@ -65,6 +66,10 @@ function Create(self)
 	
 	self.spotVoiceLineTimer = Timer();
 	self.spotVoiceLineDelay = 15000;
+	
+	self.gunShotCounter = 0;
+	self.suppressingVoicelineTimer = Timer();
+	self.suppressingVoicelineDelay = 15000;
 	
 	 -- in MS
 	self.spotDelayMin = 4000;

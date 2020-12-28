@@ -374,6 +374,29 @@ function CyborgAIBehaviours.handleVoicelines(self)
 		self.Holding = false;
 	end
 	
+	-- DEVICE RELATED VOICELINES
+	
+	if self.EquippedItem then	
+		-- SUPPRESSING
+		if (IsHDFirearm(self.EquippedItem)) then	
+			if self.EquippedItem:IsInGroup("Weapons - Primary") then
+				local gun = ToHDFirearm(self.EquippedItem);
+				local gunMag = gun.Magazine
+				
+				if gun.FullAuto == true and gunMag and gun:IsActivated() then
+					if gun.FiredFrame then
+						self.gunShotCounter = self.gunShotCounter + 1;
+					end
+					if self.gunShotCounter > (gunMag.Capacity*0.7) and self.suppressingVoicelineTimer:IsPastSimMS(self.suppressingVoicelineDelay) then
+						CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Battlecry, 3);
+						self.suppressingVoicelineTimer:Reset();
+					end
+				else
+					self.gunShotCounter = 0;
+				end
+			end
+		end
+	end
 end
 
 function CyborgAIBehaviours.handleHeadFrames(self)
