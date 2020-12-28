@@ -12,6 +12,10 @@ function Create(self)
 	
 	self.magInSound = CreateSoundContainer("MagIn Disabler", "Heat.rte");
 	
+	self.magHitPrepareSound = CreateSoundContainer("MagHitPrepare Disabler", "Heat.rte");
+	
+	self.magHitSound = CreateSoundContainer("MagHit Disabler", "Heat.rte");
+	
 	self.boltBackSound = CreateSoundContainer("BoltBack Disabler", "Heat.rte");
 	
 	self.boltForwardSound = CreateSoundContainer("BoltForward Disabler", "Heat.rte");
@@ -40,19 +44,22 @@ function Create(self)
 	self.reloadTimer = Timer();
 	
 	self.magOutPrepareDelay = 500;
-	self.magOutAfterDelay = 800;
-	self.magInPrepareDelay = 450;
-	self.magInAfterDelay = 250;
+	self.magOutAfterDelay = 1000;
+	self.magInPrepareDelay = 600;
+	self.magInAfterDelay = 400;
+	self.magHitPrepareDelay = 300;
+	self.magHitAfterDelay = 350;
 	self.boltBackPrepareDelay = 500;
-	self.boltBackAfterDelay = 200;
-	self.boltForwardPrepareDelay = 250;
+	self.boltBackAfterDelay = 50;
+	self.boltForwardPrepareDelay = 50;
 	self.boltForwardAfterDelay = 400;
 	
 	-- phases:
 	-- 0 magout
 	-- 1 magin
-	-- 2 boltback
-	-- 3 boltforward
+	-- 2 maghit
+	-- 3 boltback
+	-- 4 boltforward
 	
 	self.reloadPhase = 0;
 	
@@ -133,9 +140,18 @@ function Update(self)
 			self.prepareSound = self.magInPrepareSound;
 			self.afterSound = self.magInSound;
 			
-			self.rotationTarget = 10;
+			self.rotationTarget = 6;
 			
 		elseif self.reloadPhase == 2 then
+			self.reloadDelay = self.magHitPrepareDelay;
+			self.afterDelay = self.magHitAfterDelay;
+			
+			self.prepareSound = self.magHitPrepareSound;
+			self.afterSound = self.magHitSound;
+			
+			self.rotationTarget = 3;
+			
+		elseif self.reloadPhase == 3 then
 			self.Frame = 0;
 			self.reloadDelay = self.boltBackPrepareDelay;
 			self.afterDelay = self.boltBackAfterDelay;
@@ -143,17 +159,17 @@ function Update(self)
 			self.prepareSound = nil;
 			self.afterSound = self.boltBackSound;
 
-			self.rotationTarget = 5;
+			self.rotationTarget = 1;
 		
-		elseif self.reloadPhase == 3 then
-			self.Frame = 3;
+		elseif self.reloadPhase == 4 then
+			self.Frame = 1;
 			self.reloadDelay = self.boltForwardPrepareDelay;
 			self.afterDelay = self.boltForwardAfterDelay;
 			
 			self.prepareSound = nil;
 			self.afterSound = self.boltForwardSound;
 			
-			self.rotationTarget = 2;
+			self.rotationTarget = 1;
 			
 		end
 		
@@ -173,22 +189,12 @@ function Update(self)
 			elseif self.reloadPhase == 2 then
 			
 				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
-					self.Frame = 3;
-				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
-					self.Frame = 2;
-				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
 					self.Frame = 1;
 				end
 
 			elseif self.reloadPhase == 3 then
 				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
 					self.Frame = 0;
-				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.9)) then
-					self.Frame = 1;
-				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
-					self.Frame = 2;
-				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.3)) then
-					self.Frame = 3;
 				end
 			end
 			
@@ -209,6 +215,10 @@ function Update(self)
 					self.verticalAnim = self.verticalAnim + 1
 					
 				elseif self.reloadPhase == 1 then
+					self.verticalAnim = self.verticalAnim - 1	
+					self:RemoveNumberValue("MagRemoved");
+					
+				elseif self.reloadPhase == 2 then
 					if self.chamberOnReload then
 						self.phaseOnStop = 2;
 					else
@@ -216,16 +226,13 @@ function Update(self)
 						self.reloadPhase = 0;
 						self.phaseOnStop = nil;
 					end
-					self.angVel = self.angVel - 2;
-					self.verticalAnim = self.verticalAnim - 1	
+					self.angVel = self.angVel + 1;
+					self.verticalAnim = self.verticalAnim - 2	
 					self:RemoveNumberValue("MagRemoved");
-					
-				elseif self.reloadPhase == 2 then
-					self.horizontalAnim = self.horizontalAnim - 1;
-					self.angVel = self.angVel - 2;
-				elseif self.reloadPhase == 3 then
+
+				elseif self.reloadPhase == 4 then
 					self.horizontalAnim = self.horizontalAnim + 1;
-					self.angVel = self.angVel + 4;
+					self.angVel = self.angVel + 6;
 					self.phaseOnStop = nil;
 				else
 					self.phaseOnStop = nil;
@@ -240,9 +247,9 @@ function Update(self)
 				self.reloadTimer:Reset();
 				self.afterSoundPlayed = false;
 				self.prepareSoundPlayed = false;
-				if self.chamberOnReload and self.reloadPhase == 1 then
+				if self.chamberOnReload and self.reloadPhase == 2 then
 					self.reloadPhase = self.reloadPhase + 1;
-				elseif self.reloadPhase == 1 or self.reloadPhase == 3 then
+				elseif self.reloadPhase == 2 or self.reloadPhase == 4 then
 					self.ReloadTime = 0;
 					self.reloadPhase = 0;
 				else
@@ -266,10 +273,10 @@ function Update(self)
 	end
 	
 	if self:DoneReloading() == true and self.chamberOnReload then
-		self.Magazine.RoundCount = 25
+		self.Magazine.RoundCount = 15
 		self.chamberOnReload = false;
 	elseif self:DoneReloading() then
-		self.Magazine.RoundCount = 26
+		self.Magazine.RoundCount = 16
 		self.chamberOnReload = false;
 	end	
 	

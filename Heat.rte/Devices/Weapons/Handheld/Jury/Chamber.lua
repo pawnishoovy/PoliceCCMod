@@ -454,7 +454,7 @@ function Update(self)
 		else
 			self.Frame = 4;
 		end
-	elseif (not self.shrapnelReload) then
+	elseif ((not self.shrapnelReload) and (not self.Reloading)) or self.toClose == true then
 	
 		if self.shrapnelUnreadyPlayed == false then
 			self.shrapnelUnreadySound:Play(self.Pos);
@@ -463,6 +463,7 @@ function Update(self)
 		
 		if self.shrapnelAnimTimer:IsPastSimMS(100) then
 			self.Frame = 0;
+			self.toClose = false;
 		else
 			self.Frame = 4;
 		end
@@ -500,6 +501,8 @@ function Update(self)
 				
 				self.chamberOnReload = true;
 				self.shrapnelReload = false;
+				
+				self.toClose = true;
 				
 				for i = 1, self.Magazine.RoundCount do
 					local Bullet = CreateMOPixel("Particle Jury", "Heat.rte")
