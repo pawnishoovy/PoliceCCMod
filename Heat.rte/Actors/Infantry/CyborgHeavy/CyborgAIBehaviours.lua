@@ -359,8 +359,23 @@ end
 
 function CyborgAIBehaviours.handleVoicelines(self)
 
-	-- holding
+	-- squad stuff
+	-- this is imperfect: itll only play when we go straight from being in a squad to being player controlled (i.e. we are now the leader)
+	-- there is no way to see if we're leading a squad, so that close approximation is the best we can get.
+	-- also means no VO when FORMING a squad :(
 
+	if self.AIMode == 11 then
+		self.inSquad = true;
+	elseif self.inSquad == true and self:IsPlayerControlled() and self.leadVoiceLineTimer:IsPastSimMS(self.leadVoiceLineDelay) then
+		self.inSquad = false;
+		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Lead, 3);
+	else
+		self.inSquad = false;
+	end
+		
+		
+	-- holding
+	
 	if self.AIMode == 1 then
 		if self.Holding == false then
 			self.Holding = true;
@@ -387,7 +402,7 @@ function CyborgAIBehaviours.handleVoicelines(self)
 					if gun.FiredFrame then
 						self.gunShotCounter = self.gunShotCounter + 1;
 					end
-					if self.gunShotCounter > (gunMag.Capacity*0.7) and self.suppressingVoicelineTimer:IsPastSimMS(self.suppressingVoicelineDelay) then
+					if self.gunShotCounter > (gunMag.Capacity*0.7) and self.suppressingVoiceLineTimer:IsPastSimMS(self.suppressingVoiceLineDelay) then
 						CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Battlecry, 3);
 						self.suppressingVoicelineTimer:Reset();
 					end
