@@ -369,6 +369,7 @@ function CyborgAIBehaviours.handleVoicelines(self)
 	elseif self.inSquad == true and self:IsPlayerControlled() and self.leadVoiceLineTimer:IsPastSimMS(self.leadVoiceLineDelay) then
 		self.inSquad = false;
 		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Lead, 3);
+		self.leadVoiceLineTimer:Reset();
 	else
 		self.inSquad = false;
 	end
@@ -398,7 +399,7 @@ function CyborgAIBehaviours.handleVoicelines(self)
 				local gun = ToHDFirearm(self.EquippedItem);
 				local gunMag = gun.Magazine
 				
-				if gun.FullAuto == true and gunMag and gun:IsActivated() then
+				if gun.FullAuto == true and gunMag and gunMag.Capacity > 10  and gun:IsActivated() then
 					if gun.FiredFrame then
 						self.gunShotCounter = self.gunShotCounter + 1;
 					end
