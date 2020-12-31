@@ -283,20 +283,19 @@ function CyborgAIBehaviours.handleSuppression(self)
 				CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Suppressed, 5);
 				self.suppressedVoicelineTimer:Reset();
 			end
-			if self.Suppressed == false then -- initial voiceline
+			if self.Suppressed == false and self.suppressedVoicelineTimer:IsPastSimMS(self.suppressedVoicelineDelay) then -- initial voiceline
 				CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Suppressed, 5);
+				self.suppressedVoicelineTimer:Reset();
 			end
 			self.Suppressed = true;
 		else
 			self.Suppressed = false;
 		end
 		self.Suppression = math.min(self.Suppression, 100)
-		if self.Suppression > 80 then
+		if self.Suppression > 0 then
 			self.Suppression = self.Suppression - 5;
-		elseif self.Suppression > 0 then
-			self.Suppression = self.Suppression - 10;
 		end
-		self.Suppression = math.max(self.Suppression, 0)
+		self.Suppression = math.max(self.Suppression, 0);
 		self.suppressionUpdateTimer:Reset();
 	end
 end
@@ -369,6 +368,7 @@ function CyborgAIBehaviours.handleVoicelines(self)
 	elseif self.inSquad == true and self:IsPlayerControlled() and self.leadVoiceLineTimer:IsPastSimMS(self.leadVoiceLineDelay) then
 		self.inSquad = false;
 		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Lead, 3);
+		self.leadVoiceLineTimer:Reset();
 	else
 		self.inSquad = false;
 	end
@@ -398,13 +398,13 @@ function CyborgAIBehaviours.handleVoicelines(self)
 				local gun = ToHDFirearm(self.EquippedItem);
 				local gunMag = gun.Magazine
 				
-				if gun.FullAuto == true and gunMag and gun:IsActivated() then
+				if gun.FullAuto == true and gunMag and gunMag.Capacity > 10  and gun:IsActivated() then
 					if gun.FiredFrame then
 						self.gunShotCounter = self.gunShotCounter + 1;
 					end
 					if self.gunShotCounter > (gunMag.Capacity*0.7) and self.suppressingVoiceLineTimer:IsPastSimMS(self.suppressingVoiceLineDelay) then
 						CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Battlecry, 3);
-						self.suppressingVoicelineTimer:Reset();
+						self.suppressingVoiceLineTimer:Reset();
 					end
 				else
 					self.gunShotCounter = 0;
