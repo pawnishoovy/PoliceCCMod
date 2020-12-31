@@ -283,20 +283,19 @@ function CyborgAIBehaviours.handleSuppression(self)
 				CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Suppressed, 5);
 				self.suppressedVoicelineTimer:Reset();
 			end
-			if self.Suppressed == false then -- initial voiceline
+			if self.Suppressed == false and self.suppressedVoicelineTimer:IsPastSimMS(self.suppressedVoicelineDelay) then -- initial voiceline
 				CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Suppressed, 5);
+				self.suppressedVoicelineTimer:Reset();
 			end
 			self.Suppressed = true;
 		else
 			self.Suppressed = false;
 		end
 		self.Suppression = math.min(self.Suppression, 100)
-		if self.Suppression > 80 then
+		if self.Suppression > 0 then
 			self.Suppression = self.Suppression - 5;
-		elseif self.Suppression > 0 then
-			self.Suppression = self.Suppression - 10;
 		end
-		self.Suppression = math.max(self.Suppression, 0)
+		self.Suppression = math.max(self.Suppression, 0);
 		self.suppressionUpdateTimer:Reset();
 	end
 end
