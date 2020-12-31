@@ -404,7 +404,7 @@ function CyborgAIBehaviours.handleVoicelines(self)
 					end
 					if self.gunShotCounter > (gunMag.Capacity*0.7) and self.suppressingVoiceLineTimer:IsPastSimMS(self.suppressingVoiceLineDelay) then
 						CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Battlecry, 3);
-						self.suppressingVoicelineTimer:Reset();
+						self.suppressingVoiceLineTimer:Reset();
 					end
 				else
 					self.gunShotCounter = 0;
