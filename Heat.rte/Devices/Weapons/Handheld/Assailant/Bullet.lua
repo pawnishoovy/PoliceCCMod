@@ -1,3 +1,9 @@
+function Create(self)
+
+	self.impactSound = CreateSoundContainer("Bullet Impact Assailant", "Heat.rte");
+	
+end
+
 function Update(self)
 
 
@@ -11,7 +17,7 @@ function Update(self)
 			local obstacleRay = SceneMan:CastObstacleRay(Vector(self.Pos.X, self.Pos.Y), trace, Vector(), hitPos, rte.NoMOID, self.Team, rte.airID, skipPx);
 			if obstacleRay >= 0 then
 				
-				self.hitSound = AudioMan:PlaySound("Heat.rte/Devices/Weapons/Handheld/Assailant/CompliSound/BulletImpact" .. math.random(1, 5) .. ".ogg", hitPos, -1, 0, 130, 1, 150, false);
+				self.impactSound:Play(self.Pos);
 				--[[
 				if math.random(100) > 85 then
 					local Effect = CreateMOSParticle("Explosion Smoke 2 Glow")
