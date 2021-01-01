@@ -7,10 +7,6 @@ end
 
 function Update(self)
 
-	if not self.idleLoop:IsBeingPlayed() then
-		self.idleLoop:Play(self.Pos);
-	end
-
 	if self.Vel.Magnitude > 2 and not self.engineLoop:IsBeingPlayed() then
 		self.engineLoop:Play(self.Pos);
 	elseif self.Vel.Magnitude <= 2 then
@@ -24,7 +20,12 @@ function Update(self)
 		self.engineLoop.Volume = self.Vel.Magnitude / 28;
 		self.engineLoop.Pitch = (self.Vel.Magnitude / 28) + 1;
 	end
-
+	
+	if self.idleLoop:IsBeingPlayed() then
+		self.idleLoop.Volume = 1 - (self.Vel.Magnitude / 60);
+	else
+		self.idleLoop:Play(self.Pos);
+	end
 	if self.Vel.Magnitude > 30 then
 		local vec = self.Vel + Vector(0, 0);
 		self.Vel = vec:SetMagnitude(30);
