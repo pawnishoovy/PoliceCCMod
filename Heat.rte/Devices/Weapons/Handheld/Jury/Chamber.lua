@@ -668,7 +668,7 @@ function Update(self)
 		
 		local fire = false
 		if self.parent:IsPlayerControlled() and ctrl.Player ~= -1 then
-			if UInputMan:KeyPressed(15) then
+			if UInputMan:KeyPressed(22) then
 				fire = true
 			end
 		elseif self.Magazine then -- AI

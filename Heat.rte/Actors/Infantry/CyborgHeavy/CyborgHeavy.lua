@@ -101,6 +101,11 @@ function Create(self)
 	self.boosterTimer = Timer()
 	self.boosterAIDelay = 6000
 	
+	-- Abilities
+	
+	self.Shield = CreateHeldDevice("Sergeant's Shield", "Heat.rte");
+	self.shieldUsed = false;
+	
 	-- End modded code
 end
 
@@ -165,6 +170,8 @@ function Update(self)
 		CyborgAIBehaviours.handleVoicelines(self);
 		
 		CyborgAIBehaviours.handleHeadFrames(self);
+		
+		CyborgAIBehaviours.handleAbilities(self)
 
 	else
 	
