@@ -105,6 +105,7 @@ function Create(self)
 	
 	self.Shield = CreateHeldDevice("Sergeant's Shield", "Heat.rte");
 	self.shieldUsed = false;
+	self.shieldAITrigger = false
 	
 	-- End modded code
 end

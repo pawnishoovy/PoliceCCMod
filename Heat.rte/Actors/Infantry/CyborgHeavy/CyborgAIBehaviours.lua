@@ -308,6 +308,13 @@ function CyborgAIBehaviours.handleAITargetLogic(self)
 		self.LastTargetID = -1
 	end
 	
+	-- AGRESSIVENESS
+	if not self.Suppressed and self.Health > 55 and self.UniqueID % 2 == 0 then
+		self.aggressive = true
+	else
+		self.aggressive = false
+	end
+	
 	--spotEnemy
 	
 	if (not self:IsPlayerControlled()) and self.AI.Target and IsAHuman(self.AI.Target) then
@@ -316,6 +323,10 @@ function CyborgAIBehaviours.handleAITargetLogic(self)
 		
 		local posDifference = SceneMan:ShortestDistance(self.Pos,self.AI.Target.Pos,SceneMan.SceneWrapsX)
 		local distance = posDifference.Magnitude
+		
+		if self.shieldUsed == false and (distance < 300 or self.Health < 70) then -- AI shield trigger
+			self.shieldAITrigger = true
+		end
 		
 		if self.spotAllowed ~= false then
 			
@@ -430,7 +441,7 @@ function CyborgAIBehaviours.handleHeadFrames(self)
 end
 
 function CyborgAIBehaviours.handleAbilities(self)
-	if self:IsPlayerControlled() and UInputMan:KeyPressed(15) then
+	if (self:IsPlayerControlled() and UInputMan:KeyPressed(15)) or self.shieldAITrigger == true then
 		if self.shieldUsed == false then
 			self:AddInventoryItem(self.Shield);
 			self.shieldUsed = true;
