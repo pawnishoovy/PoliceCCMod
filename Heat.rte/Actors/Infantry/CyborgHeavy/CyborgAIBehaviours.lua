@@ -427,7 +427,25 @@ function CyborgAIBehaviours.handleHeadFrames(self)
 	elseif (self.emotionDuration == 0) and ((not self.voiceSound or not self.voiceSound:IsBeingPlayed())) then
 		self.Head.Frame = self.baseHeadFrame;
 	end
+end
 
+function CyborgAIBehaviours.handleAbilities(self)
+	if self:IsPlayerControlled() and UInputMan:KeyPressed(15) then
+		if self.shieldUsed == false then
+			self:AddInventoryItem(self.Shield);
+			self.shieldUsed = true;
+		end
+	end
+	
+	if self.EquippedItem and IsHDFirearm(self.EquippedItem)then
+		local gun = ToHDFirearm(self.EquippedItem)
+		if not gun:NumberValueExists("CyborgOneHand") then
+			local attachment = CreateAttachable("One Hand Attachment CyborgHeavy", "Heat.rte");
+			gun:AddAttachable(attachment);
+			gun:SetNumberValue("CyborgOneHand", 1);
+		end
+	end
+	
 end
 
 function CyborgAIBehaviours.handleHeadLoss(self)

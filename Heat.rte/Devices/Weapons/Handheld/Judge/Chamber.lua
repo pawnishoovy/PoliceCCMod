@@ -391,7 +391,7 @@ function Update(self)
 		-- Auto/Manual mode piggybacking off self.parent here
 		
 		if self.parent:IsPlayerControlled() then
-			if UInputMan:KeyPressed(15) then
+			if UInputMan:KeyPressed(22) then
 				if self.Mode == 0 then
 					self.autoOnSound:Play(self.Pos);
 					self.Mode = 1;
