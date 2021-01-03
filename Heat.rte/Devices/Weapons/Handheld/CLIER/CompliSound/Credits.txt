@@ -1,0 +1,5 @@
+Add - AfurisShotFireA (0.022) mp5a5_bass_loop_01 mp5a5_core_single_01
+
+Mech - mp5a5_mech_loop_01
+
+Reflection - GrineerM16WraithShotA weap_smg_fire_plr_atmo_ext1_01
