@@ -157,7 +157,7 @@ function Update(self)
 		if self.parent then
 			self.parent:GetController():SetState(Controller.AIM_SHARP,false);
 		end
-		
+		--[[
 		if not self:NumberValueExists("MagRemoved") and self.parent:IsPlayerControlled() then
 			local color = (self.reloadPhase == 2 and 105 or 120)
 			local offset = Vector(0, 36)
@@ -195,7 +195,7 @@ function Update(self)
 				lastVecA = Vector(vecA.X, vecA.Y)
 				lastVecB = Vector(vecB.X, vecB.Y)
 			end
-		end
+		end]]
 	
 		
 		if self.reloadPhase == 0 then
@@ -359,6 +359,36 @@ function Update(self)
 	end
 	
 	if self.flashFiring and self.flashFireTimer:IsPastSimMS(self.flashFireTimeMS) then
+		
+		-- Flash
+		local rayVec = Vector(75 * self.FlipFactor, 0):RadRotate(self.RotAngle)
+		
+		local endPos = self.MuzzlePos + rayVec; -- This value is going to be overriden by function below, this is the end of the ray
+		local ray = SceneMan:CastObstacleRay(self.MuzzlePos, rayVec, Vector(0, 0), endPos, self.parent.ID, self.Team, 0, 2) -- Do the hitscan stuff, raycast
+		--local vec = SceneMan:ShortestDistance(point,endPos,SceneMan.SceneWrapsX);
+		
+		local Effect = CreateMOPixel("Flash Glow CLIER", "Heat.rte")
+		if Effect then
+			Effect.Pos = self.MuzzlePos;
+			--Effect.Vel = (self.Vel + Vector(RangeRand(-20,20), RangeRand(-20,20)) + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 30
+			MovableMan:AddParticle(Effect)
+		end
+		
+		for i = 0, math.random(3,6) do
+			local Effect = CreateMOPixel("Flash Glow CLIER", "Heat.rte")
+			if Effect then
+				Effect.Pos = self.MuzzlePos + Vector(math.random(15,50) * self.FlipFactor, 0):RadRotate(self.RotAngle + math.rad(RangeRand(-45,45)));
+				MovableMan:AddParticle(Effect)
+			end
+		end
+		
+		local Flash = CreateMOPixel("Flash CLIER", "Heat.rte")
+		if Flash then
+			Flash.Pos = endPos;
+			Flash.Vel = Vector(45,0)
+			Flash.Team = self.Team
+			MovableMan:AddParticle(Flash)
+		end
 		
 		self.flashSound:Play(self.Pos);
 		
