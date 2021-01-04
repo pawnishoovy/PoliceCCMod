@@ -33,7 +33,8 @@ function Create(self)
 	Suppressed = CreateSoundContainer("VO Suppressed CyborgHeavy", "Heat.rte"),
 	Battlecry = CreateSoundContainer("VO Battlecry CyborgHeavy", "Heat.rte"),
 	Intimidate = CreateSoundContainer("VO Intimidate CyborgHeavy", "Heat.rte"),
-	Lead = CreateSoundContainer("VO Lead CyborgHeavy", "Heat.rte")};
+	Lead = CreateSoundContainer("VO Lead CyborgHeavy", "Heat.rte"),
+	meleeYell = CreateSoundContainer("VO Melee Yell CyborgHeavy", "Heat.rte")};
 
 	self.altitude = 0;
 	self.wasInAir = false;

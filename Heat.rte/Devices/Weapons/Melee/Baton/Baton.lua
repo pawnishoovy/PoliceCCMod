@@ -196,9 +196,9 @@ function Create(self)
 	attackPhase[i].durationMS = 110
 	
 	attackPhase[i].canDamage = true
-	attackPhase[i].attackDamage = 2.5
+	attackPhase[i].attackDamage = 3
 	attackPhase[i].attackStunChance = 0.15
-	attackPhase[i].attackRange = 11
+	attackPhase[i].attackRange = 13
 	attackPhase[i].attackPush = 0.8
 	attackPhase[i].attackVector = Vector(0, -4) -- local space vector relative to position and rotation
 	attackPhase[i].attackAngle = 90;
@@ -329,7 +329,7 @@ function Create(self)
 	chargeAttackPhase[i].durationMS = 160
 	
 	chargeAttackPhase[i].canDamage = true
-	chargeAttackPhase[i].attackDamage = 4
+	chargeAttackPhase[i].attackDamage = 5
 	chargeAttackPhase[i].attackStunChance = 0.3
 	chargeAttackPhase[i].attackRange = 7
 	chargeAttackPhase[i].attackPush = 0.8
@@ -406,12 +406,13 @@ function Create(self)
 end
 
 function Update(self)
-	local act = MovableMan:GetMOFromID(self.RootID);
-	local actor = act and act.ID ~= rte.NoMOID and MovableMan:IsActor(act) and ToActor(act) or nil;
+	local act = self:GetRootParent();
+	local actor = MovableMan:IsActor(act) and ToActor(act) or nil;
 	local player = false
 	if actor then
 		--ToActor(actor):GetController():SetState(Controller.WEAPON_RELOAD,false);
 		actor:GetController():SetState(Controller.AIM_SHARP,false);
+		self.parent = actor;
 		if actor:IsPlayerControlled() then
 			player = true
 		end
@@ -528,6 +529,9 @@ function Update(self)
 			end
 			
 			canDamage = currentPhase.canDamage or false
+			if canDamage == true then
+				self.parent:SetNumberValue("Melee Attacked", 1);
+			end
 			damage = currentPhase.attackDamage or 0
 			damageVector = currentPhase.attackVector or Vector(0,0)
 			damageAngle = currentPhase.attackAngle or 0

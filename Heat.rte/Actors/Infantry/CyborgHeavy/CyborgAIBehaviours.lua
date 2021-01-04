@@ -383,6 +383,11 @@ function CyborgAIBehaviours.handleVoicelines(self)
 	else
 		self.inSquad = false;
 	end
+	
+	if self:NumberValueExists("Melee Attacked") then
+		self:RemoveNumberValue("Melee Attacked");
+		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 3);
+	end
 		
 		
 	-- holding

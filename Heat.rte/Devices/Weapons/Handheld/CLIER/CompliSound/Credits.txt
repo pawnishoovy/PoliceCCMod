@@ -1,4 +1,4 @@
-Add - AfurisShotFireA (0.022) mp5a5_bass_loop_01 mp5a5_core_single_01
+Add - AfurisShotFireA (0.022, -9) mp5a5_bass_loop_01 mp5a5_core_single_01
 
 Mech - mp5a5_mech_loop_01
 

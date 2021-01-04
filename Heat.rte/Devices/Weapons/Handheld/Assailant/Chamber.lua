@@ -446,7 +446,7 @@ function Update(self)
 				PrimitiveMan:DrawTextPrimitive(screen, pos + Vector(0, 10), "Nade Launcher Ready!", true, 1);
 			elseif self.grenadeLoaded then
 				PrimitiveMan:DrawTextPrimitive(screen, pos, "Underbarrel Nade: Ready", true, 1);
-				PrimitiveMan:DrawTextPrimitive(screen, pos + Vector(0, 10), "Press O to fire", true, 1);
+				PrimitiveMan:DrawTextPrimitive(screen, pos + Vector(0, 10), "Press V to fire", true, 1);
 			else
 				PrimitiveMan:DrawTextPrimitive(screen, pos, "Underbarrel Nade: Loading...", true, 1);
 			end
