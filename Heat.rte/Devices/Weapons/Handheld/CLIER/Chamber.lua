@@ -255,11 +255,18 @@ function Update(self)
 		if self.reloadTimer:IsPastSimMS(self.reloadDelay) then
 		
 			if self.reloadPhase == 0 then
-				self.Frame = 1;
+				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*1.2)) then
+					self.Frame = 2;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.6)) then
+					self.Frame = 1;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.3)) then
+					self.Frame = 0;
+				end
 				self.phaseOnStop = 0;
 			elseif self.reloadPhase == 1 then
-				self.Frame = 2;
+				self.Frame = 3;
 				self.phaseOnStop = 2;
+				self.boltLockedBack = true;
 			elseif self.reloadPhase == 2 then
 				self.phaseOnStop = nil;
 				self:SetNumberValue("MagRemoved", 1);
@@ -269,8 +276,12 @@ function Update(self)
 				if self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.5)) then
 					self.Frame = 0;
 					self.rotationTarget = -10
-				else
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.4)) then
 					self.Frame = 1;
+				elseif self.reloadTimer:IsPastSimMS(self.reloadDelay + ((self.afterDelay/5)*0.3)) then
+					self.Frame = 2;
+				else
+					self.Frame = 3;
 					self.rotationTarget = -15
 				end
 			end
@@ -318,9 +329,11 @@ function Update(self)
 				if self.chamberOnReload and self.reloadPhase == 4 then
 					self.ReloadTime = 0;
 					self.reloadPhase = 2;
+					self.boltLockedBack = false;
 				elseif (not self.chamberOnReload) and self.reloadPhase == 3 then
 					self.ReloadTime = 0;
 					self.reloadPhase = 2;
+					self.boltLockedBack = false;
 				else
 					self.reloadPhase = self.reloadPhase + 1;
 				end
@@ -328,6 +341,11 @@ function Update(self)
 		end
 	else
 		self.rotationTarget = 0
+		if self.boltLockedBack == true then
+			self.Frame = 3;
+		else
+			self.Frame = 0;
+		end
 		if self.phaseOnStop then
 			self.reloadPhase = self.phaseOnStop;
 			self.phaseOnStop = nil;

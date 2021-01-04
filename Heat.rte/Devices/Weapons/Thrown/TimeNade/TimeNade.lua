@@ -1,4 +1,7 @@
 function Create(self)
+
+	self.startSound = CreateSoundContainer("Time Nade Start", "Heat.rte");
+
 	self.activateTimer = Timer();
 	self.activateDelay = 2000
 	
@@ -99,6 +102,8 @@ function Update(self)
 				local emitter = CreateAEmitter("Time Nade Emitter")
 				emitter.Lifetime = self.deactivateDelay
 				self:AddAttachable(emitter);
+				
+				self.startSound:Play(self.Pos);
 			end
 		else
 			self.activateTimer:Reset()
