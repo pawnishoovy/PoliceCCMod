@@ -291,6 +291,8 @@ function OnCollideWithMO(self, collidedMO, collidedRootMO)
 			effect:GibThis();
 		end
 		
+		self.Health = self.Health - math.random(0,2)
+		
 		-- Damage things by spewing particles
 		for j = 0, math.random(2,4) do
 			for i = 0, 1 do
@@ -344,6 +346,8 @@ function OnCollideWithTerrain(self, terrainID)
 			MovableMan:AddParticle(effect);
 			effect:GibThis();
 		end
+		
+		self.Health = self.Health - math.random(0,1)
 		
 		self.sawHitTimer:Reset()
 	end
