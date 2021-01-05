@@ -613,7 +613,31 @@ function Create(self)
 	-- Attack
 	i = 3
 	chargeAttackPhase2[i] = {}
-	chargeAttackPhase2[i].durationMS = 160
+	chargeAttackPhase2[i].durationMS = 90
+	
+	chargeAttackPhase2[i].canDamage = false
+	chargeAttackPhase2[i].attackDamage = 5
+	chargeAttackPhase2[i].attackStunChance = 0.3
+	chargeAttackPhase2[i].attackRange = 7
+	chargeAttackPhase2[i].attackPush = 0.8
+	chargeAttackPhase2[i].attackVector = Vector(0, -7) -- local space vector relative to position and rotation
+	chargeAttackPhase2[i].attackAngle = 90;
+	
+	chargeAttackPhase2[i].frameStart = 10
+	chargeAttackPhase2[i].frameEnd = 8
+	chargeAttackPhase2[i].angleStart = -120
+	chargeAttackPhase2[i].angleEnd = -82.5
+	chargeAttackPhase2[i].offsetStart = Vector(4, 15)
+	chargeAttackPhase2[i].offsetEnd = Vector(9.5, 0)
+	
+	chargeAttackPhase2[i].soundStart = CreateSoundContainer("Swing Baton Heat", "Heat.rte");
+	
+	chargeAttackPhase2[i].soundEnd = nil
+	
+	-- Attack
+	i = 4
+	chargeAttackPhase2[i] = {}
+	chargeAttackPhase2[i].durationMS = 90
 	
 	chargeAttackPhase2[i].canDamage = true
 	chargeAttackPhase2[i].attackDamage = 5
@@ -621,21 +645,21 @@ function Create(self)
 	chargeAttackPhase2[i].attackRange = 7
 	chargeAttackPhase2[i].attackPush = 0.8
 	chargeAttackPhase2[i].attackVector = Vector(0, -7) -- local space vector relative to position and rotation
-	chargeAttackPhase2[i].attackAngle = -90;
+	chargeAttackPhase2[i].attackAngle = 90;
 	
-	chargeAttackPhase2[i].frameStart = 10
+	chargeAttackPhase2[i].frameStart = 8
 	chargeAttackPhase2[i].frameEnd = 6
-	chargeAttackPhase2[i].angleStart = -120
+	chargeAttackPhase2[i].angleStart = -82.5
 	chargeAttackPhase2[i].angleEnd = -45
-	chargeAttackPhase2[i].offsetStart = Vector(4, 15)
+	chargeAttackPhase2[i].offsetStart = Vector(9.5, 0)
 	chargeAttackPhase2[i].offsetEnd = Vector(15, -15)
 	
-	chargeAttackPhase2[i].soundStart = CreateSoundContainer("Swing Baton Heat", "Heat.rte");
+	chargeAttackPhase2[i].soundStart = nil
 	
 	chargeAttackPhase2[i].soundEnd = nil
 	
 	-- Recover
-	i = 4
+	i = 5
 	chargeAttackPhase2[i] = {}
 	chargeAttackPhase2[i].durationMS = 250
 	
@@ -894,7 +918,7 @@ function Update(self)
 			local rayVec = Vector(damageRange * self.FlipFactor, 0):RadRotate(self.RotAngle):DegRotate(damageAngle*self.FlipFactor)--damageVector:RadRotate(self.RotAngle) * Vector(self.FlipFactor, 1)
 			local rayOrigin = Vector(self.Pos.X, self.Pos.Y) + Vector(damageVector.X * self.FlipFactor, damageVector.Y):RadRotate(self.RotAngle)
 			
-			PrimitiveMan:DrawLinePrimitive(rayOrigin, rayOrigin + rayVec,  5);
+			--PrimitiveMan:DrawLinePrimitive(rayOrigin, rayOrigin + rayVec,  5);
 			--PrimitiveMan:DrawCirclePrimitive(self.Pos, 3, 5);
 			
 			local moCheck = SceneMan:CastMORay(rayOrigin, rayVec, self.ID, self.Team, 0, false, 2); -- Raycast
