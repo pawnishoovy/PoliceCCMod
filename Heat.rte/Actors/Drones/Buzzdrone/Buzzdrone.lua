@@ -20,6 +20,14 @@ function Create(self)
 	
 	self.Accelerate = CreateSoundContainer("Accelerate Buzzdrone", "Heat.rte");
 	
+	self.scanLoop = CreateSoundContainer("Scan Loop Buzzdrone", "Heat.rte");
+	self.aggroScanLoop = CreateSoundContainer("Aggro Scan Loop Buzzdrone", "Heat.rte");
+	self.scanLockOn = CreateSoundContainer("Scan Lock On Buzzdrone", "Heat.rte");
+	self.scanLockOff = CreateSoundContainer("Scan Lock Off Buzzdrone", "Heat.rte");
+	
+	self.scanTimer = Timer();
+	self.scanDelay = 4000;
+	
 	self.Moving = false;
 	
 	self.moveTimer = Timer();
@@ -90,6 +98,72 @@ function Update(self)
 		self.scanTimer:Reset()
 	end
 	
+	if self.aggroScan == true then
+		if self.scanLockOnSound == true then
+			self.scanLockOn:Play(self.Pos);
+			self.scanLockOnSound = false;
+			
+			if self.scanLoop:IsBeingPlayed() then
+				self.scanLoop:Stop(-1);
+			end
+			
+			if self.scanLockOff:IsBeingPlayed() then
+				self.scanLockOff:Stop(-1);
+			end
+			
+			self.Scan = true;
+			
+		end
+		if not self.aggroScanLoop:IsBeingPlayed() then
+			self.aggroScanLoop:Play(self.Pos);
+		else
+			self.aggroScanLoop.Pos = self.Pos;
+		end
+	else
+		if self.aggroScanLoop:IsBeingPlayed() then
+			self.aggroScanLoop:Stop(-1);
+			
+			self.scanTimer:Reset();
+			
+			self.scanLockOff:Play(self.Pos);
+		end
+		
+		if self.Scan == true and not self.Scanning == true then
+			self.Scan = false;
+			self.Scanning = true;
+			if self.scanLoop:IsBeingPlayed() then
+				self.scanLoop:Stop(-1);
+			end
+			self.scanTimer:Reset();
+		end
+		if self.Scanning == true then
+			self.Scan = false;
+			if not self.scanLoop:IsBeingPlayed() then
+				self.scanLoop:Play(self.Pos);
+				self.scanTimer:Reset();
+			elseif self.scanLoop:IsBeingPlayed() then
+			
+				PrimitiveMan:DrawLinePrimitive(self.Pos + Vector(4*self.FlipFactor, -4):RadRotate(self.RotAngle), self.Pos + Vector(20*self.FlipFactor, 0):RadRotate(self.RotAngle):DegRotate(math.random(-45, 45)), 122);
+				PrimitiveMan:DrawLinePrimitive(self.Pos + Vector(4*self.FlipFactor, -4):RadRotate(self.RotAngle), self.Pos + Vector(20*self.FlipFactor, 0):RadRotate(self.RotAngle):DegRotate(math.random(-45, 45)), 122);
+				PrimitiveMan:DrawLinePrimitive(self.Pos + Vector(4*self.FlipFactor, -4):RadRotate(self.RotAngle), self.Pos + Vector(20*self.FlipFactor, 0):RadRotate(self.RotAngle):DegRotate(math.random(-45, 45)), 122);
+				
+				self.scanLoop.Pos = self.Pos;
+				if self.scanTimer:IsPastSimMS(self.scanDelay) then
+					AudioMan:FadeOutSound(self.scanLoop, 250);
+					self.Scanning = false;
+				end
+			end
+		end
+		
+		self.scanLockOnSound = true;
+		
+	end
+	
+	if math.random() < 0.002 then
+		self.Scan = true;
+		self.scanDelay = math.random(2000, 6500);
+	end	
+	
 	-- Controller
 	
 	if self:IsPlayerControlled() then -- PLAYER
@@ -108,7 +182,7 @@ function Update(self)
 			moving = true
 		end
 		if ctrl:IsState(Controller.HOLD_LEFT) then
-			movementVector.X = movementVector.Y - 1
+			movementVector.X = movementVector.X - 1
 			moving = true
 		end
 		if ctrl:IsState(Controller.HOLD_RIGHT) then
@@ -126,6 +200,11 @@ function Update(self)
 			movementVector:SetMagnitude(self.Vel.Magnitude * 2.0 + 25)
 			self.hoverPosTarget = Vector(self.Pos.X, self.Pos.Y) + movementVector;
 		end
+		
+		self.Scan = false;
+		self.aggroScan = false;
+		
+		
 	else -- AI
 		-- Placeholder AI
 		local target = MovableMan:GetClosestEnemyActor(self.Team, self.Pos, 300, Vector());
@@ -137,6 +216,7 @@ function Update(self)
 				self.hoverPosTarget = Vector(target.Pos.X, target.Pos.Y)
 				
 				self.sawEnabled = true
+				self.aggroScan = true;
 			end
 		else
 			-- Patrol
@@ -169,6 +249,7 @@ function Update(self)
 		
 		self.sawStartSound = true
 	end
+
 	
 	-- Movement
 	self.accsin = (self.accsin + TimerMan.DeltaTimeSecs * 2) % 2;
@@ -368,4 +449,12 @@ function Destroy(self)
 	if self.Accelerate:IsBeingPlayed() then
 		self.Accelerate:Stop(-1);
 	end
+	
+	if self.scanLoop:IsBeingPlayed() then
+		self.scanLoop:Stop(-1);
+	end
+	
+	if self.aggroScanLoop:IsBeingPlayed() then
+		self.aggroScanLoop:Stop(-1);
+	end	
 end
