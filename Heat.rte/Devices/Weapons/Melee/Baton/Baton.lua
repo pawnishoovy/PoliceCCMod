@@ -974,7 +974,6 @@ function Update(self)
 							end
 						end
 						
-						self.anim = self.anim - 3
 						self.attackStun = true
 					end
 					
