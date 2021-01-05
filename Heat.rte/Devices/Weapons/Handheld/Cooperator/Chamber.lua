@@ -315,7 +315,7 @@ function Update(self)
 			
 			local bigIndoorRays = 0;
 
-			if self.parent:IsPlayerControlled() then
+			if self.parent and self.parent:IsPlayerControlled() then
 				self.rayThreshold = 2; -- this is the first ray check to decide whether we play outdoors
 				local Vector2 = Vector(0,-700); -- straight up
 				local Vector2Left = Vector(0,-700):RadRotate(45*(math.pi/180));

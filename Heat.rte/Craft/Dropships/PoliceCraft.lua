@@ -20,7 +20,7 @@ function Create(self)
 	self.healthUpdateTimer = Timer();
 	self.oldHealth = self.Health;
 	
-	ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.YELLOW, 0):ShowText("oh lawd they coming", GUIBanner.FLYBYLEFTWARD, 1000, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
+	--ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.YELLOW, 0):ShowText("oh lawd they coming", GUIBanner.FLYBYLEFTWARD, 1000, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
 end
 
 function Update(self)
