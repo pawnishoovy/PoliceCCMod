@@ -269,6 +269,184 @@ function Create(self)
 	self.attackAnimationsGFX[1] = regularAttackGFX
 	self.attackAnimations[1] = attackPhase
 	
+	-- Regular Attack 2 ("stab")
+	attackPhase2 = {}
+	
+	-- Prepare
+	i = 1
+	attackPhase2[i] = {}
+	attackPhase2[i].durationMS = 150
+	
+	attackPhase2[i].canDamage = false
+	attackPhase2[i].attackDamage = 0
+	attackPhase2[i].attackStunChance = 0
+	attackPhase2[i].attackRange = 0
+	attackPhase2[i].attackPush = 0
+	attackPhase2[i].attackVector = Vector(4, 10) -- local space vector relative to position and rotation
+	
+	attackPhase2[i].frameStart = 6
+	attackPhase2[i].frameEnd = 6
+	attackPhase2[i].angleStart = 0
+	attackPhase2[i].angleEnd = -60
+	attackPhase2[i].offsetStart = Vector(0, 0)
+	attackPhase2[i].offsetEnd = Vector(-2, -3)
+	
+	attackPhase2[i].soundStart = nil
+	attackPhase2[i].soundStartVariations = 0
+	
+	attackPhase2[i].soundEnd = nil
+	attackPhase2[i].soundEndVariations = 0
+	
+	-- Late Prepare
+	i = 2
+	attackPhase2[i] = {}
+	attackPhase2[i].durationMS = 30
+	
+	attackPhase2[i].canDamage = false
+	attackPhase2[i].attackDamage = 0
+	attackPhase2[i].attackStunChance = 0
+	attackPhase2[i].attackRange = 0
+	attackPhase2[i].attackPush = 0
+	attackPhase2[i].attackVector = Vector(4, 10) -- local space vector relative to position and rotation
+	
+	attackPhase2[i].frameStart = 6
+	attackPhase2[i].frameEnd = 6
+	attackPhase2[i].angleStart = -60
+	attackPhase2[i].angleEnd = -70
+	attackPhase2[i].offsetStart = Vector(-2, -3)
+	attackPhase2[i].offsetEnd = Vector(-3, -4)
+	
+	attackPhase2[i].soundStart = nil
+	attackPhase2[i].soundStartVariations = 0
+	
+	attackPhase2[i].soundEnd = nil
+	attackPhase2[i].soundEndVariations = 0
+	
+	-- Early Early Attack
+	i = 3
+	attackPhase2[i] = {}
+	attackPhase2[i].durationMS = 110
+	
+	attackPhase2[i].canDamage = false
+	attackPhase2[i].attackDamage = 2.3
+	attackPhase2[i].attackStunChance = 0.15
+	attackPhase2[i].attackRange = 20
+	attackPhase2[i].attackPush = 0.8
+	attackPhase2[i].attackVector = Vector(0, -8) -- local space vector relative to position and rotation
+	
+	attackPhase2[i].frameStart = 6
+	attackPhase2[i].frameEnd = 6
+	attackPhase2[i].angleStart = -70
+	attackPhase2[i].angleEnd = -80
+	attackPhase2[i].offsetStart = Vector(-3, -4)
+	attackPhase2[i].offsetEnd = Vector(0, -5)
+	
+	attackPhase2[i].soundStart = CreateSoundContainer("Swing Baton Heat", "Heat.rte");
+	
+	attackPhase2[i].soundEnd = nil
+	
+	-- Early Attack
+	i = 4
+	attackPhase2[i] = {}
+	attackPhase2[i].durationMS = 30
+	
+	attackPhase2[i].canDamage = false
+	attackPhase2[i].attackDamage = 2.3
+	attackPhase2[i].attackStunChance = 0.15
+	attackPhase2[i].attackRange = 20
+	attackPhase2[i].attackPush = 0.8
+	attackPhase2[i].attackVector = Vector(0, -8) -- local space vector relative to position and rotation
+	
+	attackPhase2[i].frameStart = 6
+	attackPhase2[i].frameEnd = 6
+	attackPhase2[i].angleStart = -80
+	attackPhase2[i].angleEnd = -90
+	attackPhase2[i].offsetStart = Vector(0, -5)
+	attackPhase2[i].offsetEnd = Vector(4, -6)
+	
+	attackPhase2[i].soundStart = nil
+	
+	attackPhase2[i].soundEnd = nil
+	
+	-- Attack
+	i = 5
+	attackPhase2[i] = {}
+	attackPhase2[i].durationMS = 110
+	
+	attackPhase2[i].canDamage = true
+	attackPhase2[i].attackDamage = 3
+	attackPhase2[i].attackStunChance = 0.15
+	attackPhase2[i].attackRange = 13
+	attackPhase2[i].attackPush = 0.8
+	attackPhase2[i].attackVector = Vector(0, -4) -- local space vector relative to position and rotation
+	attackPhase2[i].attackAngle = 90;
+	
+	attackPhase2[i].frameStart = 6
+	attackPhase2[i].frameEnd = 6
+	attackPhase2[i].angleStart = -90
+	attackPhase2[i].angleEnd = -90
+	attackPhase2[i].offsetStart = Vector(4 , -6)
+	attackPhase2[i].offsetEnd = Vector(15, -6)
+	
+	attackPhase2[i].soundStart = nil
+	
+	attackPhase2[i].soundEnd = nil
+	
+	-- Early Recover
+	i = 6
+	attackPhase2[i] = {}
+	attackPhase2[i].durationMS = 100
+	
+	attackPhase2[i].canDamage = false
+	attackPhase2[i].attackDamage = 0
+	attackPhase2[i].attackStunChance = 0
+	attackPhase2[i].attackRange = 0
+	attackPhase2[i].attackPush = 0
+	attackPhase2[i].attackVector = Vector(4, 10) -- local space vector relative to position and rotation
+	
+	attackPhase2[i].frameStart = 6
+	attackPhase2[i].frameEnd = 7
+	attackPhase2[i].angleStart = -90
+	attackPhase2[i].angleEnd = -60
+	attackPhase2[i].offsetStart = Vector(15, -6)
+	attackPhase2[i].offsetEnd = Vector(7, -3)
+	
+	attackPhase2[i].soundStart = nil
+	attackPhase2[i].soundStartVariations = 0
+	
+	attackPhase2[i].soundEnd = nil
+	attackPhase2[i].soundEndVariations = 0
+	
+	-- Recover
+	i = 7
+	attackPhase2[i] = {}
+	attackPhase2[i].durationMS = 100
+	
+	attackPhase2[i].canDamage = false
+	attackPhase2[i].attackDamage = 0
+	attackPhase2[i].attackStunChance = 0
+	attackPhase2[i].attackRange = 0
+	attackPhase2[i].attackPush = 0
+	attackPhase2[i].attackVector = Vector(4, 10) -- local space vector relative to position and rotation
+	
+	attackPhase2[i].frameStart = 7
+	attackPhase2[i].frameEnd = 6
+	attackPhase2[i].angleStart = -60
+	attackPhase2[i].angleEnd = 0
+	attackPhase2[i].offsetStart = Vector(7, -3)
+	attackPhase2[i].offsetEnd = Vector(3, 0)
+	
+	attackPhase2[i].soundStart = nil
+	attackPhase2[i].soundStartVariations = 0
+	
+	attackPhase2[i].soundEnd = nil
+	attackPhase2[i].soundEndVariations = 0
+	
+	-- Add the animation to the animation table
+	self.attackAnimationsSounds[2] = regularAttackSounds
+	self.attackAnimationsGFX[2] = regularAttackGFX
+	self.attackAnimations[2] = attackPhase2
+	
 	-- Charged Attack
 
 	chargeAttackPhase = {}
@@ -334,6 +512,7 @@ function Create(self)
 	chargeAttackPhase[i].attackRange = 7
 	chargeAttackPhase[i].attackPush = 0.8
 	chargeAttackPhase[i].attackVector = Vector(0, -7) -- local space vector relative to position and rotation
+	chargeAttackPhase[i].attackAngle = 45;
 	
 	chargeAttackPhase[i].frameStart = 7
 	chargeAttackPhase[i].frameEnd = 6
@@ -372,9 +551,118 @@ function Create(self)
 	chargeAttackPhase[i].soundEndVariations = 0
 	
 	-- Add the animation to the animation table
-	self.attackAnimationsSounds[2] = chargeAttackSounds
-	self.attackAnimationsGFX[2] = regularAttackGFX
-	self.attackAnimations[2] = chargeAttackPhase
+	self.attackAnimationsSounds[3] = chargeAttackSounds
+	self.attackAnimationsGFX[3] = regularAttackGFX
+	self.attackAnimations[3] = chargeAttackPhase
+	
+	-- Charged Attack 2 Upwards Swing
+	
+	chargeAttackPhase2 = {}
+	
+	
+	-- Prepare
+	i = 1
+	chargeAttackPhase2[i] = {}
+	chargeAttackPhase2[i].durationMS = 150
+	
+	chargeAttackPhase2[i].canDamage = false
+	chargeAttackPhase2[i].attackDamage = 0
+	chargeAttackPhase2[i].attackStunChance = 0
+	chargeAttackPhase2[i].attackRange = 0
+	chargeAttackPhase2[i].attackPush = 0
+	chargeAttackPhase2[i].attackVector = Vector(4, 10) -- local space vector relative to position and rotation
+	
+	chargeAttackPhase2[i].frameStart = 6
+	chargeAttackPhase2[i].frameEnd = 9
+	chargeAttackPhase2[i].angleStart = 0
+	chargeAttackPhase2[i].angleEnd = -70
+	chargeAttackPhase2[i].offsetStart = Vector(0, 0)
+	chargeAttackPhase2[i].offsetEnd = Vector(4, 15)
+	
+	chargeAttackPhase2[i].soundStart = nil
+	chargeAttackPhase2[i].soundStartVariations = 0
+	
+	chargeAttackPhase2[i].soundEnd = nil
+	chargeAttackPhase2[i].soundEndVariations = 0
+	
+	-- Late Prepare
+	i = 2
+	chargeAttackPhase2[i] = {}
+	chargeAttackPhase2[i].durationMS = 60
+	
+	chargeAttackPhase2[i].canDamage = false
+	chargeAttackPhase2[i].attackDamage = 0
+	chargeAttackPhase2[i].attackStunChance = 0
+	chargeAttackPhase2[i].attackRange = 0
+	chargeAttackPhase2[i].attackPush = 0
+	chargeAttackPhase2[i].attackVector = Vector(4, 10) -- local space vector relative to position and rotation
+	
+	chargeAttackPhase2[i].frameStart = 9
+	chargeAttackPhase2[i].frameEnd = 10
+	chargeAttackPhase2[i].angleStart = -70
+	chargeAttackPhase2[i].angleEnd = -120
+	chargeAttackPhase2[i].offsetStart = Vector(4, 15)
+	chargeAttackPhase2[i].offsetEnd = Vector(4, 15)
+	
+	chargeAttackPhase2[i].soundStart = nil
+	chargeAttackPhase2[i].soundStartVariations = 0
+	
+	chargeAttackPhase2[i].soundEnd = nil
+	chargeAttackPhase2[i].soundEndVariations = 0
+	
+	-- Attack
+	i = 3
+	chargeAttackPhase2[i] = {}
+	chargeAttackPhase2[i].durationMS = 160
+	
+	chargeAttackPhase2[i].canDamage = true
+	chargeAttackPhase2[i].attackDamage = 5
+	chargeAttackPhase2[i].attackStunChance = 0.3
+	chargeAttackPhase2[i].attackRange = 7
+	chargeAttackPhase2[i].attackPush = 0.8
+	chargeAttackPhase2[i].attackVector = Vector(0, -7) -- local space vector relative to position and rotation
+	chargeAttackPhase2[i].attackAngle = -90;
+	
+	chargeAttackPhase2[i].frameStart = 10
+	chargeAttackPhase2[i].frameEnd = 6
+	chargeAttackPhase2[i].angleStart = -120
+	chargeAttackPhase2[i].angleEnd = -45
+	chargeAttackPhase2[i].offsetStart = Vector(4, 15)
+	chargeAttackPhase2[i].offsetEnd = Vector(15, -15)
+	
+	chargeAttackPhase2[i].soundStart = CreateSoundContainer("Swing Baton Heat", "Heat.rte");
+	
+	chargeAttackPhase2[i].soundEnd = nil
+	
+	-- Recover
+	i = 4
+	chargeAttackPhase2[i] = {}
+	chargeAttackPhase2[i].durationMS = 250
+	
+	chargeAttackPhase2[i].canDamage = false
+	chargeAttackPhase2[i].attackDamage = 0
+	chargeAttackPhase2[i].attackStunChance = 0
+	chargeAttackPhase2[i].attackRange = 0
+	chargeAttackPhase2[i].attackPush = 0
+	chargeAttackPhase2[i].attackVector = Vector(4, 10) -- local space vector relative to position and rotation
+	
+	chargeAttackPhase2[i].frameStart = 6
+	chargeAttackPhase2[i].frameEnd = 6
+	chargeAttackPhase2[i].angleStart = -45
+	chargeAttackPhase2[i].angleEnd = 0
+	chargeAttackPhase2[i].offsetStart = Vector(15, -15)
+	chargeAttackPhase2[i].offsetEnd = Vector(3, -5)
+	
+	chargeAttackPhase2[i].soundStart = nil
+	chargeAttackPhase2[i].soundStartVariations = 0
+	
+	chargeAttackPhase2[i].soundEnd = nil
+	chargeAttackPhase2[i].soundEndVariations = 0
+	
+	-- Add the animation to the animation table
+	self.attackAnimationsSounds[4] = chargeAttackSounds
+	self.attackAnimationsGFX[4] = regularAttackGFX
+	self.attackAnimations[4] = chargeAttackPhase2
 	
 	-- replace with your own code if you wish
 	
@@ -447,7 +735,7 @@ function Update(self)
 		if player then -- PLAYER INPUT
 			charge = self:IsActivated()
 		else -- AI
-			
+			attacked = self:IsActivated() and not self.attackAnimationIsPlaying
 		end
 		
 		-- replace with your own code if you wish
@@ -491,9 +779,9 @@ function Update(self)
 		if attacked then
 			if self.isCharged then
 				self.isCharged = false
-				playAttackAnimation(self, 2) -- charged attack
+				playAttackAnimation(self, math.random(3, 4)) -- charged attack
 			else
-				playAttackAnimation(self, 1) -- regular attack
+				playAttackAnimation(self, math.random(1, 2)) -- regular attack
 			end
 		end
 		
@@ -606,7 +894,7 @@ function Update(self)
 			local rayVec = Vector(damageRange * self.FlipFactor, 0):RadRotate(self.RotAngle):DegRotate(damageAngle*self.FlipFactor)--damageVector:RadRotate(self.RotAngle) * Vector(self.FlipFactor, 1)
 			local rayOrigin = Vector(self.Pos.X, self.Pos.Y) + Vector(damageVector.X * self.FlipFactor, damageVector.Y):RadRotate(self.RotAngle)
 			
-			--PrimitiveMan:DrawLinePrimitive(rayOrigin, rayOrigin + rayVec,  5);
+			PrimitiveMan:DrawLinePrimitive(rayOrigin, rayOrigin + rayVec,  5);
 			--PrimitiveMan:DrawCirclePrimitive(self.Pos, 3, 5);
 			
 			local moCheck = SceneMan:CastMORay(rayOrigin, rayVec, self.ID, self.Team, 0, false, 2); -- Raycast
