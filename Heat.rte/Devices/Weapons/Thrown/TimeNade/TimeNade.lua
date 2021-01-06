@@ -10,7 +10,7 @@ function Create(self)
 	
 	self.range = 160
 	
-	self.timeFactor = (1 - 0.3)
+	self.timeFactor = (1 - 0.15)
 	
 	self.glowSpawnTimer = Timer();
 	
@@ -30,7 +30,7 @@ function Update(self)
 					local timeFactor = self.timeFactor * distanceFactor
 					
 					--PrimitiveMan:DrawCirclePrimitive(mo.Pos, 1, 5)
-					if mo.ClassName ~= "AEmitter" and mo.ClassName ~= "MOSRotating" and mo.ClassName ~= "Actor" then
+					if mo.Lifetime and mo.Lifetime > 0 and mo.ClassName ~= "AEmitter" and mo.ClassName ~= "MOSRotating" and mo.ClassName ~= "Actor" then
 						mo.Lifetime = mo.Lifetime + TimerMan.DeltaTimeSecs * 700 * timeFactor
 					end
 					mo.Pos = mo.Pos - mo.Vel * GetPPM() * TimerMan.DeltaTimeSecs * timeFactor
