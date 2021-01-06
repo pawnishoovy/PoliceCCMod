@@ -28,6 +28,9 @@ function Create(self)
 	
 	self.voiceSounds = {
 	Pain = CreateSoundContainer("VO Pain Heat", "Heat.rte")};
+	
+	self.voiceSound = CreateSoundContainer("VO Pain Heat", "Heat.rte");
+	-- MEANINGLESS! this is just so we can do voiceSound.Pos without an if check first! it will be overwritten first actual VO play
 
 	self.altitude = 0;
 	self.wasInAir = false;
@@ -69,19 +72,6 @@ function Create(self)
 	-- End modded code
 end
 
--- Start modded code --
-
--- End modded code --
-
-function OnCollideWithTerrain(self, terrainID)
-	-- let Fall sounds know to play this
-	self.terrainCollided = true;
-	self.terrainCollidedWith = terrainID;
-	--if self.Dying or self.Status == Actor.DEAD or self.Status == Actor.DYING then
-	--	HeatAIBehaviours.handleRagdoll(self)
-	--end
-end
-
 function Update(self)
 
 	self.controller = self:GetController();
@@ -101,21 +91,7 @@ function Update(self)
 	
 	-- Start modded code--
 	
-	if (UInputMan:KeyPressed(26)) and self:IsPlayerControlled() then
-		self.Health = self.Health -26
-	end
-	
-	if UInputMan:KeyPressed(3) and self:IsPlayerControlled() then
-		self.Health = self.Health -51
-	end
-	
-	if (UInputMan:KeyPressed(24)) and self:IsPlayerControlled() then
-		self.Health = self.Health -6
-	end
-	
-	if self.voiceSound then
-		self.voiceSound.Pos = self.Pos;
-	end
+	self.voiceSound.Pos = self.Pos;
 	
 	if (self:IsDead() ~= true) then
 		
@@ -132,11 +108,7 @@ function Update(self)
 		HeatAIBehaviours.handleMovement(self);
 		
 	end
-	
-	-- clear terrain stuff after we did everything that used em
-	
-	self.terrainCollided = false;
-	self.terrainCollidedWith = nil;
+
 end
 -- End modded code --
 
@@ -150,40 +122,8 @@ function Destroy(self)
 	
 	-- Start modded code --
 	
-	if ActivityMan:ActivityRunning() then -- for some reason the game crashes if you switch activities (i.e. start a new one) while this actor is active
-										  -- presumably it attempts to destroy this, which then tells it to do a buncha stuff and it just goes mad
-										  -- this check is to see if the activity is running, since you have to be paused to switch activities. hopefully.
-										  -- it is possible Void Wanderers switches activities without pausing. thus this may not work and induce a crash	
-	
-		if not self.ToSettle then -- we have been gibbed
-			
-			if (self.voiceSound) then
-				self.voiceSound:Stop(-1);
-				self.voiceSound = nil;
-			end
-			--[[
-			for actor in MovableMan.Actors do
-				if actor.Team == self.Team then
-					local d = SceneMan:ShortestDistance(actor.Pos, self.Pos, true).Magnitude;
-					if d < 300 then
-						local strength = SceneMan:CastStrengthSumRay(self.Pos, actor.Pos, 0, 128);
-						if strength < 500 then
-							actor:SetNumberValue("Sandstorm Friendly Down", 1)
-							break;  -- first come first serve
-						else
-							if IsAHuman(actor) and actor.Head then -- if it is a human check for head
-								local strength = SceneMan:CastStrengthSumRay(self.Pos, ToAHuman(actor).Head.Pos, 0, 128);	
-								if strength < 500 then		
-									actor:SetNumberValue("Sandstorm Friendly Down", 1)
-									break; -- first come first serve
-								end
-							end
-						end
-					end
-				end
-			end]]
-		end
-		
+	if not self.ToSettle then -- we have been gibbed		
+		self.voiceSound:Stop(-1);
 	end
 	
 	-- End modded code --
