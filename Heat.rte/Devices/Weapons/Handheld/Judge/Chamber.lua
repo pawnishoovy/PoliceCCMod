@@ -251,11 +251,8 @@ function Update(self)
 			end
 		end
 		
-		
 		if self.reflectionSound then
-			if self.reflectionSound:IsBeingPlayed() then
-				self.reflectionSound:Stop(-1)
-			end
+			self.reflectionSound:Stop(-1);
 		end
 
 		local outdoorRays = 0;
@@ -309,8 +306,12 @@ function Update(self)
 		
 		if outdoorRays >= self.rayThreshold then
 			if self.Mode == 0 then
+				self.manualReflectionSound:Stop(-1);
+				self.autoReflectionSound:Stop(-1);
 				self.manualReflectionSound:Play(self.Pos);
 			else
+				self.manualReflectionSound:Stop(-1);
+				self.autoReflectionSound:Stop(-1);
 				self.autoReflectionSound:Play(self.Pos);
 			end
 		end

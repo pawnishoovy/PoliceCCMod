@@ -103,13 +103,9 @@ function Update(self)
 			self.scanLockOn:Play(self.Pos);
 			self.scanLockOnSound = false;
 			
-			if self.scanLoop:IsBeingPlayed() then
-				self.scanLoop:Stop(-1);
-			end
+			self.scanLoop:Stop(-1);
 			
-			if self.scanLockOff:IsBeingPlayed() then
-				self.scanLockOff:Stop(-1);
-			end
+			self.scanLockOff:Stop(-1);
 			
 			self.Scan = true;
 			
@@ -131,9 +127,7 @@ function Update(self)
 		if self.Scan == true and not self.Scanning == true then
 			self.Scan = false;
 			self.Scanning = true;
-			if self.scanLoop:IsBeingPlayed() then
-				self.scanLoop:Stop(-1);
-			end
+			self.scanLoop:Stop(-1);
 			self.scanTimer:Reset();
 		end
 		if self.Scanning == true then
@@ -315,9 +309,9 @@ function Update(self)
 	if self.Vel.Magnitude < 5 then
 		if self.Moving == true then
 			if self.moveTimer:IsPastSimMS(600) then
-				if self.Accelerate:IsBeingPlayed() then
-					self.Accelerate:Stop(-1);
-				end
+
+				self.Accelerate:Stop(-1);
+
 				--self.Deccelerate:Play(self.Pos);
 				self.moveTimer:Reset();
 			end
@@ -442,19 +436,12 @@ function Destroy(self)
 		self.sawStop:Play(self.Pos)
 	end
 
-	if self.hoverLoop:IsBeingPlayed() then
-		self.hoverLoop:Stop(-1);
-	end
+	self.hoverLoop:Stop(-1);
 	
-	if self.Accelerate:IsBeingPlayed() then
-		self.Accelerate:Stop(-1);
-	end
-	
-	if self.scanLoop:IsBeingPlayed() then
-		self.scanLoop:Stop(-1);
-	end
-	
-	if self.aggroScanLoop:IsBeingPlayed() then
-		self.aggroScanLoop:Stop(-1);
-	end	
+	self.Accelerate:Stop(-1);
+
+	self.scanLoop:Stop(-1);
+
+	self.aggroScanLoop:Stop(-1);
+
 end

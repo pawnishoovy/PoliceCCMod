@@ -210,10 +210,8 @@ function Destroy(self)
 		if not self.ToSettle then -- we have been gibbed
 			
 			if (self.voiceSound) then
-				if (self.voiceSound:IsBeingPlayed()) then
-					self.voiceSound:Stop(-1);
-					self.voiceSound = nil;
-				end
+				self.voiceSound:Stop(-1);
+				self.voiceSound = nil;
 			end
 			--[[
 			for actor in MovableMan.Actors do

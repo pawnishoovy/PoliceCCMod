@@ -65,11 +65,8 @@ function Update(self)
 	end
 
 	if self.ToDelete then
-		if self.crackleSound then
-			if self.crackleSound:IsBeingPlayed() then
-				self.crackleSound:Stop(-1);
-			end
-		end
+		self.bulletCrackleSound:Stop(-1);
+
 		
 		if self.Age < self.Lifetime then
 			local hitPos = Vector(self.Pos.X, self.Pos.Y);

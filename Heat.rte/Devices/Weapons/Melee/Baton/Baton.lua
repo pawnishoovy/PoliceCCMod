@@ -985,7 +985,7 @@ function Update(self)
 					local actorHit = MovableMan:GetMOFromID(MO.RootID)
 					if (actorHit and IsActor(actorHit)) then-- and (MO.RootID == moCheck or (not IsAttachable(MO) or string.find(MO.PresetName,"Arm") or string.find(MO,"Leg") or string.find(MO,"Head"))) then -- Apply addational damage
 						actorHit = ToActor(actorHit)
-						actorHit.Vel = actorHit.Vel + (self.Vel + pushVector) / actorHit.Mass * ((50 + self.Mass) * (actor.Mass / 100)) * (damagePush) * 0.8
+						actorHit.Vel = actorHit.Vel + (self.Vel + pushVector) / actorHit.Mass * ((50 + self.Mass) * (actorHit.Mass / 100)) * (damagePush) * 0.8
 						--print(actorHit.Material.StructuralIntegrity)
 						--actor.Health = actor.Health - 8 * damageMulti;
 						if self.isCharged then

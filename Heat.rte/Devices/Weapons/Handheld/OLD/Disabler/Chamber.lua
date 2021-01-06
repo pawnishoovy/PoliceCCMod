@@ -284,11 +284,7 @@ function Update(self)
 			end
 		end
 		
-		if self.reflectionSound then
-			if self.reflectionSound:IsBeingPlayed() then
-				self.reflectionSound:Stop(-1)
-			end
-		end
+		self.reflectionSound:Stop(-1)
 		
 		for i = 1, 2 do
 			local Effect = CreateMOSParticle("Tiny Smoke Ball 1", "Base.rte")

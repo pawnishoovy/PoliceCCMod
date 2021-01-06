@@ -45,9 +45,7 @@ function Update(self)
 	if self.Vel.Magnitude < 5 then
 		if self.Moving == true then
 			if self.moveTimer:IsPastSimMS(600) then
-				if self.Accelerate:IsBeingPlayed() then
-					self.Accelerate:Stop(-1);
-				end
+				self.Accelerate:Stop(-1);
 				self.Deccelerate:Play(self.Pos);
 				self.moveTimer:Reset();
 			end
@@ -63,9 +61,7 @@ function Update(self)
 	else
 		if self.Moving == false then
 			if self.moveTimer:IsPastSimMS(600) then
-				if self.Deccelerate:IsBeingPlayed() then
-					self.Deccelerate:Stop(-1);
-				end
+				self.Deccelerate:Stop(-1);
 				self.Accelerate:Play(self.Pos);
 			end
 			self.moveTimer:Reset();
@@ -77,9 +73,7 @@ function Update(self)
 	if self.Vel.Magnitude > 2 and not self.engineLoop:IsBeingPlayed() then
 		self.engineLoop:Play(self.Pos);
 	elseif self.Vel.Magnitude <= 2 then
-		if self.engineLoop:IsBeingPlayed() then
-			self.engineLoop:Stop(-1);
-		end
+		self.engineLoop:Stop(-1);
 	end
 	
 	self.idleLoop.Pos = self.Pos;
@@ -108,25 +102,15 @@ end
 
 function Destroy(self)
 
-	if self.idleLoop:IsBeingPlayed() then
-		self.idleLoop:Stop(-1);
-	end
+	self.idleLoop:Stop(-1);
 
-	if self.engineLoop:IsBeingPlayed() then
-		self.engineLoop:Stop(-1);
-	end
+	self.engineLoop:Stop(-1);
 	
-	if self.Accelerate:IsBeingPlayed() then
-		self.Accelerate:Stop(-1);
-	end
+	self.Accelerate:Stop(-1);
 	
-	if self.Deccelerate:IsBeingPlayed() then
-		self.Deccelerate:Stop(-1);
-	end
+	self.Deccelerate:Stop(-1);
 	
-	if self.sirenBlast:IsBeingPlayed() then
-		self.sirenBlast:Stop(-1);
-	end
+	self.sirenBlast:Stop(-1);
 	
 end
 

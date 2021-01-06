@@ -515,17 +515,10 @@ function Update(self)
 				
 				self.Magazine.RoundCount = 0;
 				
-				if self.reflectionSound then
-					if self.reflectionSound:IsBeingPlayed() then
-						self.reflectionSound:Stop(-1)
-					end
-				end
+
+				self.reflectionSound:Stop(-1)
 				
-				if self.mechSound then
-					if self.mechSound:IsBeingPlayed() then
-						self.mechSound:Stop(-1)
-					end
-				end
+				self.mechSound:Stop(-1)
 				
 				for i = 1, 7 do
 					local Effect = CreateMOSParticle("Tiny Smoke Ball 1", "Base.rte")

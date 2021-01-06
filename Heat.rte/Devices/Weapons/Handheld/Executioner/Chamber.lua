@@ -321,11 +321,7 @@ function Update(self)
 			MovableMan:AddParticle(Bullet);
 		end
 		
-		if self.reflectionSound then
-			if self.reflectionSound:IsBeingPlayed() then
-				self.reflectionSound:Stop(-1)
-			end
-		end
+		self.reflectionSound:Stop(-1)
 		
 		if self.reflectionAddSound then
 			if self.reflectionAddSound:IsBeingPlayed() then
