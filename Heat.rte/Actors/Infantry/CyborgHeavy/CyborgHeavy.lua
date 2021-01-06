@@ -8,7 +8,7 @@ function Create(self)
 	self.AI = NativeHumanAI:Create(self)
 	--You can turn features on and off here
 	self.armSway = true;
-	self.automaticEquip = true;
+	self.automaticEquip = false;
 	self.alternativeGib = false;
 	self.visibleInventory = true;
 	

@@ -25,6 +25,8 @@ function Create(self)
 	self.scanLockOn = CreateSoundContainer("Scan Lock On Buzzdrone", "Heat.rte");
 	self.scanLockOff = CreateSoundContainer("Scan Lock Off Buzzdrone", "Heat.rte");
 	
+	self.dyingWarningLoop = CreateSoundContainer("Dying Warning Loop Buzzdrone", "Heat.rte");
+	
 	self.scanTimer = Timer();
 	self.scanDelay = 4000;
 	
@@ -63,18 +65,34 @@ function Update(self)
 				emitter.Lifetime = 3000
 				self:AddAttachable(emitter);
 				
+				self.GibImpulseLimit = 50;
+				
 				if math.random(1,2) < 2 then
 					self.Vel = self.Vel + Vector(RangeRand(-1,1), RangeRand(-1,0)) * 5
-					self.GibImpulseLimit = 1
 				end
-			
+				
+				self.aggroScanLoop:Stop(-1);
+				self.scanLoop:Stop(-1);
+				
+				self.dyingWarningLoop:Play(self.Pos);
+				
 				self.dead = true
 				self.GlobalAccScalar = 1.0;
+			end
+		else
+			self.dyingWarningLoop.Pos = self.Pos;
+			if self.hoverLoop.Pitch > 0 then
+				self.hoverLoop.Pitch = self.hoverLoop.Pitch - 0.05;
+			end
+			if self.hoverLoop.Volume > 0 then
+				self.hoverLoop.Volume = self.hoverLoop.Volume - 0.05;
 			end
 		end
 		--self.ToSettle = true;
 		return
 	end
+	
+	self.dyingWarningLoop.Pos = self.Pos;
 	
 	-- Damage
 	self.hoverSpeed = 0.2 + math.min((self.Health / self.MaxHealth + 0.5) / 1.5, 1)
@@ -347,7 +365,7 @@ function Update(self)
 	self.hoverLoop.Pos = self.Pos;
 	self.Accelerate.Pos = self.Pos;
 	
-	if self.hoverLoop:IsBeingPlayed() then
+	if not self.dead then
 		self.hoverLoop.Volume = (self.Vel.Magnitude / 20) + 0.5;
 		self.hoverLoop.Pitch = (self.Vel.Magnitude / 20) + 1;
 	end
@@ -443,5 +461,7 @@ function Destroy(self)
 	self.scanLoop:Stop(-1);
 
 	self.aggroScanLoop:Stop(-1);
+	
+	self.dyingWarningLoop:Stop(-1)
 
 end
