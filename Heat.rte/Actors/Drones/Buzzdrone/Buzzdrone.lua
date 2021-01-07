@@ -344,6 +344,7 @@ function Update(self)
 					-- Do nothing
 				end
 				self.sawEnabled = false
+				self.aggroScan = false;
 			end
 		end
 		
