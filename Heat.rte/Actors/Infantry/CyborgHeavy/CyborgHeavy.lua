@@ -139,10 +139,6 @@ function Update(self)
 	end
 	
 	-- Start modded code--
-	
-	if UInputMan:KeyPressed(22) then
-		self.Health = 2;
-	end
 
 	self.voiceSound.Pos = self.Pos;
 	
