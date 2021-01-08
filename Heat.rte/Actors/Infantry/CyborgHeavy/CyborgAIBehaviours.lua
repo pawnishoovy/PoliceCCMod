@@ -245,6 +245,14 @@ function CyborgAIBehaviours.handleHealth(self)
 	local wasInjured = self.Health < (self.oldHealth - 6);
 
 	if (healthTimerReady or wasInjured or wasLightlyInjured) then
+	
+		if self.toSelfDestruct and not self.selfDestructing then
+			if (self.Health < self.selfDestructThreshold) or (self.WoundCount > 40) then
+				self.selfDestructing = true;
+				CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Respect, 9)
+			end
+		end
+	
 		self.oldHealth = self.Health;
 		self.healthUpdateTimer:Reset();
 		
@@ -260,6 +268,19 @@ function CyborgAIBehaviours.handleHealth(self)
 				CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Death, 10)
 			end
 		end
+	end
+end
+
+function CyborgAIBehaviours.handleSelfDestruct(self)
+	
+	self.Health = self.selfDestructThreshold;
+	if self.Status == 3 then
+		self.Status = 1;
+	end
+	self.controller:SetState(Controller.WEAPON_DROP,true);
+
+	if not self.voiceSound:IsBeingPlayed() then
+		self:GibThis();
 	end
 end
 

@@ -34,7 +34,8 @@ function Create(self)
 	Battlecry = CreateSoundContainer("VO Battlecry CyborgHeavy", "Heat.rte"),
 	Intimidate = CreateSoundContainer("VO Intimidate CyborgHeavy", "Heat.rte"),
 	Lead = CreateSoundContainer("VO Lead CyborgHeavy", "Heat.rte"),
-	meleeYell = CreateSoundContainer("VO Melee Yell CyborgHeavy", "Heat.rte")};
+	meleeYell = CreateSoundContainer("VO Melee Yell CyborgHeavy", "Heat.rte"),
+	Respect = CreateSoundContainer("VO Respect CyborgHeavy", "Heat.rte")};
 	
 	self.voiceSound = CreateSoundContainer("VO Pain CyborgHeavy", "Heat.rte");
 	-- MEANINGLESS! this is just so we can do voiceSound.Pos without an if check first! it will be overwritten first actual VO play
@@ -57,6 +58,12 @@ function Create(self)
 	
 	self.healthUpdateTimer = Timer();
 	self.oldHealth = self.Health;
+	
+	if math.random(0, 100) < 5 then
+		self.toSelfDestruct = true;
+		self.selfDestructThreshold = 5;
+		self.GibWoundLimit = 5000;
+	end
 	
 	self.emotionTimer = Timer();
 	self.emotionDuration = 0;
@@ -132,6 +139,10 @@ function Update(self)
 	end
 	
 	-- Start modded code--
+	
+	if UInputMan:KeyPressed(22) then
+		self.Health = 2;
+	end
 
 	self.voiceSound.Pos = self.Pos;
 	
@@ -150,8 +161,16 @@ function Update(self)
 		CyborgAIBehaviours.handleHeadFrames(self);
 		
 		CyborgAIBehaviours.handleAbilities(self)
+		
+		if self.selfDestructing then
+			CyborgAIBehaviours.handleSelfDestruct(self)
+		end
 
 	else
+	
+		if self.selfDestructing then
+			self:GibThis();
+		end
 	
 		CyborgAIBehaviours.handleDying(self)
 	
