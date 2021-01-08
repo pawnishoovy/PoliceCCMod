@@ -178,7 +178,7 @@ function Update(self)
 			local Vector3 = Vector(0,0); -- dont need this but is needed as an arg
 			local Vector4 = Vector(0,0); -- dont need this but is needed as an arg
 
-			self.ray = SceneMan:CastObstacleRay(self.Pos, Vector2, Vector3, Vector4, self.RootID, self.Team, 128, 7);			
+			self.ray = SceneMan:CastObstacleRay(self.Pos, Vector2, Vector3, Vector4, self.RootID, self.Team, 128, 7);
 			self.raySlightRight = SceneMan:CastObstacleRay(self.Pos, Vector2SlightRight, Vector3, Vector4, self.RootID, self.Team, 128, 7);
 			self.raySlightLeft = SceneMan:CastObstacleRay(self.Pos, Vector2SlightLeft, Vector3, Vector4, self.RootID, self.Team, 128, 7);
 			
@@ -192,7 +192,31 @@ function Update(self)
 				end
 			end
 			
-			if outdoorRays == 3 then
+			-- trajectory check!
+			local trajectoryObscured = true
+			
+			if not self:IsReloading() then
+				local VectorT1 = Vector(0,-110):RadRotate(self.RotAngle);
+				local VectorT2 = SceneMan:ShortestDistance(self.Pos + VectorT1, self.targetingPos, SceneMan.SceneWrapsX);
+				
+				VectorT2:SetMagnitude(math.max(VectorT2.Magnitude - 15, 0))
+				
+				PrimitiveMan:DrawLinePrimitive(self.Pos, self.Pos + VectorT1, 5);
+				
+				local rayT1 = SceneMan:CastStrengthRay(self.Pos, VectorT1, 30, Vector(), 5, 0, SceneMan.SceneWrapsX);
+				if rayT1 == false then
+					PrimitiveMan:DrawLinePrimitive(self.Pos + VectorT1, self.Pos + VectorT1 + VectorT2, 5);
+					
+					local rayT2 = SceneMan:CastStrengthRay(self.Pos + VectorT1, VectorT2, 30, Vector(), 5, 0, SceneMan.SceneWrapsX);
+					if rayT2 == false then
+						trajectoryObscured = false
+					end
+				end
+			else
+				trajectoryObscured = false
+			end
+			
+			if outdoorRays == 3 and not trajectoryObscured then
 				if self.mechanismState == 1 then
 					self.mechanismSwitchTimer:Reset();
 					self.mechanismSwitching = true;
