@@ -191,16 +191,16 @@ function Update(self)
 			
 				if self.reloadPhase == 0 then
 					self.phaseOnStop = 1;
-					for i = 1, 2 do
-						local fake
-						fake = CreateMOSParticle("Casing");
-						fake.Pos = self.Pos + Vector(1 * self.FlipFactor, 0):RadRotate(self.RotAngle);
-						fake.Vel = self.Vel + Vector(0.5*self.FlipFactor, 3):RadRotate(self.RotAngle);
-						fake.RotAngle = self.RotAngle;
-						fake.AngularVel = self.AngularVel + (-1*self.FlipFactor);
-						fake.HFlipped = self.HFlipped;
-						MovableMan:AddParticle(fake);
-					end
+					-- for i = 1, 2 do
+						-- local fake
+						-- fake = CreateMOSParticle("Casing");
+						-- fake.Pos = self.Pos + Vector(1 * self.FlipFactor, 0):RadRotate(self.RotAngle);
+						-- fake.Vel = self.Vel + Vector(0.5*self.FlipFactor, 3):RadRotate(self.RotAngle);
+						-- fake.RotAngle = self.RotAngle;
+						-- fake.AngularVel = self.AngularVel + (-1*self.FlipFactor);
+						-- fake.HFlipped = self.HFlipped;
+						-- MovableMan:AddParticle(fake);
+					-- end
 						
 					self.angVel = self.angVel + 2;
 					self.verticalAnim = self.verticalAnim + 1

@@ -257,7 +257,7 @@ function Update(self)
 			end
 		end		
 	else
-		
+		self.ReloadTime = 9999;
 		self.reloadTimer:Reset();
 	end
 
