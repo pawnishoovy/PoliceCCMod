@@ -302,6 +302,7 @@ function Update(self)
 	if self.grenadeActivated and self.grenadeLoaded and (not self.grenadeFiring) and (not self:IsReloading()) then
 	
 		self.grenadeActivated = false;
+		self.grenadeLoaded = false;
 		self.grenadeFiring = true;
 		
 		self.grenadePreSound:Play(self.Pos);

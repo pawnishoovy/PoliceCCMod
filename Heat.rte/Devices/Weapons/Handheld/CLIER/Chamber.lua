@@ -367,6 +367,7 @@ function Update(self)
 	if self.flashActivated and self.flashLoaded and (not self.flashFiring) and (not self:IsReloading()) then
 	
 		self.flashActivated = false;
+		self.flashLoaded = false;
 		self.flashFiring = true;
 		
 		self.flashPreSound:Play(self.Pos);
@@ -578,7 +579,7 @@ function Update(self)
 		end
 		
 		local fire = false
-		if self.parent:IsPlayerControlled() and ctrl.Player ~= -1 then
+		if self.parent:IsPlayerControlled() then
 			if UInputMan:KeyPressed(22) then
 				fire = true
 			end
