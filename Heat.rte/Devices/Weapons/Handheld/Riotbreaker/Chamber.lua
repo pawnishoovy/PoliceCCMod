@@ -498,7 +498,7 @@ function Update(self)
 					elseif self.reloadPhase == 2 then
 					
 						if self.reloadCycle then
-							self.reloadPhase = 3; -- same phase baby the ride never ends (except at 8 rounds)
+							self.reloadPhase = 3; -- same phase baby the ride never ends (except at 4 rounds)
 						else
 							self.ReloadTime = 0;
 							self.reloadPhase = 0;
@@ -512,7 +512,7 @@ function Update(self)
 						self.ammoCountRaised = false;
 					
 						if self.reloadCycle then
-							self.reloadPhase = 3; -- same phase baby the ride never ends (except at 8 rounds)
+							self.reloadPhase = 3; -- same phase baby the ride never ends (except at 4 rounds)
 						else
 							self.ReloadTime = 0;
 							self.reloadPhase = 0;
@@ -559,18 +559,7 @@ function Update(self)
 			self.ReloadTime = 19999;
 		end
 	else
-		self.ammoCountRaised = false;
-		if self.Reloading then
-			self.resumeReload = true;
-		end
-		if self.phaseOnStop then
-			self.reloadPhase = self.phaseOnStop;
-			self.phaseOnStop = nil;
-		end
 		self.reloadTimer:Reset();
-		self.prepareSoundPlayed = false;
-		self.afterSoundPlayed = false;
-		self.ReloadTime = 19999;
 	end
 	
 	if self:DoneReloading() then
