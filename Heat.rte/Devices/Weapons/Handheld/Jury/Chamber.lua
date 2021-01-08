@@ -672,7 +672,7 @@ function Update(self)
 		
 		
 		if fire then
-			if self.canShrapnel == true and not self:IsReloading() then
+			if self.canShrapnel == true and not self.shrapnelFiring and not self:IsReloading() then
 			  self.shrapnelActivated = true;
 			else
 				--sound
