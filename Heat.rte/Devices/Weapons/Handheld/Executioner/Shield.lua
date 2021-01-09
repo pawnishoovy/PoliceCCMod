@@ -29,47 +29,56 @@ function Update(self)
 		self:ClearForces();
 		self:ClearImpulseForces();
 
-		if self.parent:GetNumberValue("ShieldActive") == 1 and (self.Frame < 2) then
-			self.Frame = math.random(0,1)
-			if self.WoundCount > 9 then
-				self.parent:SetNumberValue("Charge", 3);
-				self.Frame = 2;
-				self:RemoveWounds(self.WoundCount);
-				if self.soundHiPlayed == false then
-					self.soundHi:Play(self.Pos);
-					self.soundHiPlayed = true;
-				end
-			elseif self.WoundCount > 6 then
-				self.parent:SetNumberValue("Charge", 2);
-				if self.soundMedPlayed == false then
-					self.soundMed:Play(self.Pos);
-					self.soundMedPlayed = true;
-				end
-			elseif self.WoundCount > 3 then
-				self.parent:SetNumberValue("Charge", 1);
-				if self.soundLowPlayed == false then
-					self.soundLow:Play(self.Pos);
-					self.soundLowPlayed = true;
-				end
-			end
-
-			if self.parent:NumberValueExists("MagRotation") then
-				self.RotAngle = self.RotAngle + self.parent:GetNumberValue("MagRotation");
-			end
-			if self.parent:NumberValueExists("MagOffsetX") and self.parent:NumberValueExists("MagOffsetY") then
-				self.Pos = self.Pos + Vector(self.parent:GetNumberValue("MagOffsetX"), self.parent:GetNumberValue("MagOffsetY"));
-			end
-		else
-			if self.WoundCount > 0 then
-				self:RemoveWounds(self.WoundCount);
-			end
+		if self.parent:GetNumberValue("DisableShield") == 1 then
+		
 			self.Frame = 2;
-			if self.parent:GetNumberValue("ActivateShield") == 1 then
-				self.parent:SetNumberValue("ActivateShield", 0);
+		
+		else
+			if self.parent:GetNumberValue("ShieldActive") == 1 and (self.Frame < 2) then
 				self.Frame = math.random(0,1)
-				self.soundLowPlayed = false;
-				self.soundMedPlayed = false;
-				self.soundHiPlayed = false;
+				if self.WoundCount > 9 then
+					self.parent:SetNumberValue("Charge", 3);
+					self.Frame = 2;
+					self:RemoveWounds(self.WoundCount);
+					if self.soundHiPlayed == false then
+						self.soundHi:Play(self.Pos);
+						self.soundHiPlayed = true;
+					end
+				elseif self.WoundCount > 6 then
+					self.parent:SetNumberValue("Charge", 2);
+					if self.soundMedPlayed == false then
+						self.soundMed:Play(self.Pos);
+						self.soundMedPlayed = true;
+					end
+				elseif self.WoundCount > 3 then
+					self.parent:SetNumberValue("Charge", 1);
+					if self.soundLowPlayed == false then
+						self.soundLow:Play(self.Pos);
+						self.soundLowPlayed = true;
+					end
+				end
+
+				if self.parent:NumberValueExists("MagRotation") then
+					self.RotAngle = self.RotAngle + self.parent:GetNumberValue("MagRotation");
+				end
+				if self.parent:NumberValueExists("MagOffsetX") and self.parent:NumberValueExists("MagOffsetY") then
+					self.Pos = self.Pos + Vector(self.parent:GetNumberValue("MagOffsetX"), self.parent:GetNumberValue("MagOffsetY"));
+				end
+			elseif self.parent:GetNumberValue("ReenableShield") == 1 then
+				self.parent:RemoveNumberValue("ReenableShield");
+				self.Frame = 0;
+			else
+				if self.WoundCount > 0 then
+					self:RemoveWounds(self.WoundCount);
+				end
+				self.Frame = 2;
+				if self.parent:GetNumberValue("ActivateShield") == 1 then
+					self.parent:SetNumberValue("ActivateShield", 0);
+					self.Frame = math.random(0,1)
+					self.soundLowPlayed = false;
+					self.soundMedPlayed = false;
+					self.soundHiPlayed = false;
+				end
 			end
 		end
 		

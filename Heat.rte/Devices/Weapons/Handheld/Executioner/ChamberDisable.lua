@@ -10,7 +10,11 @@ function OnDetach(self)
 			self.chargeInterruptSound:Play(self.Pos);
 			self.returnToCharge = true;
 		end
-	end	
+	elseif self:GetNumberValue("ShieldActive") == 1 then
+		self.returnToShield = true;
+		self:SetNumberValue("DisableShield", 1);
+	end
+		
 	
 end
 
@@ -22,6 +26,10 @@ function OnAttach(self)
 		self.Charging = true;
 		self.shieldActivationTimer:Reset();
 		self.chargeUpSound:Play(self.Pos);
+	elseif self.returnToShield == true then
+		self.returnToShield = false;
+		self:RemoveNumberValue("DisableShield");
+		self:SetNumberValue("ReenableShield", 1);
 	end
 	
 end
