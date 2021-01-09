@@ -53,7 +53,7 @@ function Update(self)
 			self.Moving = false;
 		end
 		if self.Vel.Magnitude < 1 then
-			if cont:IsState(Controller.MOVE_UP) then
+			if self:IsPlayerControlled() and cont:IsState(Controller.MOVE_UP) then
 				self.upBoost:Play(self.Pos);
 				self.Vel = self.Vel + Vector(0, -4);
 			end
