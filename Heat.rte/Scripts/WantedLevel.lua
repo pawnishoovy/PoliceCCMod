@@ -142,7 +142,7 @@ function WantedLevelScript:UpdateScript()
 			reinforcementAmout = reinforcementAmout + (math.random(1,5) < 2 and 1 or 0) -- Chance based on pure luck
 			
 			-- Now get a nice spot to land
-			for i = 0, reinforcementAmout do
+			for i = 0, (reinforcementAmout - 1) do
 				reinforcementSector = WantedLevelScript:PickSector(reinforcementCraftSize * (reinforcementAmout - i))
 				if reinforcementSector ~= nil then
 					reinforcementAmout = reinforcementAmout - i
@@ -152,7 +152,7 @@ function WantedLevelScript:UpdateScript()
 			
 			if reinforcementSector ~= nil then
 				-- Spawn them cops!
-				for i = 0, reinforcementAmout do
+				for i = 0, (reinforcementAmout - 1) do
 					local x = reinforcementSector.Start.X + SceneMan:ShortestDistance(reinforcementSector.Start, reinforcementSector.End,SceneMan.SceneWrapsX).X / reinforcementAmout * i
 					if reinforcementAmout == 1 then -- Middle
 						x = reinforcementSector.Start.X + SceneMan:ShortestDistance(reinforcementSector.Start, reinforcementSector.End,SceneMan.SceneWrapsX).X * 0.5
