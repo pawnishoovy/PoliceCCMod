@@ -2,7 +2,7 @@
 dofile("Base.rte/Constants.lua")
 require("AI/NativeHumanAI")  --dofile("Base.rte/AI/NativeHumanAI.lua")
 package.path = package.path .. ";Heat.rte/?.lua";
-require("Actors/Shared/HeatAIBehaviours")
+require("Actors/Infantry/BotMedium/BotMediumAIBehaviours")
 
 function Create(self)
 	self.AI = NativeHumanAI:Create(self)
@@ -26,8 +26,19 @@ function Create(self)
 	
 	self.jumpJetSound = CreateSoundContainer("Jumpjet Start Heat", "Heat.rte");
 	
-	self.voiceSounds = {
-	Pain = CreateSoundContainer("VO Pain Heat", "Heat.rte")};
+	if math.random(0, 1) == 0 then
+		self.voiceSounds = {
+		Spot = CreateSoundContainer("VO Spot VariantOne", "Heat.rte"),
+		Death = CreateSoundContainer("VO Death VariantOne", "Heat.rte"),
+		Suppressed = CreateSoundContainer("VO Suppressed VariantOne", "Heat.rte"),
+		deployDrone = CreateSoundContainer("VO Drone Deploy VariantOne", "Heat.rte")};
+	else
+		self.voiceSounds = {
+		Spot = CreateSoundContainer("VO Spot VariantTwo", "Heat.rte"),
+		Death = CreateSoundContainer("VO Death VariantTwo", "Heat.rte"),
+		Suppressed = CreateSoundContainer("VO Suppressed VariantTwo", "Heat.rte"),
+		deployDrone = CreateSoundContainer("VO Drone Deploy VariantTwo", "Heat.rte")};
+	end
 	
 	self.voiceSound = CreateSoundContainer("VO Pain Heat", "Heat.rte");
 	-- MEANINGLESS! this is just so we can do voiceSound.Pos without an if check first! it will be overwritten first actual VO play
@@ -43,13 +54,24 @@ function Create(self)
 	self.healthUpdateTimer = Timer();
 	self.oldHealth = self.Health;
 	
-	self.emotionTimer = Timer();
-	self.emotionDuration = 0;
+	self.Suppression = 0;
+	self.Suppressed = false;
 	
-	self.baseHeadFrame = 0;
+	self.suppressionUpdateTimer = Timer();
 	
-	self.blinkTimer = Timer();
-	self.blinkDelay = math.random(5000, 11000);
+	self.suppressedVoicelineTimer = Timer();
+	self.suppressedVoicelineDelay = 5000;
+	
+	self.spotVoiceLineTimer = Timer();
+	self.spotVoiceLineDelay = 15000;
+	
+	 -- in MS
+	self.spotDelayMin = 4000;
+	self.spotDelayMax = 8000;
+	
+	 -- in percent
+	self.spotIgnoreDelayChance = 10;
+	self.spotNoVoicelineChance = 15;
 
 	-- fil jump
 	
@@ -95,17 +117,24 @@ function Update(self)
 	
 	if (self:IsDead() ~= true) then
 		
-		HeatAIBehaviours.handleMovement(self);
+		BotMediumAIBehaviours.handleMovement(self);
 		
-		HeatAIBehaviours.handleHealth(self);
+		BotMediumAIBehaviours.handleHealth(self);
 		
-		HeatAIBehaviours.handleHeadFrames(self);
+		BotMediumAIBehaviours.handleAITargetLogic(self);
+		
+		BotMediumAIBehaviours.handleVoicelines(self);
+		
+		BotMediumAIBehaviours.handleSuppression(self);
+		
 
 	else
 	
-		HeatAIBehaviours.handleHeadLoss(self);
+		BotMediumAIBehaviours.handleHeadLoss(self);
+		
+		BotMediumAIBehaviours.handleDying(self);
 	
-		HeatAIBehaviours.handleMovement(self);
+		BotMediumAIBehaviours.handleMovement(self);
 		
 	end
 

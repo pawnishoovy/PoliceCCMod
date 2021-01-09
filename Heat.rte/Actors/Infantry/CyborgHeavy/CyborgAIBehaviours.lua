@@ -8,31 +8,7 @@ CyborgAIBehaviours = {};
 
 -- no longer needed as of pre3!
 
-function CyborgAIBehaviours.createEmotion(self, emotion, priority, duration, canOverridePriority)
-	if canOverridePriority == nil then
-		canOverridePriority = false;
-	end
-	local usingPriority
-	if canOverridePriority == false then
-		usingPriority = priority - 1;
-	else
-		usingPriority = priority;
-	end
-	if emotion then
-		
-		self.emotionApplied = false; -- applied later in handleheadframes
-		self.Emotion = emotion;
-		if duration then
-			self.emotionTimer:Reset();
-			self.emotionDuration = duration;
-		else
-			self.emotionDuration = 0; -- will follow voiceSound length
-		end
-		self.lastEmotionPriority = priority;
-	end
-end
-
-function CyborgAIBehaviours.createVoiceSoundEffect(self, soundContainer, priority, emotion, canOverridePriority)
+function CyborgAIBehaviours.createVoiceSoundEffect(self, soundContainer, priority, canOverridePriority)
 	if canOverridePriority == nil then
 		canOverridePriority = false;
 	end
@@ -46,9 +22,6 @@ function CyborgAIBehaviours.createVoiceSoundEffect(self, soundContainer, priorit
 		if self.voiceSound then
 			if self.voiceSound:IsBeingPlayed() then
 				if self.lastPriority <= usingPriority then
-					if emotion then
-						CyborgAIBehaviours.createEmotion(self, emotion, priority, 0, canOverridePriority);
-					end
 					self.voiceSound:Stop();
 					self.voiceSound = soundContainer;
 					soundContainer:Play(self.Pos)
@@ -56,18 +29,12 @@ function CyborgAIBehaviours.createVoiceSoundEffect(self, soundContainer, priorit
 					return true;
 				end
 			else
-				if emotion then
-					CyborgAIBehaviours.createEmotion(self, emotion, priority, 0, canOverridePriority);
-				end
 				self.voiceSound = soundContainer;
 				soundContainer:Play(self.Pos)
 				self.lastPriority = priority;
 				return true;
 			end
 		else
-			if emotion then
-				CyborgAIBehaviours.createEmotion(self, emotion, priority, 0, canOverridePriority);
-			end
 			self.voiceSound = soundContainer;
 			soundContainer:Play(self.Pos)
 			self.lastPriority = priority;
@@ -448,21 +415,6 @@ function CyborgAIBehaviours.handleVoicelines(self)
 				end
 			end
 		end
-	end
-end
-
-function CyborgAIBehaviours.handleHeadFrames(self)
-	if not self.Head then return end
-	if self.Emotion and self.emotionApplied ~= true and self.Head then
-		self.Head.Frame = self.baseHeadFrame + self.Emotion;
-		self.emotionApplied = true;
-	end
-		
-		
-	if self.emotionDuration > 0 and self.emotionTimer:IsPastSimMS(self.emotionDuration) then
-		self.Head.Frame = self.baseHeadFrame;
-	elseif (self.emotionDuration == 0) and ((not self.voiceSound or not self.voiceSound:IsBeingPlayed())) then
-		self.Head.Frame = self.baseHeadFrame;
 	end
 end
 

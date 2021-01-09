@@ -65,14 +65,6 @@ function Create(self)
 		self.GibWoundLimit = 5000;
 	end
 	
-	self.emotionTimer = Timer();
-	self.emotionDuration = 0;
-	
-	self.baseHeadFrame = 0;
-	
-	self.blinkTimer = Timer();
-	self.blinkDelay = math.random(5000, 11000);
-	
 	self.holdVoiceLineTimer = Timer();
 	self.holdVoiceLineDelay = 15000;
 	

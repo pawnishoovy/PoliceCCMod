@@ -14,6 +14,7 @@ function Update(self)
 		local actor = MovableMan:GetMOFromID(self.RootID);
 		if MovableMan:IsActor(actor) then
 			self.Team = ToActor(actor).Team;
+			self.parent = ToActor(actor);
 		end
 	end
 	
@@ -37,6 +38,12 @@ function Update(self)
 		self.ToDelete = true
 		self.canSpawn = false
 	end
+	
+	if self:IsActivated() and self.parent and self.numberValueSet ~= true then
+		self.parent:SetNumberValue("DeployedHeatDrone", 1);
+		self.numberValueSet = true;
+	end
+	
 end
 
 function OnCollideWithMO(self, collidedMO, collidedRootMO)
