@@ -146,8 +146,6 @@ function Update(self)
 		
 		CyborgAIBehaviours.handleVoicelines(self);
 		
-		CyborgAIBehaviours.handleHeadFrames(self);
-		
 		CyborgAIBehaviours.handleAbilities(self)
 		
 		if self.selfDestructing then
