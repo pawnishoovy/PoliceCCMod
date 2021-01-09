@@ -1,6 +1,9 @@
 function Create(self)
 
 	self.startSound = CreateSoundContainer("Time Nade Start", "Heat.rte");
+	
+	self.bounceSound = CreateSoundContainer("Grenade Bounce Heat", "Heat.rte");
+	self.rollSound = CreateSoundContainer("Grenade Roll Heat", "Heat.rte");
 
 	self.activateTimer = Timer();
 	self.activateDelay = 2000
@@ -14,10 +17,19 @@ function Create(self)
 	
 	self.glowSpawnTimer = Timer();
 	
+	self.lastVel = Vector(self.Vel.X, self.Vel.Y)
+	
+	self.impulse = Vector()
+	self.bounceSoundTimer = Timer()	
+	
 	self.active = false
 end
 
 function Update(self)
+
+	self.impulse = (self.Vel - self.lastVel) / TimerMan.DeltaTimeSecs * self.Vel.Magnitude * 0.1
+	self.lastVel = Vector(self.Vel.X, self.Vel.Y)
+
 	if self.active then
 		--PrimitiveMan:DrawCirclePrimitive(self.Pos, self.range, 5)
 		
@@ -107,6 +119,18 @@ function Update(self)
 			end
 		else
 			self.activateTimer:Reset()
+		end
+	end
+end
+
+function OnCollideWithTerrain(self, terrainID)
+	if self.bounceSoundTimer:IsPastSimMS(50) then
+		if self.impulse.Magnitude > 25 then -- Hit
+			self.bounceSound:Play(self.Pos);
+			self.bounceSoundTimer:Reset()
+		elseif self.impulse.Magnitude > 11 then -- Roll
+			self.rollSound:Play(self.Pos);
+			self.bounceSoundTimer:Reset()
 		end
 	end
 end

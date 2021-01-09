@@ -10,7 +10,7 @@ function Create(self)
 	self.armSway = true;
 	self.automaticEquip = false;
 	self.alternativeGib = false;
-	self.visibleInventory = true;
+	self.visibleInventory = false;
 	
 	-- Start modded code --
 	
