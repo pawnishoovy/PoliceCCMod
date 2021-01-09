@@ -22,7 +22,7 @@ function Update(self)
 			self.parent = ToActor(mo);
 		end
 
-	elseif self.parent then
+	elseif IsActor(self.parent) then
 		
 		if self.parent:NumberValueExists("AttackAngle") then
 			local min_value = -math.pi;
