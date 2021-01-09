@@ -42,14 +42,6 @@ function Create(self)
 	
 	self.healthUpdateTimer = Timer();
 	self.oldHealth = self.Health;
-	
-	self.emotionTimer = Timer();
-	self.emotionDuration = 0;
-	
-	self.baseHeadFrame = 0;
-	
-	self.blinkTimer = Timer();
-	self.blinkDelay = math.random(5000, 11000);
 
 	-- fil jump
 	
@@ -98,8 +90,6 @@ function Update(self)
 		HeatAIBehaviours.handleMovement(self);
 		
 		HeatAIBehaviours.handleHealth(self);
-		
-		HeatAIBehaviours.handleHeadFrames(self);
 
 	else
 	
