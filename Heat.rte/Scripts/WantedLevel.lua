@@ -71,7 +71,7 @@ function WantedLevelScript:PickSector(minimumSize)
 		local sectorPool = {}
 		for i, sector in ipairs(self.sectorTable) do
 			local size = math.abs(SceneMan:ShortestDistance(sector.Start, sector.End,SceneMan.SceneWrapsX).X)
-			if size > minimumSize then
+			if size > minimumSize and sector.Start.Y > 200 and sector.End.Y > 200 then
 				table.insert(sectorPool, sector)
 			end
 		end
@@ -115,8 +115,8 @@ function WantedLevelScript:StartScript()
 	
 	--self.spawnDelayMin = 4000 -- IN MS
 	--self.spawnDelayMax = 5000
-	self.spawnDelayMin = 120 -- IN S
-	self.spawnDelayMax = 180
+	self.spawnDelayMin = 90 -- IN S
+	self.spawnDelayMax = 150
 	
 	self.spawnDelay = math.random(self.spawnDelayMin, self.spawnDelayMax)
 	self.spawnTimer = 0
