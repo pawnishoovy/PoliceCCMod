@@ -20,15 +20,16 @@ function HumanAIBehaviours.createEmotion(self, emotion, priority, duration, canO
 	end
 	if emotion then
 		
-			self.emotionApplied = false; -- applied later in handleheadframes
-			self.Emotion = emotion;
-			if duration then
-				self.emotionTimer:Reset();
-				self.emotionDuration = duration;
-			else
-				self.emotionDuration = 0; -- will follow voiceSound length
-			end
-			self.lastEmotionPriority = priority;
+		self.emotionApplied = false; -- applied later in handleheadframes
+		self.Emotion = emotion;
+		if duration then
+			self.emotionTimer:Reset();
+			self.emotionDuration = duration;
+		else
+			self.emotionDuration = 0; -- will follow voiceSound length
+		end
+		self.lastEmotionPriority = priority;
+		self.deathCloseTimer:Reset();
 	end
 end
 
@@ -296,8 +297,9 @@ function HumanAIBehaviours.handleDying(self)
 		if self.deathSoundPlayed ~= true then
 			self.deathSoundPlayed = true;
 			HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Death, 10, 4);
+			self.deathCloseTimer:Reset();
 		end
-		if self.ToDelete == true then
+		if self.deathCloseTimer:IsPastSimMS(self.deathCloseDelay) then
 			self.Head.Frame = self.baseHeadFrame + 1; -- (+1: eyes closed. rest in peace grunt)
 		end
 	end
