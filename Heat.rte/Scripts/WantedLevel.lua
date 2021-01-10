@@ -94,9 +94,12 @@ function WantedLevelScript:StartScript()
 	self.terrainPointTable = {}
 	
 	self.spawnMessageTable = {
-		"nigga melon",
-		"bottom text",
-		"filipe rulezzz"
+		"The Heat is here!",
+		"Get down, cops!",
+		"It's the fuzz!",
+		"Cops!",
+		"They're here!",
+		"Stop right there!"
 	}
 	
 	ActivityMan:GetActivity():SetTeamAISkill(-1, Activity.UNFAIRSKILL)

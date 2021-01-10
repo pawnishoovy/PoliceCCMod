@@ -131,7 +131,7 @@ function HumanAIBehaviours.handleMovement(self)
 	-- Custom Jump
 	if self.controller:IsState(Controller.BODY_JUMPSTART) == true and self.controller:IsState(Controller.BODY_CROUCH) == false and self.jumpTimer:IsPastSimMS(self.jumpDelay) and not self.isJumping then
 		if self.feetContact[1] == true or self.feetContact[2] == true then
-			local jumpVec = Vector(0,-1.5)
+			local jumpVec = Vector(0,-3.0)
 			local jumpWalkX = 3
 			if self.controller:IsState(Controller.MOVE_LEFT) == true then
 				jumpVec.X = -jumpWalkX

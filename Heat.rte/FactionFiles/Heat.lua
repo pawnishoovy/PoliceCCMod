@@ -90,6 +90,16 @@ CF_ActUnlockData[factionid][i] = 2000
 CF_ActTypes[factionid][i] = CF_ActorTypes.HEAVY;
 CF_ActPowers[factionid][i] = 6
 
+i = #CF_ActNames[factionid] + 1
+CF_ActNames[factionid][i] = "Police Corporal"
+CF_ActPresets[factionid][i] = "Corporal"
+CF_ActModules[factionid][i] = "Heat.rte"
+CF_ActPrices[factionid][i] = 200
+CF_ActDescriptions[factionid][i] = "Tactics-inclined corporal of the force."
+CF_ActUnlockData[factionid][i] = 1400
+CF_ActTypes[factionid][i] = CF_ActorTypes.LIGHT;
+CF_ActPowers[factionid][i] = 5
+
 
 
 i = #CF_ActNames[factionid] + 1
@@ -167,6 +177,17 @@ CF_ItmModules[factionid][i] = "Base.rte"
 CF_ItmPrices[factionid][i] = 20
 CF_ItmDescriptions[factionid][i] = "This metal shield provides excellent additional frontal protection to the user and it can stop numerous hits before breaking up."
 CF_ItmUnlockData[factionid][i] = 500
+CF_ItmClasses[factionid][i] = "HeldDevice"
+CF_ItmTypes[factionid][i] = CF_WeaponTypes.SHIELD;
+CF_ItmPowers[factionid][i] = 2
+
+i = #CF_ItmNames[factionid] + 1
+CF_ItmNames[factionid][i] = "Heatplastene Riotshield"
+CF_ItmPresets[factionid][i] = "Heatplastene Riotshield"
+CF_ItmModules[factionid][i] = "Heat.rte"
+CF_ItmPrices[factionid][i] = 10
+CF_ItmDescriptions[factionid][i] = "Heatplastene riotshield. Very light, very cheap - but certainly weak compared to the traditional metal slab."
+CF_ItmUnlockData[factionid][i] = 250
 CF_ItmClasses[factionid][i] = "HeldDevice"
 CF_ItmTypes[factionid][i] = CF_WeaponTypes.SHIELD;
 CF_ItmPowers[factionid][i] = 1
