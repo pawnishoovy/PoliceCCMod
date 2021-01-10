@@ -26,10 +26,10 @@ function Create(self)
 	
 	self.jumpJetSound = CreateSoundContainer("Jumpjet Start Heat", "Heat.rte");
 	
-	self.Gender = math.random(0, 1);
-	
-	if self.Gender == 0 then -- female
-	
+	if math.random(0,100) < 40 then -- female
+		self.baseHeadFrame = 5;
+		self.Gender = 0
+		
 		self.voiceSounds = {
 		Pain = CreateSoundContainer("VO Normal Female Pain HumanOfficer", "Heat.rte"),
 		Death = CreateSoundContainer("VO Normal Female Death HumanOfficer", "Heat.rte"),
@@ -41,8 +41,10 @@ function Create(self)
 		Spot = CreateSoundContainer("VO Normal Female Spot HumanOfficer", "Heat.rte"),
 		Reload = CreateSoundContainer("VO Normal Female Reload HumanOfficer", "Heat.rte")};
 		
-	else
-	
+	else -- male
+		self.baseHeadFrame = 0;
+		self.Gender = 1
+		
 		self.voiceSounds = {
 		Pain = CreateSoundContainer("VO Normal Male Pain HumanOfficer", "Heat.rte"),
 		Death = CreateSoundContainer("VO Normal Male Death HumanOfficer", "Heat.rte"),
@@ -66,8 +68,6 @@ function Create(self)
 	self.moveSoundWalkTimer = Timer();
 	self.wasCrouching = false;
 	self.wasMoving = false;
-	
-	self.baseHeadFrame = 0;
 	
 	self.emotionTimer = Timer();
 	self.emotionDuration = 0;
