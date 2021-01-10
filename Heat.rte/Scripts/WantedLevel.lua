@@ -100,11 +100,15 @@ function WantedLevelScript:StartScript()
 	}
 	
 	ActivityMan:GetActivity():SetTeamAISkill(-1, Activity.UNFAIRSKILL)
-	print(ActivityMan:GetActivity().TeamCount)
 	
 	self.spawnTicketsMax = math.random(3,5)
 	self.spawnTickets = self.spawnTicketsMax
 	self.spawnTier = 1 -- start with 0 and ends with 3
+	
+	self.spawnTeam = -1
+	if ActivityMan:GetActivity().TeamCount < 4 then
+		self.spawnTeam = ActivityMan:GetActivity().TeamCount -- it just works ¯\_(ツ)_/¯
+	end
 	
 	--self.spawnDelayMin = 4000 -- IN MS
 	--self.spawnDelayMax = 5000
@@ -128,14 +132,18 @@ function WantedLevelScript:UpdateScript()
 			local reinforcementAmout = 1 -- Base
 			local reinforcementCraft = "HS Craft"
 			local reinforcementCraftSize = 116
-			local reinforcementTeam = -1
+			local reinforcementTeam = self.spawnTeam
 			local reinforcementSector = nil
 			
 			--SetScrollTarget
 			
 			reinforcementAmout = reinforcementAmout + (math.random(1,3) <= self.spawnTier and 1 or 0) -- Chance based on tier
 			reinforcementAmout = reinforcementAmout + (math.random(1,3) < self.spawnTier and 1 or 0) -- Chance based on tier
-			reinforcementAmout = reinforcementAmout + (math.random(1,5) < 2 and 1 or 0) -- Chance based on pure luck
+			reinforcementAmout = reinforcementAmout + (math.random(1,3) < 2 and 1 or 0) -- Chance based on pure luck
+			
+			reinforcementAmout = reinforcementAmout + (self.spawnTier > 1 and 1 or 0) -- Based on tier
+			
+			reinforcementAmout = math.min(reinforcementAmout, 4)
 			
 			-- Now get a nice spot to land
 			for i = 0, (reinforcementAmout - 1) do
@@ -146,18 +154,20 @@ function WantedLevelScript:UpdateScript()
 				end
 			end
 			
-			if reinforcementSector ~= nil then
+			if reinforcementSector ~= nil and reinforcementAmout > 0 then
+				local spawnedAnything = false
+				
 				-- Spawn them cops!
 				for i = 0, (reinforcementAmout - 1) do
 					local x = reinforcementSector.Start.X + SceneMan:ShortestDistance(reinforcementSector.Start, reinforcementSector.End,SceneMan.SceneWrapsX).X / reinforcementAmout * i
 					if reinforcementAmout == 1 then -- Middle
 						x = reinforcementSector.Start.X + SceneMan:ShortestDistance(reinforcementSector.Start, reinforcementSector.End,SceneMan.SceneWrapsX).X * 0.5
 					end
-					local pos = Vector(x, - math.random(0,50))
+					local pos = Vector(x, math.random(0,50))
 					
 					local ship = CreateACDropShip(reinforcementCraft, module)
 					
-					local actorsInCargo = math.min(ship.MaxPassengers, math.random(1,3));
+					local actorsInCargo = math.min(ship.MaxPassengers, math.random(2,3));
 					
 					--The max allowed weight of this craft plus cargo
 					local craftMaxMass = ship.MaxMass;
@@ -199,33 +209,41 @@ function WantedLevelScript:UpdateScript()
 							end
 							
 						end
-						--Set AI mode and team so it knows who and what to fight for!
+						-- Set AI mode and team so it knows who and what to fight for!
 						passenger.AIMode = Actor.AIMODE_BRAINHUNT
 						passenger.Team = reinforcementTeam
 						passenger.IgnoresTeamHits = true
 
-						--Yes we can; so add it to the cargo hold
+						-- Add it to the cargo hold
 						ship:AddInventoryItem(passenger);
 						passenger = nil;
 					end
 					
-					ship.Pos = pos
-					ship.Vel = Vector(math.random(-5,5), math.random(0, -15))
-					ship.Team = reinforcementTeam
-					
-					MovableMan:AddActor(ship);
+					if ship:IsInventoryEmpty() == false then
+						ship.Pos = pos
+						ship.Vel = Vector(math.random(-5,5), math.random(0, -15))
+						ship.Team = reinforcementTeam
+						
+						MovableMan:AddActor(ship);
+						
+						spawnedAnything = true -- Double check
+					else
+						DeleteEntity(ship) -- Don't spawn empty craft, sill!
+					end
 				end
 				
-				-- Ticket has been used
-				self.spawnTier = math.floor((1 - (self.spawnTickets / self.spawnTicketsMax)) * self.spawnTicketsMax + 0.5)
-				self.spawnTickets = self.spawnTickets - 1
-				
-				--- Show super cool message
-				-- Let them know that they are fucked
-				local text = self.spawnMessageTable[math.random(1, #self.spawnMessageTable)]
-				
-				ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.YELLOW, 0):ShowText(text, GUIBanner.FLYBYLEFTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
-				ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.RED, 0):ShowText(text, GUIBanner.FLYBYRIGHTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
+				if spawnedAnything then
+					-- Ticket has been used
+					self.spawnTier = math.floor((1 - (self.spawnTickets / self.spawnTicketsMax)) * self.spawnTicketsMax + 0.5)
+					self.spawnTickets = self.spawnTickets - 1
+					
+					--- Show super cool message
+					-- Let them know that they are fucked
+					local text = self.spawnMessageTable[math.random(1, #self.spawnMessageTable)]
+					
+					ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.YELLOW, 0):ShowText(text, GUIBanner.FLYBYLEFTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
+					ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.RED, 0):ShowText(text, GUIBanner.FLYBYRIGHTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
+				end
 			else
 				-- Too bad! no spawning for today!
 				print("ERROR: NO SUITABLE SECTORS FOUND")
