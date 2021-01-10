@@ -75,6 +75,9 @@ function Create(self)
 	self.blinkTimer = Timer();
 	self.blinkDelay = math.random(5000, 11000);
 	
+	self.deathCloseTimer = Timer();
+	self.deathCloseDelay = 750;
+	
 	self.Suppression = 0;
 	self.Suppressed = false;
 	
