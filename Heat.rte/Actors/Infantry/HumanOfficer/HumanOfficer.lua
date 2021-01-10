@@ -26,18 +26,37 @@ function Create(self)
 	
 	self.jumpJetSound = CreateSoundContainer("Jumpjet Start Heat", "Heat.rte");
 	
-	self.voiceSounds = {
-	Pain = CreateSoundContainer("VO Pain HumanOfficer", "Heat.rte"),
-	Death = CreateSoundContainer("VO Death HumanOfficer", "Heat.rte"),
-	Lead = CreateSoundContainer("VO Lead HumanOfficer", "Heat.rte"),
-	suppressedLow = CreateSoundContainer("VO Suppressed Low HumanOfficer", "Heat.rte"),
-	suppressedMedium = CreateSoundContainer("VO Suppressed Medium HumanOfficer", "Heat.rte"),
-	suppressedHigh = CreateSoundContainer("VO Suppressed High HumanOfficer", "Heat.rte"),
-	Battlecry = CreateSoundContainer("VO Battlecry HumanOfficer", "Heat.rte"),
-	Spot = CreateSoundContainer("VO Spot HumanOfficer", "Heat.rte"),
-	Reload = CreateSoundContainer("VO Reload HumanOfficer", "Heat.rte")};
+	self.Gender = math.random(0, 1);
 	
-	self.voiceSound = CreateSoundContainer("VO Pain HumanOfficer", "Heat.rte");
+	if self.Gender == 0 then -- female
+	
+		self.voiceSounds = {
+		Pain = CreateSoundContainer("VO Normal Female Pain HumanOfficer", "Heat.rte"),
+		Death = CreateSoundContainer("VO Normal Female Death HumanOfficer", "Heat.rte"),
+		Lead = CreateSoundContainer("VO Normal Female Lead HumanOfficer", "Heat.rte"),
+		suppressedLow = CreateSoundContainer("VO Normal Female Suppressed Low HumanOfficer", "Heat.rte"),
+		suppressedMedium = CreateSoundContainer("VO Normal Female Suppressed Medium HumanOfficer", "Heat.rte"),
+		suppressedHigh = CreateSoundContainer("VO Normal Female Suppressed High HumanOfficer", "Heat.rte"),
+		Battlecry = CreateSoundContainer("VO Normal Female Battlecry HumanOfficer", "Heat.rte"),
+		Spot = CreateSoundContainer("VO Normal Female Spot HumanOfficer", "Heat.rte"),
+		Reload = CreateSoundContainer("VO Normal Female Reload HumanOfficer", "Heat.rte")};
+		
+	else
+	
+		self.voiceSounds = {
+		Pain = CreateSoundContainer("VO Normal Male Pain HumanOfficer", "Heat.rte"),
+		Death = CreateSoundContainer("VO Normal Male Death HumanOfficer", "Heat.rte"),
+		Lead = CreateSoundContainer("VO Normal Male Lead HumanOfficer", "Heat.rte"),
+		suppressedLow = CreateSoundContainer("VO Normal Male Suppressed Low HumanOfficer", "Heat.rte"),
+		suppressedMedium = CreateSoundContainer("VO Normal Male Suppressed Medium HumanOfficer", "Heat.rte"),
+		suppressedHigh = CreateSoundContainer("VO Normal Male Suppressed High HumanOfficer", "Heat.rte"),
+		Battlecry = CreateSoundContainer("VO Normal Male Battlecry HumanOfficer", "Heat.rte"),
+		Spot = CreateSoundContainer("VO Normal Male Spot HumanOfficer", "Heat.rte"),
+		Reload = CreateSoundContainer("VO Normal Male Reload HumanOfficer", "Heat.rte")};
+
+	end
+	
+	self.voiceSound = CreateSoundContainer("VO Normal Female Pain HumanOfficer", "Heat.rte");
 	-- MEANINGLESS! this is just so we can do voiceSound.Pos without an if check first! it will be overwritten first actual VO play
 
 	self.altitude = 0;
