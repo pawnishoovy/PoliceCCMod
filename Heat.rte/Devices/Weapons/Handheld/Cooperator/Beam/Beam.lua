@@ -68,7 +68,8 @@ function Update(self)
 			local pixel = CreateMOPixel("Cooperator Beam Damage 1");
 			pixel.Vel = Vector(1, 0):RadRotate(self.RotAngle) * 70;
 			pixel.Pos = self.hitPos - Vector(2, 0):RadRotate(self.RotAngle);
-			pixel.Team = self.Team -- It doesn't work, somehow
+			pixel.Team = self.Team
+			pixel.Sharpness = pixel.Sharpness / 2 * math.random(1,2)
 			pixel.IgnoresTeamHits = true;
 			MovableMan:AddParticle(pixel);
 		end
