@@ -189,6 +189,18 @@ function WantedLevelScript:UpdateScript()
 						else
 							passenger = RandomAHuman("Actors - Light", module);
 						end
+						-- Companion drone
+						if module == "Heat.rte" and math.random() < (0.1 * self.spawnTier) then
+							local drone = CreateActor(math.random(1,2) < 2 and "Gundrone" or "Buzzdrone", module) -- Predeployed drone
+							drone:SetNumberValue("AIMode", 1) -- Follow someone!
+							drone.Team = reinforcementTeam
+							drone.IgnoresTeamHits = true
+							
+							-- Add it to the cargo hold
+							ship:AddInventoryItem(drone);
+							drone = nil;
+						end
+						
 						--Equip it with tools and guns if it's a humanoid
 						if IsAHuman(passenger) then
 							if math.random(1,3) <= self.spawnTier then
@@ -204,11 +216,13 @@ function WantedLevelScript:UpdateScript()
 								passenger:AddInventoryItem(RandomTDExplosive("Bombs", module));
 							end
 							
-							if math.random() < 0.2 then
-								passenger:AddInventoryItem(RandomTDExplosive("Gundrone", module));
-							end
-							if math.random() < 0.2 then
-								passenger:AddInventoryItem(RandomTDExplosive("Buzzdrone", module));
+							if module == "Heat.rte" then -- Deployable drones
+								if math.random() < 0.1 then
+									passenger:AddInventoryItem(RandomTDExplosive("Gundrone", module));
+								end
+								if math.random() < 0.1 then
+									passenger:AddInventoryItem(RandomTDExplosive("Buzzdrone", module));
+								end
 							end
 							
 						end
