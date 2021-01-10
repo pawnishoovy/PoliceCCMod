@@ -62,8 +62,6 @@ function Create(self)
 	self.reloadVoicelineTimer = Timer();
 	self.reloadVoicelineDelay = 5000;
 	
-	self.suppressionUpdates = 0;
-	
 	self.suppressionUpdateTimer = Timer();
 	
 	self.suppressedVoicelineTimer = Timer();

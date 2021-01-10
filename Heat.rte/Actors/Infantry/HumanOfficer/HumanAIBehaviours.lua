@@ -273,17 +273,16 @@ function HumanAIBehaviours.handleHealth(self)
 		
 		if wasHeavilyInjured then
 			self.Suppression = self.Suppression + 100;
-			self.Status = 1
 		elseif wasInjured then
-			self.Suppression = self.Suppression + 60;
+			self.Suppression = self.Suppression + 50;
 		elseif wasLightlyInjured then
 			--HumanAIBehaviours.createEmotion(self, 2, 4, 500);
-			self.Suppression = self.Suppression + math.random(9,13);
+			self.Suppression = self.Suppression + math.random(15,25);
 		end
 		
 		if (wasInjured) or (wasHeavilyInjured) and self.Head then
 			if self.Health > 0 then
-				HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Pain, 3)
+				HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Pain, 2)
 			else
 				HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Death, 10)
 			end
@@ -321,20 +320,15 @@ function HumanAIBehaviours.handleSuppression(self)
 	
 	
 	if (suppressionTimerReady) then
-		self.suppressionUpdates = self.suppressionUpdates + 1;
 		if self.Suppression > 25 then
 			if self.suppressedVoicelineTimer:IsPastSimMS(self.suppressedVoicelineDelay) then
 				if self.Suppression > 99 then
-					-- keep playing voicelines if we keep being suppressed to the max
+					-- keep playing voicelines if we keep being suppressed
 					HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedHigh, 5);
 					self.suppressedVoicelineTimer:Reset();
 					self.suppressionUpdates = 0;
-				elseif self.Suppression > 55 and self.suppressionUpdates > 4 then
+				elseif self.Suppression > 80 then
 					HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedMedium, 4);
-					self.suppressedVoicelineTimer:Reset();
-					self.suppressionUpdates = 0;
-				elseif self.Suppression > 25 and self.suppressionUpdates > 4 then
-					HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedLow, 4);
 					self.suppressedVoicelineTimer:Reset();
 					self.suppressionUpdates = 0;
 				end
@@ -353,7 +347,7 @@ function HumanAIBehaviours.handleSuppression(self)
 		end
 		self.Suppression = math.min(self.Suppression, 100)
 		if self.Suppression > 0 then
-			self.Suppression = self.Suppression - 10;
+			self.Suppression = self.Suppression - 7;
 		end
 		self.Suppression = math.max(self.Suppression, 0);
 		self.suppressionUpdateTimer:Reset();
