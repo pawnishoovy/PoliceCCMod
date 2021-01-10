@@ -32,7 +32,7 @@ function HumanAIBehaviours.createEmotion(self, emotion, priority, duration, canO
 	end
 end
 
-function HumanAIBehaviours.createVoiceSoundEffect(self, soundContainer, priority, canOverridePriority)
+function HumanAIBehaviours.createVoiceSoundEffect(self, soundContainer, priority, emotion, canOverridePriority)
 	if canOverridePriority == nil then
 		canOverridePriority = false;
 	end
@@ -253,22 +253,22 @@ function HumanAIBehaviours.handleHealth(self)
 		if not (self.FGArm) and (self.FGArmLost ~= true) then
 			self.Suppression = self.Suppression + 100;
 			self.FGArmLost = true;
-			HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedHigh, 5);
+			HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedHigh, 5, 4);
 		end
 		if not (self.BGArm) and (self.BGArmLost ~= true) then
 			self.Suppression = self.Suppression + 100;
 			self.BGArmLost = true;
-			HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedHigh, 5);
+			HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedHigh, 5, 4);
 		end
 		if not (self.FGLeg) and (self.FGLegLost ~= true) then
 			self.Suppression = self.Suppression + 100;
 			self.FGLegLost = true;
-			HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedHigh, 5);
+			HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedHigh, 5, 4);
 		end
 		if not (self.BGLeg) and (self.BGLegLost ~= true) then
 			self.Suppression = self.Suppression + 100;
 			self.BGLegLost = true;
-			HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedHigh, 5);
+			HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedHigh, 5, 4);
 		end	
 		
 		if wasHeavilyInjured then
@@ -282,61 +282,58 @@ function HumanAIBehaviours.handleHealth(self)
 		
 		if (wasInjured) or (wasHeavilyInjured) and self.Head then
 			if self.Health > 0 then
-				HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Pain, 2)
+				HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Pain, 2, 2)
 			else
-				HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Death, 10)
+				HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Death, 10, 4)
 			end
 		end		
 	end
 	
 end
 
-function HumanAIBehaviours.handleSelfDestruct(self)
-	
-	self.Health = self.selfDestructThreshold;
-	if self.Status == 3 then
-		self.Status = 1;
-	end
-	self.controller:SetState(Controller.WEAPON_DROP,true);
-
-	if not self.voiceSound:IsBeingPlayed() then
-		self:GibThis();
-	end
-end
-
 function HumanAIBehaviours.handleDying(self)
 	if self.Head then
 		if self.deathSoundPlayed ~= true then
 			self.deathSoundPlayed = true;
-			HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Death, 10);
-		end		
+			HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Death, 10, 4);
+		end
+		if self.ToDelete == true then
+			self.Head.Frame = self.baseHeadFrame + 1; -- (+1: eyes closed. rest in peace grunt)
+		end
 	end
 end
 
 function HumanAIBehaviours.handleSuppression(self)
 
+	local blinkTimerReady = self.blinkTimer:IsPastSimMS(self.blinkDelay);
 	local suppressionTimerReady = self.suppressionUpdateTimer:IsPastSimMS(1500);
 	
-	
+	if (blinkTimerReady) and (not self.Suppressed) and self.Head then
+		if self.Head.Frame == self.baseHeadFrame then
+			HumanAIBehaviours.createEmotion(self, 1, 0, 100);
+			self.blinkTimer:Reset();
+			self.blinkDelay = math.random(5000, 11000);
+		end
+	end	
 	
 	if (suppressionTimerReady) then
 		if self.Suppression > 25 then
 			if self.suppressedVoicelineTimer:IsPastSimMS(self.suppressedVoicelineDelay) then
 				if self.Suppression > 99 then
 					-- keep playing voicelines if we keep being suppressed
-					HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedHigh, 5);
+					HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedHigh, 5, 4);
 					self.suppressedVoicelineTimer:Reset();
 					self.suppressionUpdates = 0;
 				elseif self.Suppression > 80 then
-					HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedMedium, 4);
+					HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedMedium, 4, 4);
 					self.suppressedVoicelineTimer:Reset();
 					self.suppressionUpdates = 0;
 				end
 				if self.Suppressed == false then -- initial voiceline
 					if self.Suppression > 55 then
-						HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedMedium, 4);
+						HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedMedium, 4, 4);
 					else
-						HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedLow, 3);
+						HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.suppressedLow, 3, 2);
 					end
 					self.suppressedVoicelineTimer:Reset();
 				end
@@ -395,7 +392,7 @@ function HumanAIBehaviours.handleAITargetLogic(self)
 					
 					self.spotAllowed = false;
 					
-					HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Spot, 3);
+					HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Spot, 3, 3);
 					
 				end
 			else
@@ -449,7 +446,7 @@ function HumanAIBehaviours.handleVoicelines(self)
 						self.gunShotCounter = self.gunShotCounter + 1;
 					end
 					if self.gunShotCounter > (gunMag.Capacity*0.7) and self.suppressingVoiceLineTimer:IsPastSimMS(self.suppressingVoiceLineDelay) then
-						HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Battlecry, 3);
+						HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Battlecry, 3, 3);
 						self.suppressingVoiceLineTimer:Reset();
 					end
 				else
@@ -458,7 +455,7 @@ function HumanAIBehaviours.handleVoicelines(self)
 				if (reloading) then
 					if (self.reloadVoicelinePlayed ~= true) then
 						if (math.random(1, 100) < 30) then
-							HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Reload, 3);
+							HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Reload, 3, 2);
 						end
 						self.reloadVoicelinePlayed = true;
 					end
