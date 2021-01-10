@@ -99,6 +99,8 @@ function WantedLevelScript:StartScript()
 		"filipe rulezzz"
 	}
 	
+	ActivityMan:GetActivity():SetTeamAISkill(-1, Activity.UNFAIRSKILL)
+	print(ActivityMan:GetActivity().TeamCount)
 	
 	self.spawnTicketsMax = math.random(3,5)
 	self.spawnTickets = self.spawnTicketsMax
@@ -119,12 +121,6 @@ function WantedLevelScript:UpdateScript()
 	if self.spawnTickets > 0 then -- We run out of tickets!
 		if self.spawnTimer > self.spawnDelay then -- Time to spawn!
 			self:CalculateSectors(16, 16, 2)
-			
-			--- Show super cool message
-			-- Let them know that they are fucked
-			local text = self.spawnMessageTable[math.random(1, #self.spawnMessageTable)]
-			ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.YELLOW, 0):ShowText(text, GUIBanner.FLYBYLEFTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
-			ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.RED, 0):ShowText(text, GUIBanner.FLYBYRIGHTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
 			
 			-- How many crafts?
 			local module = "Heat.rte"
@@ -219,21 +215,27 @@ function WantedLevelScript:UpdateScript()
 					
 					MovableMan:AddActor(ship);
 				end
+				
+				-- Ticket has been used
+				self.spawnTier = math.floor((1 - (self.spawnTickets / self.spawnTicketsMax)) * self.spawnTicketsMax + 0.5)
+				self.spawnTickets = self.spawnTickets - 1
+				
+				--- Show super cool message
+				-- Let them know that they are fucked
+				local text = self.spawnMessageTable[math.random(1, #self.spawnMessageTable)]
+				
+				ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.YELLOW, 0):ShowText(text, GUIBanner.FLYBYLEFTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
+				ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.RED, 0):ShowText(text, GUIBanner.FLYBYRIGHTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
 			else
 				-- Too bad! no spawning for today!
 				print("ERROR: NO SUITABLE SECTORS FOUND")
 			end
 			
-			
-			
-			self.spawnTier = math.floor((1 - (self.spawnTickets / self.spawnTicketsMax)) * self.spawnTicketsMax + 0.5)
-			self.spawnTickets = self.spawnTickets - 1
-			
 			-- Reset Timer
 			--self.spawnTimer:Reset()
 			self.spawnTimer = 0
 			self.spawnDelay = math.random(self.spawnDelayMin, self.spawnDelayMax)
-		else
+		elseif ToGameActivity(ActivityMan:GetActivity()).ActivityState ~= Activity.EDITING and ToGameActivity(ActivityMan:GetActivity()).ActivityState ~= Activity.OVER then
 			self.spawnTimer = self.spawnTimer + TimerMan.DeltaTimeSecs -- Why this over timer? Timer might not stop when paused so I better use this
 		end
 	end
