@@ -166,7 +166,7 @@ function WantedLevelScript:UpdateScript()
 					if reinforcementAmout == 1 then -- Middle
 						x = reinforcementSector.Start.X + SceneMan:ShortestDistance(reinforcementSector.Start, reinforcementSector.End,SceneMan.SceneWrapsX).X * 0.5
 					end
-					local pos = Vector(x, math.random(0,50))
+					local pos = Vector(x, -math.random(0,50))
 					
 					local ship = CreateACDropShip(reinforcementCraft, module)
 					
@@ -238,7 +238,7 @@ function WantedLevelScript:UpdateScript()
 					
 					if ship:IsInventoryEmpty() == false then
 						ship.Pos = pos
-						ship.Vel = Vector(math.random(-5,5), math.random(0, -15))
+						ship.Vel = Vector(math.random(-5,5), math.random(0, 15))
 						ship.Team = reinforcementTeam
 						
 						MovableMan:AddActor(ship);
