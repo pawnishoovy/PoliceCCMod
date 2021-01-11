@@ -63,13 +63,13 @@ function Create(self)
 	self.reloadTimer = Timer();
 	
 	self.magOutPrepareDelay = 700;
-	self.magOutAfterDelay = 1100;
+	self.magOutAfterDelay = 700;
 	self.magInPrepareDelay = 900;
-	self.magInAfterDelay = 600;
+	self.magInAfterDelay = 300;
 	self.boltBackPrepareDelay = 700;
-	self.boltBackAfterDelay = 400;
+	self.boltBackAfterDelay = 300;
 	self.boltForwardPrepareDelay = 400;
-	self.boltForwardAfterDelay = 700;
+	self.boltForwardAfterDelay = 600;
 	
 	-- phases:
 	-- 0 magout
@@ -312,7 +312,7 @@ function Update(self)
 		self.canSmoke = true
 		self.smokeTimer:Reset()
 		
-		for i = 1, (3 + (self:GetNumberValue("Charge")*2)) do
+		for i = 1, (4 + (self:GetNumberValue("Charge")*2)) do
 			local Bullet = CreateMOPixel("Particle Executioner", "Heat.rte")
 			Bullet.Pos = self.MuzzlePos;
 			Bullet.Vel = self.Vel + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)

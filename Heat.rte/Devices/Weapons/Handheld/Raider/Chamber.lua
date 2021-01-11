@@ -51,9 +51,9 @@ function Create(self)
 	self.burstTimer = Timer();
 	
 	self.openPrepareDelay = 800;
-	self.openAfterDelay = 800;
+	self.openAfterDelay = 550;
 	self.loadPrepareDelay = 450;
-	self.loadAfterDelay = 800;
+	self.loadAfterDelay = 550;
 	self.closePrepareDelay = 200;
 	self.closeAfterDelay = 150;
 	

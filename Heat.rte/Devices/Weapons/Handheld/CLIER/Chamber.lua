@@ -64,13 +64,13 @@ function Create(self)
 	self.reloadTimer = Timer();
 	
 	self.boltBackPrepareDelay = 600;
-	self.boltBackAfterDelay = 100;
+	self.boltBackAfterDelay = 60;
 	self.boltLockPrepareDelay = 150;
-	self.boltLockAfterDelay = 100;
+	self.boltLockAfterDelay = 60;
 	self.magOutPrepareDelay = 500;
 	self.magOutAfterDelay = 100;
 	self.magInPrepareDelay = 900;
-	self.magInAfterDelay = 500;
+	self.magInAfterDelay = 200;
 	self.boltSlapPrepareDelay = 400;
 	self.boltSlapAfterDelay = 100;
 	
