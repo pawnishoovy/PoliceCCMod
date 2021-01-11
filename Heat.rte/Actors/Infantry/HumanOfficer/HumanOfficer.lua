@@ -27,7 +27,7 @@ function Create(self)
 	self.jumpJetSound = CreateSoundContainer("Jumpjet Start HumanOfficer", "Heat.rte");
 	
 	if math.random(0,100) < 40 then -- female
-		self.baseHeadFrame = 5;
+		self.baseHeadFrame = math.random(2,4) * 5;
 		self.Gender = 0
 		
 		self.voiceSounds = {
@@ -42,7 +42,7 @@ function Create(self)
 		Reload = CreateSoundContainer("VO Normal Female Reload HumanOfficer", "Heat.rte")};
 		
 	else -- male
-		self.baseHeadFrame = 0;
+		self.baseHeadFrame = math.random(0,1) * 5;
 		self.Gender = 1
 		
 		self.voiceSounds = {
