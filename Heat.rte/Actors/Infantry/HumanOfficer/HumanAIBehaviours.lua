@@ -190,13 +190,13 @@ function HumanAIBehaviours.handleMovement(self)
 			
 			local offset = Vector(-4, 6)--Vector(self.Jetpack.EmissionOffset.X, self.Jetpack.EmissionOffset.Y)
 			
-			local emitterA = CreateAEmitter("Heat Jetpack Smoke Trail Medium")
+			local emitterA = CreateAEmitter("HumanOfficer Jetpack Smoke Trail Medium")
 			emitterA.Lifetime = 1300
 			self.Jetpack:AddAttachable(emitterA);
 			
 			ToAttachable(emitterA).ParentOffset = offset
 			
-			local emitterB = CreateAEmitter("Heat Jetpack Smoke Trail Heavy")
+			local emitterB = CreateAEmitter("HumanOfficer Jetpack Smoke Trail Heavy")
 			emitterB.Lifetime = 400
 			self.Jetpack:AddAttachable(emitterB);
 			

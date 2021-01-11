@@ -24,7 +24,7 @@ function Create(self)
 	Stand = CreateSoundContainer("Stand HumanOfficer", "Heat.rte"),
 	Step = CreateSoundContainer("Step HumanOfficer", "Heat.rte")};
 	
-	self.jumpJetSound = CreateSoundContainer("Jumpjet Start Heat", "Heat.rte");
+	self.jumpJetSound = CreateSoundContainer("Jumpjet Start HumanOfficer", "Heat.rte");
 	
 	if math.random(0,100) < 40 then -- female
 		self.baseHeadFrame = 5;
