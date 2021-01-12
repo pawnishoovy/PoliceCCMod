@@ -513,11 +513,6 @@ end
 
 function HumanAIBehaviours.handleAbilities(self)
 
-	if self.Healing == true then
-		self.Health = self.Health + (1 * TimerMan.DeltaTimeSecs * 100);
-		self.healJuice = self.healJuice - (1 * TimerMan.DeltaTimeSecs * 100);
-	end
-
 	if self.Health < 80 and self.healJuice > 0 then
 		self.toHeal = true;
 	end
@@ -563,6 +558,9 @@ function HumanAIBehaviours.handleAbilities(self)
 	if self.Healing == true then
 		self.Health = self.Health + (1 * TimerMan.DeltaTimeSecs * 100);
 		self.healJuice = self.healJuice - (1 * TimerMan.DeltaTimeSecs * 100);
+		if math.random(0, 100) < 10 then
+			self:RemoveAnyRandomWounds(1);
+		end
 		self.oldHealth = self.Health;
 	end
 		
