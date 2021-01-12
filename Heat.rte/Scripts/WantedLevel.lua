@@ -118,17 +118,21 @@ function WantedLevelScript:CalculateReinforcements()
 			
 			-- Speaker VO stuff (because pawnis could't resist to add speaker VO)
 			if not eliteSpeaker then
-				if data.Name == "Corporal" then
+				if data.Name == "Sergeant" then
 					eliteSpeaker = true
 					-- Save bunch-o data
 					-- pawnis please save bunch of important stuff to variables here
 					
-					local gender = math.random(0,1)
-					actor:SetNumberValue("Gender", gender)
-				elseif data.Name == "Sergeant" then
+					self.Speaker = 3;
+					
+				elseif data.Name == "Corporal" then
 					eliteSpeaker = true
 					-- Save bunch-o data
 					-- here too
+					local gender = math.random(0,1)
+					actor:SetNumberValue("Gender", gender)
+					self.Speaker = 1 + gender;
+					-- 0 gender: female
 				end
 			end
 			
@@ -280,6 +284,46 @@ function WantedLevelScript:SpawnReinforcements()
 end
 
 function WantedLevelScript:StartScript()
+
+	-- PAWNIS SOUNDS
+	
+	self.arriveSiren = CreateSoundContainer("Arrive Siren Wanted Level", "Heat.rte");
+	
+	self.warpIn = CreateSoundContainer("Warp In Wanted Level", "Heat.rte");
+	
+	self.arriveSounds = {
+	[1] = CreateSoundContainer("Arrive One 1 Wanted Level", "Heat.rte"),
+	[2] = CreateSoundContainer("Arrive One 2 Wanted Level", "Heat.rte"),
+	[3] = CreateSoundContainer("Arrive One 3 Wanted Level", "Heat.rte"),
+	[4] = CreateSoundContainer("Arrive One 4 Wanted Level", "Heat.rte"),
+	[5] = CreateSoundContainer("Arrive One 5 Wanted Level", "Heat.rte")};
+	
+	self.Warning = CreateSoundContainer("VO Warning Wanted Level", "Heat.rte");
+	self.finalWarning = CreateSoundContainer("VO Final Warning Wanted Level", "Heat.rte");
+	
+	self.maleWarning = CreateSoundContainer("VO Warning Male Corporal Wanted Level", "Heat.rte");
+	self.femaleWarning = CreateSoundContainer("VO Warning Female Corporal Wanted Level", "Heat.rte");
+	
+	self.sergeantWarning = CreateSoundContainer("VO Warning Sergeant Wanted Level", "Heat.rte");
+	
+	self.soundTimer = Timer();
+	
+	self.warpInInitialDelay = 1500;
+	self.warpInEachDelay = 1000;
+	self.warpsPlayed = 0;
+	
+	self.arrivalSoundsDelay = 6000;
+	
+	self.VODelay = 2000;
+	
+	self.Speaker = 0;
+	
+	self.sirenPlayed = false;
+	
+	self.arrivalPlayed = false;
+	self.VOPlayed = false;
+	
+	
 	--self:CalculateSectors(16, 16, 2)
 	self.sectorTable = {}
 	self.terrainPointTable = {}
@@ -381,6 +425,37 @@ function WantedLevelScript:StartScript()
 end
 
 function WantedLevelScript:UpdateScript()
+
+	if self.soundArrayEnabled == true then
+	
+		if self.warpsPlayed < self.warpsToPlay and self.soundTimer:IsPastSimMS(self.warpInInitialDelay + (self.warpInEachDelay * self.warpsPlayed)) then
+			self.warpIn:Play(-1);
+			self.warpsPlayed = self.warpsPlayed + 1;
+		end
+		
+		if self.soundTimer:IsPastSimMS(self.VODelay) and self.VOPlayed == false then
+			self.VOPlayed = true;
+			if self.Speaker == 0 then
+				self.Warning:Play(-1);
+			elseif self.Speaker == 1 then
+				self.femaleWarning:Play(-1);
+			elseif self.Speaker == 2 then
+				self.maleWarning:Play(-1);
+			else -- oh no...
+				self.sergeantWarning:Play(-1);
+			end
+		end
+		
+		if self.soundTimer:IsPastSimMS(self.arrivalSoundsDelay) and self.arrivalPlayed == false then
+			self.arrivalPlayed = true;
+			self.soundArrayEnabled = false;
+			for i = 1, self.warpsToPlay do
+				local key = math.random(1, #self.arriveSounds);
+				self.arriveSounds[key]:Play(-1);
+				table.remove(self.arriveSounds, key);
+			end
+		end
+	end
 	
 	--if self.spawnTimer:IsPastSimMS(self.spawnDelay) then
 	if self.spawnTickets > 0 then -- We run out of tickets!
@@ -391,23 +466,54 @@ function WantedLevelScript:UpdateScript()
 			
 			-- Reset Timer and other data
 			-- RESET YOUR VARIABLES HERE PAWNIS < ----
+			
+			self.warpsPlayed = 0;
+			
+			self.arriveSounds = {
+			[1] = CreateSoundContainer("Arrive One 1 Wanted Level", "Heat.rte"),
+			[2] = CreateSoundContainer("Arrive One 2 Wanted Level", "Heat.rte"),
+			[3] = CreateSoundContainer("Arrive One 3 Wanted Level", "Heat.rte"),
+			[4] = CreateSoundContainer("Arrive One 4 Wanted Level", "Heat.rte"),
+			[5] = CreateSoundContainer("Arrive One 5 Wanted Level", "Heat.rte")};
+			
+			self.arrivalPlayed = false;
+			self.VOPlayed = false;			
+			
+			self.Speaker = 0;
+			
 			self.spawnTimer = 0
 			self.spawnDelay = math.random(self.spawnDelayMin, self.spawnDelayMax)
 		elseif self.spawnTimer > (self.spawnDelay - 15) and #self.spawnActors < 1 then -- Precalculate actors and play sounds!
 			local reinforcementCraftMaxPassengers = 3
+			
+			self:CalculateReinforcements()
+			
 			local reinforcementAmount = math.ceil(#self.spawnActors / reinforcementCraftMaxPassengers)
+			
+			self.soundArrayEnabled = true;
+			self.soundTimer:Reset();
+			self.arriveSiren:Play(-1);
 			
 			if reinforcementAmount > 3 then -- 4
 			
+				self.warpsToPlay = 4;
+			
 			elseif reinforcementAmount > 2 then -- 3
 			
+				self.warpsToPlay = 3;
+			
 			elseif reinforcementAmount > 1 then -- 2
+			
+				self.warpsToPlay = 2;
 				
 			else -- 1
+			
+				self.warpsToPlay = 1;
+				
+				-- you gave me if elses i'm going to use them!!
 				
 			end
-			
-			self:CalculateReinforcements()
+
 			
 		elseif ToGameActivity(ActivityMan:GetActivity()).ActivityState ~= Activity.OVER then
 			if ToGameActivity(ActivityMan:GetActivity()).ActivityState ~= Activity.EDITING then
