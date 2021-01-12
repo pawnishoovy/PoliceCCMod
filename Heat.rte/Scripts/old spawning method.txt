@@ -1,0 +1,138 @@
+			-- OLD
+			--[[
+			-- How many crafts?
+			local module = "Heat.rte"
+			
+			local reinforcementAmout = 1 -- Base
+			local reinforcementCraft = "HS Craft"
+			local reinforcementCraftSize = 116
+			local reinforcementTeam = self.spawnTeam
+			local reinforcementSector = nil
+			
+			--SetScrollTarget
+			
+			reinforcementAmout = reinforcementAmout + (math.random(1,3) <= self.spawnTier and 1 or 0) -- Chance based on tier
+			reinforcementAmout = reinforcementAmout + (math.random(1,3) < self.spawnTier and 1 or 0) -- Chance based on tier
+			reinforcementAmout = reinforcementAmout + (math.random(1,3) < 2 and 1 or 0) -- Chance based on pure luck
+			
+			reinforcementAmout = reinforcementAmout + (self.spawnTier > 1 and 1 or 0) -- Based on tier
+			
+			reinforcementAmout = math.min(reinforcementAmout, 4)
+			
+			-- Now get a nice spot to land
+			for i = 0, (reinforcementAmout - 1) do
+				reinforcementSector = WantedLevelScript:PickSector(reinforcementCraftSize * (reinforcementAmout - i))
+				if reinforcementSector ~= nil then
+					reinforcementAmout = reinforcementAmout - i
+					break
+				end
+			end
+			
+			if reinforcementSector ~= nil and reinforcementAmout > 0 then
+				local spawnedAnything = false
+				
+				-- Spawn them cops!
+				for i = 0, (reinforcementAmout - 1) do
+					local x = reinforcementSector.Start.X + SceneMan:ShortestDistance(reinforcementSector.Start, reinforcementSector.End,SceneMan.SceneWrapsX).X / reinforcementAmout * i
+					if reinforcementAmout == 1 then -- Middle
+						x = reinforcementSector.Start.X + SceneMan:ShortestDistance(reinforcementSector.Start, reinforcementSector.End,SceneMan.SceneWrapsX).X * 0.5
+					end
+					local pos = Vector(x, -math.random(0,50))
+					
+					local ship = CreateACDropShip(reinforcementCraft, module)
+					
+					local actorsInCargo = math.min(ship.MaxPassengers, math.random(2,3));
+					
+					--The max allowed weight of this craft plus cargo
+					local craftMaxMass = ship.MaxMass;
+					if craftMaxMass < 0 then
+						craftMaxMass = math.huge;
+					elseif craftMaxMass < 1 then
+						craftMaxMass = ship.Mass + 400;	--MaxMass not defined
+					end
+					
+					--Set the ship up with a cargo of a few armed and equipped actors
+					for i = 1, actorsInCargo do
+						--Get any Actor from the CPU's native tech
+						local passenger = nil;
+						if math.random(1,3) <= self.spawnTier then
+							passenger = RandomAHuman("Actors - Heavy", module);
+						else
+							passenger = RandomAHuman("Actors - Light", module);
+						end
+						-- Companion drone
+						if module == "Heat.rte" and math.random() < (0.1 * self.spawnTier) then
+							local drone = CreateActor(math.random(1,2) < 2 and "Gundrone" or "Buzzdrone", module) -- Predeployed drone
+							drone:SetNumberValue("AIMode", 1) -- Follow someone!
+							drone.Team = reinforcementTeam
+							drone.IgnoresTeamHits = true
+							
+							-- Add it to the cargo hold
+							ship:AddInventoryItem(drone);
+							drone = nil;
+						end
+						
+						--Equip it with tools and guns if it's a humanoid
+						if IsAHuman(passenger) then
+							if math.random(1,3) <= self.spawnTier then
+								passenger:AddInventoryItem(RandomHDFirearm("Weapons - Heavy", module));
+							else
+								passenger:AddInventoryItem(RandomHDFirearm("Weapons - Light", module));
+							end
+							passenger:AddInventoryItem(RandomHDFirearm("Weapons - Secondary", module));
+							if math.random() < 0.2 then
+								passenger:AddInventoryItem(RandomHDFirearm("Tools - Diggers", module));
+							end
+							if math.random() < 0.2 then
+								passenger:AddInventoryItem(RandomTDExplosive("Bombs", module));
+							end
+							
+							if module == "Heat.rte" then -- Deployable drones
+								if math.random() < 0.1 then
+									passenger:AddInventoryItem(RandomTDExplosive("Gundrone", module));
+								end
+								if math.random() < 0.1 then
+									passenger:AddInventoryItem(RandomTDExplosive("Buzzdrone", module));
+								end
+							end
+							
+						end
+						-- Set AI mode and team so it knows who and what to fight for!
+						passenger.AIMode = Actor.AIMODE_BRAINHUNT
+						passenger.Team = reinforcementTeam
+						passenger.IgnoresTeamHits = true
+
+						-- Add it to the cargo hold
+						ship:AddInventoryItem(passenger);
+						passenger = nil;
+					end
+					
+					if ship:IsInventoryEmpty() == false then
+						ship.Pos = pos
+						ship.Vel = Vector(math.random(-5,5), math.random(0, 15))
+						ship.Team = reinforcementTeam
+						
+						MovableMan:AddActor(ship);
+						
+						spawnedAnything = true -- Double check
+					else
+						DeleteEntity(ship) -- Don't spawn empty craft, sill!
+					end
+				end
+				
+				if spawnedAnything then
+					-- Ticket has been used
+					self.spawnTier = math.floor((1 - (self.spawnTickets / self.spawnTicketsMax)) * self.spawnTicketsMax + 0.5)
+					self.spawnTickets = self.spawnTickets - 1
+					
+					--- Show super cool message
+					-- Let them know that they are fucked
+					local text = self.spawnMessageTable[math.random(1, #self.spawnMessageTable)]
+					
+					ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.YELLOW, 0):ShowText(text, GUIBanner.FLYBYLEFTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
+					ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.RED, 0):ShowText(text, GUIBanner.FLYBYRIGHTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
+				end
+			else
+				-- Too bad! no spawning for today!
+				print("ERROR: NO SUITABLE SECTORS FOUND")
+			end]]

@@ -101,26 +101,18 @@ function WantedLevelScript:RandomizeFromTable(tab)
 	return result
 end
 
-function WantedLevelScript:SpawnReinforcements()
-	-- How many crafts?
+function WantedLevelScript:CalculateReinforcements()
 	local module = "Heat.rte"
-	
-	local reinforcementAmout = 1 -- Base
-	local reinforcementCraft = "HS Craft"
-	local reinforcementCraftSize = 116
-	local reinforcementCraftMaxPassengers = 3
-	local reinforcementTeam = self.spawnTeam
-	local reinforcementSector = nil
 	
 	local budget = self.spawnBudgetTable[self.spawnTier]
 	self.spawnBudgetMax = math.max(self.spawnBudgetMax, math.random(budget.Min, budget.Max))
 	self.spawnBudget = self.spawnBudgetMax
 	
-	local actors = {}
+	self.spawnActors = {}
 	
 	while self.spawnBudget > self.spawnBudgetMinimum do
 		local data = self.spawnActorTable[math.random(1, #self.spawnActorTable)]
-		if data and data.Cost <= self.spawnBudget then
+		if data and data.UnlockTier <= self.spawnTier and data.Cost <= self.spawnBudget then
 			local actor = CreateAHuman(data.Name, module)
 			
 			--Equip it with tools and guns if it's a humanoid
@@ -153,10 +145,23 @@ function WantedLevelScript:SpawnReinforcements()
 			end
 			
 			self.spawnBudget = self.spawnBudget - data.Cost
-			table.insert(actors, actor)
+			table.insert(self.spawnActors, actor)
 		end
 	end
-	reinforcementAmout = math.ceil(#actors / reinforcementCraftMaxPassengers)
+end
+
+function WantedLevelScript:SpawnReinforcements()
+	-- How many crafts?
+	local module = "Heat.rte"
+	
+	local reinforcementAmout = 1 -- Base
+	local reinforcementCraft = "HS Craft"
+	local reinforcementCraftSize = 116
+	local reinforcementCraftMaxPassengers = 3
+	local reinforcementTeam = self.spawnTeam
+	local reinforcementSector = nil
+	
+	reinforcementAmout = math.ceil(#self.spawnActors / reinforcementCraftMaxPassengers)
 	--SetScrollTarget
 	
 	-- Now get a nice spot to land
@@ -192,9 +197,9 @@ function WantedLevelScript:SpawnReinforcements()
 			end
 			
 			--Set the ship up with a cargo of a few armed and equipped actors
-			while (actorsInCargo < reinforcementCraftMaxPassengers and #actors > 0) do
-				local passenger = actors[1]
-				table.remove(actors, 1)
+			while (actorsInCargo < reinforcementCraftMaxPassengers and #self.spawnActors > 0) do
+				local passenger = self.spawnActors[1]
+				table.remove(self.spawnActors, 1)
 				
 				-- Set AI mode and team so it knows who and what to fight for!
 				passenger.AIMode = Actor.AIMODE_BRAINHUNT
@@ -240,7 +245,7 @@ function WantedLevelScript:SpawnReinforcements()
 		if spawnedAnything then
 			-- Ticket has been used
 			self.spawnTickets = self.spawnTickets - 1
-			self.spawnTier = math.min(math.floor((1 - (self.spawnTickets / self.spawnTicketsMax)) * self.spawnTicketsMax + 0.5), self.spawnTicketsMax)
+			self.spawnTier = math.min(math.floor((1 - (self.spawnTickets / self.spawnTicketsMax)) * self.spawnTicketsMax + 0.5), self.spawnTierMax)
 			
 			--- Show super cool message
 			-- Let them know that they are fucked
@@ -249,6 +254,8 @@ function WantedLevelScript:SpawnReinforcements()
 			ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.YELLOW, 0):ShowText(text, GUIBanner.FLYBYLEFTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
 			ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.RED, 0):ShowText(text, GUIBanner.FLYBYRIGHTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
 		end
+		
+		self.spawnActors = {}
 	else
 		-- Too bad! no spawning for today!
 		print("ERROR: NO SUITABLE SECTORS FOUND")
@@ -273,17 +280,20 @@ function WantedLevelScript:StartScript()
 	
 	self.spawnTicketsMax = math.random(4,6)
 	self.spawnTickets = self.spawnTicketsMax
+	self.spawnTierMax = 3
 	self.spawnTier = 1 -- start with 0 and ends with 3
 	
 	self.spawnBudgetMax = 0
 	self.spawnBudget = self.spawnBudgetMax
 	self.spawnBudgetMinimum = 2
 	
+	self.spawnActors = {}
+	
 	self.spawnActorTable = {
-		{Name = "Arrestant Drone", Cost = 2, Elite = false},
-		{Name = "Enforcer Surrogate", Cost = 3, Elite = false},
-		{Name = "Corporal", Cost = 4, Elite = true},
-		{Name = "Sergeant", Cost = 6, Elite = true}
+		{Name = "Arrestant Drone", Cost = 2, UnlockTier = 1, Elite = false},
+		{Name = "Enforcer Surrogate", Cost = 3, UnlockTier = 1, Elite = false},
+		{Name = "Corporal", Cost = 4, UnlockTier = 2, Elite = true},
+		{Name = "Sergeant", Cost = 6, UnlockTier = 3, Elite = true}
 	}
 	
 	self.spawnActorSupportTable = {
@@ -346,8 +356,8 @@ function WantedLevelScript:StartScript()
 	
 	--self.spawnDelayMin = 4000 -- IN MS
 	--self.spawnDelayMax = 5000
-	self.spawnDelayMin = 100 -- IN S
-	self.spawnDelayMax = 160
+	self.spawnDelayMin = 90 -- IN S
+	self.spawnDelayMax = 170
 	
 	self.spawnDelay = math.random(self.spawnDelayMin, self.spawnDelayMax)
 	self.spawnTimer = 0
@@ -360,152 +370,28 @@ function WantedLevelScript:UpdateScript()
 		if self.spawnTimer > self.spawnDelay then -- Time to spawn!
 			self:CalculateSectors(16, 16, 2)
 			
-			-- NEW
 			self:SpawnReinforcements()
-			
-			-- OLD
-			--[[
-			-- How many crafts?
-			local module = "Heat.rte"
-			
-			local reinforcementAmout = 1 -- Base
-			local reinforcementCraft = "HS Craft"
-			local reinforcementCraftSize = 116
-			local reinforcementTeam = self.spawnTeam
-			local reinforcementSector = nil
-			
-			--SetScrollTarget
-			
-			reinforcementAmout = reinforcementAmout + (math.random(1,3) <= self.spawnTier and 1 or 0) -- Chance based on tier
-			reinforcementAmout = reinforcementAmout + (math.random(1,3) < self.spawnTier and 1 or 0) -- Chance based on tier
-			reinforcementAmout = reinforcementAmout + (math.random(1,3) < 2 and 1 or 0) -- Chance based on pure luck
-			
-			reinforcementAmout = reinforcementAmout + (self.spawnTier > 1 and 1 or 0) -- Based on tier
-			
-			reinforcementAmout = math.min(reinforcementAmout, 4)
-			
-			-- Now get a nice spot to land
-			for i = 0, (reinforcementAmout - 1) do
-				reinforcementSector = WantedLevelScript:PickSector(reinforcementCraftSize * (reinforcementAmout - i))
-				if reinforcementSector ~= nil then
-					reinforcementAmout = reinforcementAmout - i
-					break
-				end
-			end
-			
-			if reinforcementSector ~= nil and reinforcementAmout > 0 then
-				local spawnedAnything = false
-				
-				-- Spawn them cops!
-				for i = 0, (reinforcementAmout - 1) do
-					local x = reinforcementSector.Start.X + SceneMan:ShortestDistance(reinforcementSector.Start, reinforcementSector.End,SceneMan.SceneWrapsX).X / reinforcementAmout * i
-					if reinforcementAmout == 1 then -- Middle
-						x = reinforcementSector.Start.X + SceneMan:ShortestDistance(reinforcementSector.Start, reinforcementSector.End,SceneMan.SceneWrapsX).X * 0.5
-					end
-					local pos = Vector(x, -math.random(0,50))
-					
-					local ship = CreateACDropShip(reinforcementCraft, module)
-					
-					local actorsInCargo = math.min(ship.MaxPassengers, math.random(2,3));
-					
-					--The max allowed weight of this craft plus cargo
-					local craftMaxMass = ship.MaxMass;
-					if craftMaxMass < 0 then
-						craftMaxMass = math.huge;
-					elseif craftMaxMass < 1 then
-						craftMaxMass = ship.Mass + 400;	--MaxMass not defined
-					end
-					
-					--Set the ship up with a cargo of a few armed and equipped actors
-					for i = 1, actorsInCargo do
-						--Get any Actor from the CPU's native tech
-						local passenger = nil;
-						if math.random(1,3) <= self.spawnTier then
-							passenger = RandomAHuman("Actors - Heavy", module);
-						else
-							passenger = RandomAHuman("Actors - Light", module);
-						end
-						-- Companion drone
-						if module == "Heat.rte" and math.random() < (0.1 * self.spawnTier) then
-							local drone = CreateActor(math.random(1,2) < 2 and "Gundrone" or "Buzzdrone", module) -- Predeployed drone
-							drone:SetNumberValue("AIMode", 1) -- Follow someone!
-							drone.Team = reinforcementTeam
-							drone.IgnoresTeamHits = true
-							
-							-- Add it to the cargo hold
-							ship:AddInventoryItem(drone);
-							drone = nil;
-						end
-						
-						--Equip it with tools and guns if it's a humanoid
-						if IsAHuman(passenger) then
-							if math.random(1,3) <= self.spawnTier then
-								passenger:AddInventoryItem(RandomHDFirearm("Weapons - Heavy", module));
-							else
-								passenger:AddInventoryItem(RandomHDFirearm("Weapons - Light", module));
-							end
-							passenger:AddInventoryItem(RandomHDFirearm("Weapons - Secondary", module));
-							if math.random() < 0.2 then
-								passenger:AddInventoryItem(RandomHDFirearm("Tools - Diggers", module));
-							end
-							if math.random() < 0.2 then
-								passenger:AddInventoryItem(RandomTDExplosive("Bombs", module));
-							end
-							
-							if module == "Heat.rte" then -- Deployable drones
-								if math.random() < 0.1 then
-									passenger:AddInventoryItem(RandomTDExplosive("Gundrone", module));
-								end
-								if math.random() < 0.1 then
-									passenger:AddInventoryItem(RandomTDExplosive("Buzzdrone", module));
-								end
-							end
-							
-						end
-						-- Set AI mode and team so it knows who and what to fight for!
-						passenger.AIMode = Actor.AIMODE_BRAINHUNT
-						passenger.Team = reinforcementTeam
-						passenger.IgnoresTeamHits = true
-
-						-- Add it to the cargo hold
-						ship:AddInventoryItem(passenger);
-						passenger = nil;
-					end
-					
-					if ship:IsInventoryEmpty() == false then
-						ship.Pos = pos
-						ship.Vel = Vector(math.random(-5,5), math.random(0, 15))
-						ship.Team = reinforcementTeam
-						
-						MovableMan:AddActor(ship);
-						
-						spawnedAnything = true -- Double check
-					else
-						DeleteEntity(ship) -- Don't spawn empty craft, sill!
-					end
-				end
-				
-				if spawnedAnything then
-					-- Ticket has been used
-					self.spawnTier = math.floor((1 - (self.spawnTickets / self.spawnTicketsMax)) * self.spawnTicketsMax + 0.5)
-					self.spawnTickets = self.spawnTickets - 1
-					
-					--- Show super cool message
-					-- Let them know that they are fucked
-					local text = self.spawnMessageTable[math.random(1, #self.spawnMessageTable)]
-					
-					ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.YELLOW, 0):ShowText(text, GUIBanner.FLYBYLEFTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
-					ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.RED, 0):ShowText(text, GUIBanner.FLYBYRIGHTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
-				end
-			else
-				-- Too bad! no spawning for today!
-				print("ERROR: NO SUITABLE SECTORS FOUND")
-			end]]
 			
 			-- Reset Timer
 			--self.spawnTimer:Reset()
 			self.spawnTimer = 0
 			self.spawnDelay = math.random(self.spawnDelayMin, self.spawnDelayMax)
+		elseif self.spawnTimer > (self.spawnDelay - 15) and #self.spawnActors < 1 then -- Precalculate actors and play sounds!
+			local reinforcementCraftMaxPassengers = 3
+			local reinforcementAmout = math.ceil(#self.spawnActors / reinforcementCraftMaxPassengers)
+			
+			if reinforcementAmout > 3 then -- 4
+			
+			elseif reinforcementAmout > 2 then -- 3
+			
+			elseif reinforcementAmout > 1 then -- 2
+				
+			else -- 1
+				
+			end
+			
+			self:CalculateReinforcements()
+			
 		elseif ToGameActivity(ActivityMan:GetActivity()).ActivityState ~= Activity.OVER then
 			if ToGameActivity(ActivityMan:GetActivity()).ActivityState ~= Activity.EDITING then
 				self.spawnTimer = self.spawnTimer + TimerMan.DeltaTimeSecs -- Why this over timer? Timer might not stop when paused so I better use this
