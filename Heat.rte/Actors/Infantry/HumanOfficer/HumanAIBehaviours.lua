@@ -274,11 +274,53 @@ function HumanAIBehaviours.handleHealth(self)
 		
 		if wasHeavilyInjured then
 			self.Suppression = self.Suppression + 100;
+			if self.Healing == true then
+				self.Healing = false;
+				if self:IsPlayerControlled() then
+					self.healSounds.healStereoInterrupt:Play(self.Pos);
+					self.healSound = healSounds.healStereoInterrupt;
+				else
+					self.healSounds.healMonoInterrupt:Play(self.Pos);
+					self.healSound = self.healSounds.healMonoInterrupt;
+				end
+			end
+			self.healWarned = false;
+			self.toHeal = false;
+			self.healTimer:Reset();
+			self.healDelayTimer:Reset();
 		elseif wasInjured then
 			self.Suppression = self.Suppression + 50;
+			if self.Healing == true then
+				self.Healing = false;
+				if self:IsPlayerControlled() then
+					self.healSounds.healStereoInterrupt:Play(self.Pos);
+					self.healSound = healSounds.healStereoInterrupt;
+				else
+					self.healSounds.healMonoInterrupt:Play(self.Pos);
+					self.healSound = self.healSounds.healMonoInterrupt;
+				end
+			end
+			self.healWarned = false;
+			self.toHeal = false;
+			self.healTimer:Reset();
+			self.healDelayTimer:Reset();
 		elseif wasLightlyInjured then
-			--HumanAIBehaviours.createEmotion(self, 2, 4, 500);
+			HumanAIBehaviours.createEmotion(self, 2, 1, 500);
 			self.Suppression = self.Suppression + math.random(15,25);
+			if self.Healing == true then
+				self.Healing = false;
+				if self:IsPlayerControlled() then
+					self.healSounds.healStereoInterrupt:Play(self.Pos);
+					self.healSound = self.healSounds.healStereoInterrupt;
+				else
+					self.healSounds.healMonoInterrupt:Play(self.Pos);
+					self.healSound = self.healSounds.healMonoInterrupt;
+				end
+			end
+			self.healWarned = false;
+			self.toHeal = false;
+			self.healTimer:Reset();
+			self.healDelayTimer:Reset();
 		end
 		
 		if (wasInjured) or (wasHeavilyInjured) and self.Head then
@@ -467,6 +509,64 @@ function HumanAIBehaviours.handleVoicelines(self)
 			end
 		end
 	end
+end
+
+function HumanAIBehaviours.handleAbilities(self)
+
+	if self.Healing == true then
+		self.Health = self.Health + (1 * TimerMan.DeltaTimeSecs * 100);
+		self.healJuice = self.healJuice - (1 * TimerMan.DeltaTimeSecs * 100);
+	end
+
+	if self.Health < 80 and self.healJuice > 0 then
+		self.toHeal = true;
+	end
+	
+	if self.toHeal == true then
+		if self.healDelayTimer:IsPastSimMS(self.healInitialDelay) then
+			if self.healWarned ~= true then
+				self.healWarned = true;
+				self.healSounds.healWarning:Play(self.Pos);
+				self.healSound = self.healSounds.healWarning;
+				self.healSoundPlayed = false;
+				self.healTimer:Reset();
+			else
+				if self.healTimer:IsPastSimMS(self.healDelay) and self.Health < 100 and self.healJuice > 0 then
+					if self.healSoundPlayed ~= true then
+						self.healSoundPlayed = true;
+						if math.random(0, 100) < 2 then
+							self.healSounds.Heal:Play(self.Pos);
+							self.healSound = self.healSounds.Heal;
+						elseif not self:IsPlayerControlled() then
+							self.healSounds.healMono:Play(self.Pos);
+							self.healSound = self.healSounds.healMono;
+						elseif self.Health < 26 then
+							self.healSounds.healStereoHigh:Play(self.Pos);
+							self.healSound = self.healSounds.healStereoHigh;
+						else
+							self.healSounds.healStereo:Play(self.Pos);
+							self.healSound = self.healSounds.healStereo;
+						end
+					end
+					self.Healing = true;
+				elseif self.Health >= 100 or self.healJuice < 0 then
+					self.healWarned = false;
+					self.Healing = false;
+					self.toHeal = false;
+					self.healTimer:Reset();
+					self.healDelayTimer:Reset();
+				end
+			end
+		end
+	end
+	
+	if self.Healing == true then
+		self.Health = self.Health + (1 * TimerMan.DeltaTimeSecs * 100);
+		self.healJuice = self.healJuice - (1 * TimerMan.DeltaTimeSecs * 100);
+		self.oldHealth = self.Health;
+	end
+		
+	
 end
 
 function HumanAIBehaviours.handleHeadFrames(self)

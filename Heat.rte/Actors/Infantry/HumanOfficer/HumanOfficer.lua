@@ -109,6 +109,31 @@ function Create(self)
 	 -- in percent
 	self.spotIgnoreDelayChance = 10;
 	self.spotNoVoicelineChance = 15;
+	
+	-- heal ability
+	
+	self.healSounds = {
+	healWarning = CreateSoundContainer("Heal Warning HumanOfficer", "Heat.rte"),
+	healStereo = CreateSoundContainer("Heal Stereo HumanOfficer", "Heat.rte"),
+	healStereoInterrupt = CreateSoundContainer("Heal Stereo Interrupt HumanOfficer", "Heat.rte"),
+	healStereoHigh = CreateSoundContainer("Heal Stereo High HumanOfficer", "Heat.rte"),
+	healMono = CreateSoundContainer("Heal Mono HumanOfficer", "Heat.rte"),
+	healMonoInterrupt = CreateSoundContainer("Heal Mono Interrupt HumanOfficer", "Heat.rte"),
+	Heal = CreateSoundContainer("Heal HumanOfficer", "Heat.rte")};
+	
+	self.healSound = CreateSoundContainer("VO Normal Female Pain HumanOfficer", "Heat.rte");
+	-- MEANINGLESS! also
+	
+	self.healDelayTimer = Timer();
+	self.healTimer = Timer();
+	
+	self.healInitialDelay = 10000;
+	self.healDelay = 2000;
+	
+	self.healJuice = 150;    -- hp that can be healed total
+	self.healThreshold = 80; -- hp below which to try to heal
+							 -- ideally i'd heal anytime below 100 but the sounds and the timers get iffy since we want to heal even when bleeding lightly
+	
 
 	-- fil jump
 	
@@ -151,6 +176,7 @@ function Update(self)
 	-- Start modded code--
 
 	self.voiceSound.Pos = self.Pos;
+	self.healSound.Pos = self.Pos;
 	
 	if (self:IsDead() ~= true) then
 		
@@ -163,6 +189,8 @@ function Update(self)
 		HumanAIBehaviours.handleAITargetLogic(self);
 		
 		HumanAIBehaviours.handleVoicelines(self);
+		
+		HumanAIBehaviours.handleAbilities(self);
 		
 		HumanAIBehaviours.handleHeadFrames(self);
 
