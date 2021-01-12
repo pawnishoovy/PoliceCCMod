@@ -110,10 +110,27 @@ function WantedLevelScript:CalculateReinforcements()
 	
 	self.spawnActors = {}
 	
+	local eliteSpeaker = false
 	while self.spawnBudget > self.spawnBudgetMinimum do
 		local data = self.spawnActorTable[math.random(1, #self.spawnActorTable)]
 		if data and data.UnlockTier <= self.spawnTier and data.Cost <= self.spawnBudget then
 			local actor = CreateAHuman(data.Name, module)
+			
+			-- Speaker VO stuff (because pawnis could't resist to add speaker VO)
+			if not eliteSpeaker then
+				if data.Name == "Corporal" then
+					eliteSpeaker = true
+					-- Save bunch-o data
+					-- pawnis please save bunch of important stuff to variables here
+					
+					local gender = math.random(0,1)
+					actor:SetNumberValue("Gender", gender)
+				elseif data.Name == "Sergeant" then
+					eliteSpeaker = true
+					-- Save bunch-o data
+					-- here too
+				end
+			end
 			
 			--Equip it with tools and guns if it's a humanoid
 			if IsAHuman(actor) then
@@ -372,8 +389,8 @@ function WantedLevelScript:UpdateScript()
 			
 			self:SpawnReinforcements()
 			
-			-- Reset Timer
-			--self.spawnTimer:Reset()
+			-- Reset Timer and other data
+			-- RESET YOUR VARIABLES HERE PAWNIS < ----
 			self.spawnTimer = 0
 			self.spawnDelay = math.random(self.spawnDelayMin, self.spawnDelayMax)
 		elseif self.spawnTimer > (self.spawnDelay - 15) and #self.spawnActors < 1 then -- Precalculate actors and play sounds!

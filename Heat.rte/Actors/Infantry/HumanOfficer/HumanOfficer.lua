@@ -26,8 +26,12 @@ function Create(self)
 	
 	self.jumpJetSound = CreateSoundContainer("Jumpjet Start HumanOfficer", "Heat.rte");
 	
-	if math.random(0,100) < 40 then -- female
-		self.baseHeadFrame = math.random(2,4) * 5;
+	if (self:NumberValueExists("Gender") and self:GetNumberValue("Gender") == 0) or (self:NumberValueExists("Identity") and self:GetNumberValue("Identity") > 2) or math.random(0,100) < 40 then -- female
+		
+		if not self:NumberValueExists("Identity") then
+			self:SetNumberValue("Identity", math.random(2,4))
+		end
+		self.baseHeadFrame = self:GetNumberValue("Identity") * 5;
 		self.Gender = 0
 		
 		self.voiceSounds = {
@@ -42,7 +46,11 @@ function Create(self)
 		Reload = CreateSoundContainer("VO Normal Female Reload HumanOfficer", "Heat.rte")};
 		
 	else -- male
-		self.baseHeadFrame = math.random(0,1) * 5;
+		
+		if not self:NumberValueExists("Identity") then
+			self:SetNumberValue("Identity", math.random(0,1))
+		end
+		self.baseHeadFrame = self:GetNumberValue("Identity") * 5;
 		self.Gender = 1
 		
 		self.voiceSounds = {
