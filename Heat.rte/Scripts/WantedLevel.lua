@@ -1,13 +1,13 @@
 function WantedLevelScript:CalculateSectors(spacing, heightDifferenceTolerance, minimumSize)
 	-- Calculate suitable landing spots
 	self.terrainPointSpacing = spacing or 16
-	self.terrainPointAmout = math.floor(SceneMan.SceneWidth / self.terrainPointSpacing)
+	self.terrainPointAmount = math.floor(SceneMan.SceneWidth / self.terrainPointSpacing)
 	self.terrainPointHeightDifferenceTolerance = heightDifferenceTolerance or 16
 	
 	self.terrainPointTable = {}
 	
 	-- Add all points
-	for i = 0, self.terrainPointAmout do
+	for i = 0, self.terrainPointAmount do
 		table.insert(self.terrainPointTable, SceneMan:MovePointToGround(Vector(self.terrainPointSpacing * i, 100), 0, 0))
 	end
 	
@@ -154,32 +154,32 @@ function WantedLevelScript:SpawnReinforcements()
 	-- How many crafts?
 	local module = "Heat.rte"
 	
-	local reinforcementAmout = 1 -- Base
+	local reinforcementAmount = 1 -- Base
 	local reinforcementCraft = "HS Craft"
 	local reinforcementCraftSize = 116
 	local reinforcementCraftMaxPassengers = 3
 	local reinforcementTeam = self.spawnTeam
 	local reinforcementSector = nil
 	
-	reinforcementAmout = math.ceil(#self.spawnActors / reinforcementCraftMaxPassengers)
+	reinforcementAmount = math.ceil(#self.spawnActors / reinforcementCraftMaxPassengers)
 	--SetScrollTarget
 	
 	-- Now get a nice spot to land
-	for i = 0, (reinforcementAmout - 1) do
-		reinforcementSector = WantedLevelScript:PickSector(reinforcementCraftSize * (reinforcementAmout - i))
+	for i = 0, (reinforcementAmount - 1) do
+		reinforcementSector = WantedLevelScript:PickSector(reinforcementCraftSize * (reinforcementAmount - i))
 		if reinforcementSector ~= nil then
-			reinforcementAmout = reinforcementAmout - i
+			reinforcementAmount = reinforcementAmount - i
 			break
 		end
 	end
 	
-	if reinforcementSector ~= nil and reinforcementAmout > 0 then
+	if reinforcementSector ~= nil and reinforcementAmount > 0 then
 		local spawnedAnything = false
 		
 		-- Spawn them!
-		for i = 0, (reinforcementAmout - 1) do
-			local x = reinforcementSector.Start.X + SceneMan:ShortestDistance(reinforcementSector.Start, reinforcementSector.End,SceneMan.SceneWrapsX).X / reinforcementAmout * i
-			if reinforcementAmout == 1 then -- Middle
+		for i = 0, (reinforcementAmount - 1) do
+			local x = reinforcementSector.Start.X + SceneMan:ShortestDistance(reinforcementSector.Start, reinforcementSector.End,SceneMan.SceneWrapsX).X / reinforcementAmount * i
+			if reinforcementAmount == 1 then -- Middle
 				x = reinforcementSector.Start.X + SceneMan:ShortestDistance(reinforcementSector.Start, reinforcementSector.End,SceneMan.SceneWrapsX).X * 0.5
 			end
 			local pos = Vector(x, -math.random(0,50))
@@ -378,13 +378,13 @@ function WantedLevelScript:UpdateScript()
 			self.spawnDelay = math.random(self.spawnDelayMin, self.spawnDelayMax)
 		elseif self.spawnTimer > (self.spawnDelay - 15) and #self.spawnActors < 1 then -- Precalculate actors and play sounds!
 			local reinforcementCraftMaxPassengers = 3
-			local reinforcementAmout = math.ceil(#self.spawnActors / reinforcementCraftMaxPassengers)
+			local reinforcementAmount = math.ceil(#self.spawnActors / reinforcementCraftMaxPassengers)
 			
-			if reinforcementAmout > 3 then -- 4
+			if reinforcementAmount > 3 then -- 4
 			
-			elseif reinforcementAmout > 2 then -- 3
+			elseif reinforcementAmount > 2 then -- 3
 			
-			elseif reinforcementAmout > 1 then -- 2
+			elseif reinforcementAmount > 1 then -- 2
 				
 			else -- 1
 				
