@@ -183,7 +183,6 @@ function WantedLevelScript:SpawnReinforcements()
 	local reinforcementSector = nil
 	
 	reinforcementAmount = math.ceil(#self.spawnActors / reinforcementCraftMaxPassengers)
-	--SetScrollTarget
 	
 	-- Now get a nice spot to land
 	for i = 0, (reinforcementAmount - 1) do
@@ -196,6 +195,12 @@ function WantedLevelScript:SpawnReinforcements()
 	
 	if reinforcementSector ~= nil and reinforcementAmount > 0 then
 		local spawnedAnything = false
+		
+		if not self.cameraFocus then
+			self.cameraFocus = true
+			local sectorPos = reinforcementSector.Start + SceneMan:ShortestDistance(reinforcementSector.Start, reinforcementSector.End,SceneMan.SceneWrapsX) * 0.5
+			self.cameraFocusPos = Vector(sectorPos.X, 200)
+		end
 		
 		-- Spawn them!
 		for i = 0, (reinforcementAmount - 1) do
@@ -272,8 +277,8 @@ function WantedLevelScript:SpawnReinforcements()
 			-- Let them know that they are fucked
 			local text = self.spawnMessageTable[math.random(1, #self.spawnMessageTable)]
 			
-			ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.YELLOW, 0):ShowText(text, GUIBanner.FLYBYLEFTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
-			ToGameActivity(ActivityMan:GetActivity()):GetBanner(GUIBanner.RED, 0):ShowText(text, GUIBanner.FLYBYRIGHTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
+			self.activity:GetBanner(GUIBanner.YELLOW, 0):ShowText(text, GUIBanner.FLYBYLEFTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
+			self.activity:GetBanner(GUIBanner.RED, 0):ShowText(text, GUIBanner.FLYBYRIGHTWARD, 1500, Vector(FrameMan.PlayerScreenWidth, FrameMan.PlayerScreenHeight), 0.4, 4000, 0);
 		end
 		
 		self.spawnActors = {}
@@ -284,6 +289,7 @@ function WantedLevelScript:SpawnReinforcements()
 end
 
 function WantedLevelScript:StartScript()
+	self.activity = ToGameActivity(ActivityMan:GetActivity())
 
 	-- PAWNIS SOUNDS
 	
@@ -323,6 +329,12 @@ function WantedLevelScript:StartScript()
 	self.arrivalPlayed = false;
 	self.VOPlayed = false;
 	
+	self.cameraFocusEnabled = true -- DEAR PLAYER, CHANGE THIS TO FALSE IF YOU DON'T LIKE THE ACTIVTY CHANGING THE CAMERA
+	--
+	self.cameraFocus = false
+	self.cameraFocusPos = Vector()
+	self.cameraFocusTimer = Timer()
+	self.cameraFocusDuration = 2000
 	
 	--self:CalculateSectors(16, 16, 2)
 	self.sectorTable = {}
@@ -415,16 +427,18 @@ function WantedLevelScript:StartScript()
 		self.spawnTeam = ActivityMan:GetActivity().TeamCount -- it just works ¯\_(ツ)_/¯
 	end
 	
-	--self.spawnDelayMin = 4000 -- IN MS
-	--self.spawnDelayMax = 5000
-	self.spawnDelayMin = 90 -- IN S
-	self.spawnDelayMax = 170
+	self.spawnDelayMin = 25 -- IN S
+	self.spawnDelayMax = 25
+	--self.spawnDelayMin = 90 -- IN S
+	--self.spawnDelayMax = 170
 	
 	self.spawnDelay = math.random(self.spawnDelayMin, self.spawnDelayMax)
 	self.spawnTimer = 0
+	
 end
 
 function WantedLevelScript:UpdateScript()
+	--self.activity = ToGameActivity(ActivityMan:GetActivity())
 
 	if self.soundArrayEnabled == true then
 	
@@ -457,15 +471,29 @@ function WantedLevelScript:UpdateScript()
 		end
 	end
 	
-	--if self.spawnTimer:IsPastSimMS(self.spawnDelay) then
+	if self.cameraFocus and self.cameraFocusEnabled then
+		for player = Activity.PLAYER_1, Activity.MAXPLAYERCOUNT - 1 do
+			--SceneMan:SetScroll(self.cameraFocusPos, player)
+			--SceneMan:SetScrollTarget(self.cameraFocusPos, 1, SceneMan.SceneWrapsX, player)
+			local actor = ActivityMan:GetActivity():GetControlledActor(player)
+			if actor and self.activity:PlayerActive(player) and self.activity:PlayerHuman(player) then
+				actor.ViewPoint = self.cameraFocusPos
+			end
+			
+		end
+		if self.cameraFocusTimer:IsPastSimMS(self.cameraFocusDuration) then
+			self.cameraFocus = false
+		end
+	else
+		self.cameraFocusTimer:Reset()
+	end
+	
+	
 	if self.spawnTickets > 0 then -- We run out of tickets!
 		if self.spawnTimer > self.spawnDelay then -- Time to spawn!
 			self:CalculateSectors(16, 16, 2)
 			
 			self:SpawnReinforcements()
-			
-			-- Reset Timer and other data
-			-- RESET YOUR VARIABLES HERE PAWNIS < ----
 			
 			self.warpsPlayed = 0;
 			
@@ -494,29 +522,11 @@ function WantedLevelScript:UpdateScript()
 			self.soundTimer:Reset();
 			self.arriveSiren:Play(-1);
 			
-			if reinforcementAmount > 3 then -- 4
-			
-				self.warpsToPlay = 4;
-			
-			elseif reinforcementAmount > 2 then -- 3
-			
-				self.warpsToPlay = 3;
-			
-			elseif reinforcementAmount > 1 then -- 2
-			
-				self.warpsToPlay = 2;
-				
-			else -- 1
-			
-				self.warpsToPlay = 1;
-				
-				-- you gave me if elses i'm going to use them!!
-				
-			end
+			self.warpsToPlay = math.min(reinforcementAmount, 4)
 
 			
-		elseif ToGameActivity(ActivityMan:GetActivity()).ActivityState ~= Activity.OVER then
-			if ToGameActivity(ActivityMan:GetActivity()).ActivityState ~= Activity.EDITING then
+		elseif self.activity.ActivityState ~= Activity.OVER then
+			if self.activity.ActivityState ~= Activity.EDITING then
 				self.spawnTimer = self.spawnTimer + TimerMan.DeltaTimeSecs -- Why this over timer? Timer might not stop when paused so I better use this
 			else -- WAVE DEFENCE HEHE
 				self.spawnTimer = 0
