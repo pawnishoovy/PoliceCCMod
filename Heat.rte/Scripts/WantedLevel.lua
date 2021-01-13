@@ -312,6 +312,8 @@ function WantedLevelScript:StartScript()
 	
 	self.sergeantWarning = CreateSoundContainer("VO Warning Sergeant Wanted Level", "Heat.rte");
 	
+	self.noTickets = CreateSoundContainer("No Tickets Wanted Level", "Heat.rte");
+	
 	self.soundTimer = Timer();
 	
 	self.warpInInitialDelay = 1500;
@@ -329,12 +331,16 @@ function WantedLevelScript:StartScript()
 	self.arrivalPlayed = false;
 	self.VOPlayed = false;
 	
+	
 	self.cameraFocusEnabled = true -- DEAR PLAYER, CHANGE THIS TO FALSE IF YOU DON'T LIKE THE ACTIVTY CHANGING THE CAMERA
 	--
 	self.cameraFocus = false
 	self.cameraFocusPos = Vector()
 	self.cameraFocusTimer = Timer()
 	self.cameraFocusDuration = 2000
+	
+	self.noTicketsPlayed = false;
+	
 	
 	--self:CalculateSectors(16, 16, 2)
 	self.sectorTable = {}
@@ -533,6 +539,9 @@ function WantedLevelScript:UpdateScript()
 				self.spawnTickets = math.max(self.spawnTickets, 1)
 			end
 		end
+	elseif self.noTicketsPlayed == false and self.soundTimer:IsPastSimMS(50000) then
+		self.noTicketsPlayed = true;
+		self.noTickets:Play(-1);
 	end
 	
 	-- TimerMan.DeltaTimeSecs
