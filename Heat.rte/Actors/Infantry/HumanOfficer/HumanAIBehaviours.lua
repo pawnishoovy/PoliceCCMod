@@ -132,7 +132,7 @@ function HumanAIBehaviours.handleMovement(self)
 	-- Custom Jump
 	if self.controller:IsState(Controller.BODY_JUMPSTART) == true and self.controller:IsState(Controller.BODY_CROUCH) == false and self.jumpTimer:IsPastSimMS(self.jumpDelay) and not self.isJumping then
 		if self.feetContact[1] == true or self.feetContact[2] == true then
-			local jumpVec = Vector(0,-3.0)
+			local jumpVec = Vector(0,-4.0)
 			local jumpWalkX = 3
 			if self.controller:IsState(Controller.MOVE_LEFT) == true then
 				jumpVec.X = -jumpWalkX
@@ -175,7 +175,7 @@ function HumanAIBehaviours.handleMovement(self)
 		
 		self.jumpJetSound.Pos = self.Jetpack.Pos;
 		
-		if boosting and self.boosterReady then
+		if not self.Hovering and boosting and self.boosterReady then
 		
 			self.jumpJetSound:Play(self.Pos);
 			
@@ -563,6 +563,109 @@ function HumanAIBehaviours.handleAbilities(self)
 			self:RemoveAnyRandomWounds(1);
 		end
 		self.oldHealth = self.Health;
+	end
+	
+	
+	--- hovering
+	
+	if self.hoverCharging == false then
+		if (self:IsPlayerControlled() and UInputMan:KeyPressed(15)) then
+			if self.Hovering == true then
+				self.Hovering = false;
+				self.hoverFlameLoop:Stop(-1);
+				self.hoverEngineLoop:Stop(-1);
+				self.hoverSounds.hoverEnd:Play(self.Pos);
+				self.hoverSound = self.hoverSounds.hoverEnd;
+				
+				if self.Gender == 0 then
+				
+					self.voiceSounds = {
+					Pain = CreateSoundContainer("VO Normal Female Pain HumanOfficer", "Heat.rte"),
+					Death = CreateSoundContainer("VO Normal Female Death HumanOfficer", "Heat.rte"),
+					Lead = CreateSoundContainer("VO Normal Female Lead HumanOfficer", "Heat.rte"),
+					suppressedLow = CreateSoundContainer("VO Normal Female Suppressed Low HumanOfficer", "Heat.rte"),
+					suppressedMedium = CreateSoundContainer("VO Normal Female Suppressed Medium HumanOfficer", "Heat.rte"),
+					suppressedHigh = CreateSoundContainer("VO Normal Female Suppressed High HumanOfficer", "Heat.rte"),
+					Battlecry = CreateSoundContainer("VO Normal Female Battlecry HumanOfficer", "Heat.rte"),
+					Spot = CreateSoundContainer("VO Normal Female Spot HumanOfficer", "Heat.rte"),
+					Reload = CreateSoundContainer("VO Normal Female Reload HumanOfficer", "Heat.rte")};
+					
+				else
+				
+					self.voiceSounds = {
+					Pain = CreateSoundContainer("VO Normal Male Pain HumanOfficer", "Heat.rte"),
+					Death = CreateSoundContainer("VO Normal Male Death HumanOfficer", "Heat.rte"),
+					Lead = CreateSoundContainer("VO Normal Male Lead HumanOfficer", "Heat.rte"),
+					suppressedLow = CreateSoundContainer("VO Normal Male Suppressed Low HumanOfficer", "Heat.rte"),
+					suppressedMedium = CreateSoundContainer("VO Normal Male Suppressed Medium HumanOfficer", "Heat.rte"),
+					suppressedHigh = CreateSoundContainer("VO Normal Male Suppressed High HumanOfficer", "Heat.rte"),
+					Battlecry = CreateSoundContainer("VO Normal Male Battlecry HumanOfficer", "Heat.rte"),
+					Spot = CreateSoundContainer("VO Normal Male Spot HumanOfficer", "Heat.rte"),
+					Reload = CreateSoundContainer("VO Normal Male Reload HumanOfficer", "Heat.rte")};
+					
+				end
+				
+			else
+				self.hoverCharging = true;
+				self.hoverSounds.hoverCharge:Play(self.Pos);
+				self.hoverSound = self.hoverSounds.hoverCharge;
+				self.hoverChargeTimer:Reset();
+			end
+		end
+		
+		if self.Hovering then
+		
+			if not self.hoverEngineLoop:IsBeingPlayed() then
+				self.hoverEngineLoop:Play(self.Pos);
+			end
+			if not self.hoverFlameLoop:IsBeingPlayed() then
+				self.hoverFlameLoop:Play(self.Pos);
+			end
+		
+			self.hoverEngineLoop.Pitch = (self.Vel.Magnitude / 20) + 1;
+			self.hoverEngineLoop.Pitch = math.min(self.hoverEngineLoop.Pitch, 1.5);
+			
+			if self.Jetpack then
+				self.Jetpack:EnableEmission(false);
+			end
+		end
+		
+	elseif self.hoverChargeTimer:IsPastSimMS(self.hoverChargeDelay) then
+		self.hoverCharging = false;
+		self.Hovering = true;
+		self.hoverFlameLoop:Play(self.Pos);
+		self.hoverEngineLoop:Play(self.Pos);
+		self.hoverSounds.hoverStart:Play(self.Pos);
+		self.hoverSound = self.hoverSounds.hoverStart;
+		
+		if self.Gender == 0 then
+		
+			self.voiceSounds = {
+			Pain = CreateSoundContainer("VO Normal Female Pain HumanOfficer", "Heat.rte"),
+			Death = CreateSoundContainer("VO Normal Female Death HumanOfficer", "Heat.rte"),
+			Lead = CreateSoundContainer("VO Megaphone Female Lead HumanOfficer", "Heat.rte"),
+			suppressedLow = CreateSoundContainer("VO Megaphone Female Suppressed Low HumanOfficer", "Heat.rte"),
+			suppressedMedium = CreateSoundContainer("VO Megaphone Female Suppressed Medium HumanOfficer", "Heat.rte"),
+			suppressedHigh = CreateSoundContainer("VO Megaphone Female Suppressed High HumanOfficer", "Heat.rte"),
+			Battlecry = CreateSoundContainer("VO Megaphone Female Battlecry HumanOfficer", "Heat.rte"),
+			Spot = CreateSoundContainer("VO Megaphone Female Spot HumanOfficer", "Heat.rte"),
+			Reload = CreateSoundContainer("VO Megaphone Female Reload HumanOfficer", "Heat.rte")};
+			
+		else
+		
+			self.voiceSounds = {
+			Pain = CreateSoundContainer("VO Normal Male Pain HumanOfficer", "Heat.rte"),
+			Death = CreateSoundContainer("VO Normal Male Death HumanOfficer", "Heat.rte"),
+			Lead = CreateSoundContainer("VO Megaphone Male Lead HumanOfficer", "Heat.rte"),
+			suppressedLow = CreateSoundContainer("VO Megaphone Male Suppressed Low HumanOfficer", "Heat.rte"),
+			suppressedMedium = CreateSoundContainer("VO Megaphone Male Suppressed Medium HumanOfficer", "Heat.rte"),
+			suppressedHigh = CreateSoundContainer("VO Megaphone Male Suppressed High HumanOfficer", "Heat.rte"),
+			Battlecry = CreateSoundContainer("VO Megaphone Male Battlecry HumanOfficer", "Heat.rte"),
+			Spot = CreateSoundContainer("VO Megaphone Male Spot HumanOfficer", "Heat.rte"),
+			Reload = CreateSoundContainer("VO Megaphone Male Reload HumanOfficer", "Heat.rte")};
+			
+		end
+		
 	end
 		
 	

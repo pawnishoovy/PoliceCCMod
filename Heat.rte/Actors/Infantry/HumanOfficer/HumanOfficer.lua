@@ -143,9 +143,26 @@ function Create(self)
 	self.healInitialDelay = 10000;
 	self.healDelay = 2000;
 	
-	self.healJuice = 250;    -- not actually hp idk why
+	self.healJuice = 250;    -- not actually hp idk why, this translates to 100-150 hp heal
 	self.healThreshold = 80; -- hp below which to try to heal
 							 -- ideally i'd heal anytime below 100 but the sounds and the timers get iffy since we want to heal even when bleeding lightly
+							 
+	self.hoverSounds = {
+	hoverCharge = CreateSoundContainer("Hover Charge HumanOfficer", "Heat.rte"),
+	hoverStart = CreateSoundContainer("Hover Start HumanOfficer", "Heat.rte"),
+	hoverEnd = CreateSoundContainer("Hover End HumanOfficer", "Heat.rte")};
+	
+	self.hoverCharging = false;
+	self.hoverChargeTimer = Timer();
+	self.hoverChargeDelay = 800;
+	
+	self.Hovering = false;
+	
+	self.hoverSound = CreateSoundContainer("VO Normal Female Pain HumanOfficer", "Heat.rte");
+	-- MEANINGLESS! also
+	
+	self.hoverFlameLoop = CreateSoundContainer("Hover Flame Loop HumanOfficer", "Heat.rte");
+	self.hoverEngineLoop = CreateSoundContainer("Hover Engine Loop HumanOfficer", "Heat.rte");
 	
 
 	-- fil jump
@@ -190,6 +207,9 @@ function Update(self)
 
 	self.voiceSound.Pos = self.Pos;
 	self.healSound.Pos = self.Pos;
+	self.hoverSound.Pos = self.Pos;
+	self.hoverFlameLoop.Pos = self.Pos;
+	self.hoverEngineLoop.Pos = self.Pos;
 	
 	if (self:IsDead() ~= true) then
 		
@@ -233,6 +253,9 @@ function Destroy(self)
 	if not self.ToSettle then -- we have been gibbed		
 		self.voiceSound:Stop(-1);
 	end
+	
+	self.hoverEngineLoop:Stop(-1);
+	self.hoverFlameLoop:Stop(-1);
 	
 	-- End modded code --
 	
