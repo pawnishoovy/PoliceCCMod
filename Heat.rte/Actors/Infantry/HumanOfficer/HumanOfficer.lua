@@ -53,6 +53,11 @@ function Create(self)
 		self.baseHeadFrame = self:GetNumberValue("Identity") * 5;
 		self.Gender = 1
 		
+		if self.Head then
+			self.Head:SetEntryWound("Wound Flesh Helmet Entry HumanOfficer", "Heat.rte");
+			self.Head:SetExitWound("Wound Flesh Helmet Exit HumanOfficer", "Heat.rte");
+		end
+		
 		self.voiceSounds = {
 		Pain = CreateSoundContainer("VO Normal Male Pain HumanOfficer", "Heat.rte"),
 		Death = CreateSoundContainer("VO Normal Male Death HumanOfficer", "Heat.rte"),
@@ -138,7 +143,7 @@ function Create(self)
 	self.healInitialDelay = 10000;
 	self.healDelay = 2000;
 	
-	self.healJuice = 150;    -- hp that can be healed total
+	self.healJuice = 250;    -- not actually hp idk why
 	self.healThreshold = 80; -- hp below which to try to heal
 							 -- ideally i'd heal anytime below 100 but the sounds and the timers get iffy since we want to heal even when bleeding lightly
 	
