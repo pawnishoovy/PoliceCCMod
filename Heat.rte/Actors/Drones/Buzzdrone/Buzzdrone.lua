@@ -161,7 +161,8 @@ function Update(self)
 				
 				self.scanLoop.Pos = self.Pos;
 				if self.scanTimer:IsPastSimMS(self.scanDelay) then
-					AudioMan:FadeOutSound(self.scanLoop, 250);
+					--AudioMan:FadeOutSound(self.scanLoop, 250);
+					self.scanLoop:FadeOut(250);
 					self.Scanning = false;
 				end
 			end
