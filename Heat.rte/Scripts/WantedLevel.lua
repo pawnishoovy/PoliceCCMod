@@ -433,10 +433,10 @@ function WantedLevelScript:StartScript()
 		self.spawnTeam = ActivityMan:GetActivity().TeamCount -- it just works ¯\_(ツ)_/¯
 	end
 	
-	self.spawnDelayMin = 25 -- IN S
-	self.spawnDelayMax = 25
-	--self.spawnDelayMin = 90 -- IN S
-	--self.spawnDelayMax = 170
+	--self.spawnDelayMin = 25 -- IN S
+	--self.spawnDelayMax = 25
+	self.spawnDelayMin = 90 -- IN S
+	self.spawnDelayMax = 170
 	
 	self.spawnDelay = math.random(self.spawnDelayMin, self.spawnDelayMax)
 	self.spawnTimer = 0
