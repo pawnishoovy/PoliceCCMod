@@ -305,7 +305,6 @@ function WantedLevelScript:StartScript()
 	[5] = CreateSoundContainer("Arrive One 5 Wanted Level", "Heat.rte")};
 	
 	self.Warning = CreateSoundContainer("VO Warning Wanted Level", "Heat.rte");
-	self.finalWarning = CreateSoundContainer("VO Final Warning Wanted Level", "Heat.rte");
 	
 	self.maleWarning = CreateSoundContainer("VO Warning Male Corporal Wanted Level", "Heat.rte");
 	self.femaleWarning = CreateSoundContainer("VO Warning Female Corporal Wanted Level", "Heat.rte");

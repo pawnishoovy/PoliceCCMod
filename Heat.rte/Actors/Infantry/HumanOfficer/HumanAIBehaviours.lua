@@ -638,6 +638,10 @@ function HumanAIBehaviours.handleAbilities(self)
 		self.hoverSounds.hoverStart:Play(self.Pos);
 		self.hoverSound = self.hoverSounds.hoverStart;
 		
+		local jumpVec = Vector(0,-10.0)
+		
+		self.Vel = Vector(self.Vel.X, self.Vel.Y + jumpVec.Y);
+		
 		if self.Gender == 0 then
 		
 			self.voiceSounds = {
