@@ -65,11 +65,11 @@ function Create(self)
 	self.reloadTimer = Timer();
 	
 	self.rocketInPrepareDelay = 890;
-	self.rocketInAfterDelay = 200;
+	self.rocketInAfterDelay = 50;
 	self.boltBackPrepareDelay = 850;
 	self.boltBackAfterDelay = 330;
 	self.boltForwardPrepareDelay = 330;
-	self.boltForwardAfterDelay = 800;
+	self.boltForwardAfterDelay = 250;
 	
 	-- phases:
 	-- 0 rocketIn

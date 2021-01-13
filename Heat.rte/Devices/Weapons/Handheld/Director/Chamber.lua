@@ -408,12 +408,8 @@ function Update(self)
 	-- Animation
 	if self.parent then
 	
-			local ctrl = self.parent:GetController();
-			local screen = ActivityMan:GetActivity():ScreenOfPlayer(ctrl.Player);
-			if self.parent:IsPlayerControlled() then
-				local pos = self.parent.AboveHUDPos + Vector(0, 24)
-				PrimitiveMan:DrawTextPrimitive(screen, pos + Vector(0, 10), tostring(self.Overheat), true, 1);
-			end
+		local ctrl = self.parent:GetController();
+		local screen = ActivityMan:GetActivity():ScreenOfPlayer(ctrl.Player);
 		self.horizontalAnim = math.floor(self.horizontalAnim / (1 + TimerMan.DeltaTimeSecs * 24.0) * 1000) / 1000
 		self.verticalAnim = math.floor(self.verticalAnim / (1 + TimerMan.DeltaTimeSecs * 15.0) * 1000) / 1000
 		
