@@ -306,6 +306,8 @@ function WantedLevelScript:StartScript()
 	
 	self.sergeantWarning = CreateSoundContainer("VO Warning Sergeant Wanted Level", "Heat.rte");
 	
+	self.noTickets = CreateSoundContainer("No Tickets Wanted Level", "Heat.rte");
+	
 	self.soundTimer = Timer();
 	
 	self.warpInInitialDelay = 1500;
@@ -322,6 +324,8 @@ function WantedLevelScript:StartScript()
 	
 	self.arrivalPlayed = false;
 	self.VOPlayed = false;
+	
+	self.noTicketsPlayed = false;
 	
 	
 	--self:CalculateSectors(16, 16, 2)
@@ -523,6 +527,9 @@ function WantedLevelScript:UpdateScript()
 				self.spawnTickets = math.max(self.spawnTickets, 1)
 			end
 		end
+	elseif self.noTicketsPlayed == false and self.soundTimer:IsPastSimMS(50000) then
+		self.noTicketsPlayed = true;
+		self.noTickets:Play(-1);
 	end
 	
 	-- TimerMan.DeltaTimeSecs
