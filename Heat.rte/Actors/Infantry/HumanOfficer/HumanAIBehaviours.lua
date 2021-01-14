@@ -560,7 +560,7 @@ function HumanAIBehaviours.handleAbilities(self)
 		self.Health = self.Health + value
 		self.healJuice = self.healJuice - value
 		for i = 1, 2 do
-			if math.random(0, 100) < 10 then
+			if math.random(0, 100) < 15 then
 				self:RemoveAnyRandomWounds(1);
 			end
 		end
@@ -579,7 +579,10 @@ function HumanAIBehaviours.handleAbilities(self)
 				self.hoverSounds.hoverEnd:Play(self.Pos);
 				self.hoverSound = self.hoverSounds.hoverEnd;
 				
-				self.Vel = Vector(self.Vel.X, self.Vel.Y * 0.5);
+				--self.Vel = Vector(self.Vel.X, self.Vel.Y * 0.5);
+				if self.Jetpack then
+					self.Jetpack.Frame = 1
+				end
 				
 				if self.Gender == 0 then
 				
@@ -654,7 +657,7 @@ function HumanAIBehaviours.handleAbilities(self)
 					local vec = Vector(0, scanLength):RadRotate(ang)
 					
 					local endPos = Vector(self.Pos.X, self.Pos.Y)
-					local ray = SceneMan:CastObstacleRay(scanPos, vec, Vector(0, 0), endPos, 0 , self.Team, 0, 2) -- Do the hitscan stuff, raycast
+					local ray = SceneMan:CastObstacleRay(scanPos, vec, Vector(0, 0), endPos, 0 , self.Team, 0, 4) -- Do the hitscan stuff, raycast
 					if ray ~= -1 then
 						if self.hoverAltitude > ray then
 							self.hoverAltitude = ray
@@ -674,7 +677,9 @@ function HumanAIBehaviours.handleAbilities(self)
 			--PrimitiveMan:DrawCirclePrimitive(self.Pos, self.hoverAltitude, 13)
 			local factor = math.max((targetAltitude - self.hoverAltitude) / 100, 0)
 			
-			self.Vel = self.Vel - (SceneMan.GlobalAcc * TimerMan.DeltaTimeSecs * factor * 2.0):RadRotate(self.hoverTilt) - Vector(0, math.max(self.Vel.Y, 0)) * TimerMan.DeltaTimeSecs * 12.0 * factor
+			if self.Vel.Y > -8.0 then
+				self.Vel = self.Vel - (SceneMan.GlobalAcc * TimerMan.DeltaTimeSecs * factor * 2.0):RadRotate(self.hoverTilt) - Vector(0, math.max(self.Vel.Y, 0)) * TimerMan.DeltaTimeSecs * 12.0 * factor
+			end
 			
 			-- Input
 			local input = 0
@@ -720,17 +725,33 @@ function HumanAIBehaviours.handleAbilities(self)
 			
 			if self.Jetpack then
 				-- GFX
-				local effect = CreateMOSRotating("Ground Smoke Particle 1", "Heat.rte")
-				effect.Pos = self.Jetpack.Pos + Vector(RangeRand(-1,1), RangeRand(-1,1)) * 6
-				effect.Vel = Vector(math.random(110,200),0):RadRotate(math.pi * 1.5 + math.rad(45) * RangeRand(-1,1))
-				effect.Lifetime = effect.Lifetime * RangeRand(0.8,2.0)
-				effect.AirResistance = effect.AirResistance * RangeRand(0.5,0.8)
-				MovableMan:AddParticle(effect)
+				if self.hoverGFXTimer:IsPastSimMS(26) then
+					local effect = CreateMOSRotating("Ground Smoke Particle 1", "Heat.rte")
+					effect.Pos = self.Jetpack.Pos + Vector(RangeRand(-1,1), RangeRand(-1,1)) * 6
+					effect.Vel = self.Vel + Vector(math.random(110,200),0):RadRotate(math.pi * 1.5 + math.rad(45) * RangeRand(-1,1))
+					effect.Lifetime = effect.Lifetime * RangeRand(0.8,2.0)
+					effect.AirResistance = effect.AirResistance * RangeRand(0.5,0.8)
+					MovableMan:AddParticle(effect)
+					
+					local effect = CreateMOSParticle(math.random(1,3) < 2 and "Small Smoke Ball 1 Glow Blue" or "Tiny Smoke Ball 1 Glow Blue", "Heat.rte")
+					effect.Pos = self.Jetpack.Pos + Vector(-4 * self.Jetpack.FlipFactor, 6):RadRotate(self.Jetpack.RotAngle)
+					effect.Vel = self.Vel + Vector(math.random(15,25),0):RadRotate(math.pi * 1.5 + math.rad(45) * RangeRand(-1,1))
+					effect.Lifetime = effect.Lifetime * RangeRand(0.8,2.0) * 0.75
+					effect.AirResistance = effect.AirResistance * RangeRand(1.0,1.2)
+					MovableMan:AddParticle(effect)
+					self.hoverGFXTimer:Reset()
+				end
 				--
+				
+				self.Jetpack.Frame = 2
 				
 				self.controller:SetState(Controller.BODY_JUMP, false)
 				self.controller:SetState(Controller.BODY_JUMPSTART, false)
 				self.Jetpack:EnableEmission(false);
+			end
+		else
+			if self.Jetpack then
+				self.Jetpack.Frame = 0
 			end
 		end
 		
@@ -774,6 +795,8 @@ function HumanAIBehaviours.handleAbilities(self)
 			
 		end
 		
+	elseif self.hoverChargeTimer:IsPastSimMS(self.hoverChargeDelay - 100) then
+		self.Jetpack.Frame = 1
 	end
 		
 	

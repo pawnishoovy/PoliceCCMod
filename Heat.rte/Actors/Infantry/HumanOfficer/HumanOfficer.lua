@@ -159,6 +159,7 @@ function Create(self)
 	self.hoverAltitudeTarget = 100
 	self.hoverAltitude = 0
 	self.hoverTilt = 0
+	self.hoverGFXTimer = Timer()
 	self.hoverUpdate = Timer()
 	
 	self.Hovering = false;
