@@ -627,17 +627,25 @@ function HumanAIBehaviours.handleAbilities(self)
 			end
 			
 			---
+			local hoverVel = Vector(self.Vel.X, self.Vel.Y)
+			
+			local targetAltitude = self.hoverAltitudeTarget
+			if self.controller:IsState(Controller.HOLD_DOWN) then
+				targetAltitude = targetAltitude * 0.66
+			elseif self.controller:IsState(Controller.HOLD_UP) then
+				targetAltitude = targetAltitude * 1.5
+			end
 			
 			if self.hoverUpdate:IsPastSimMS(60) then
 				--self.hoverAltitude = SceneMan:FindAltitude(self.Pos, 200, 3);
 				
 				-- Reset
 				self.hoverTilt = 0
-				self.hoverAltitude = self.hoverAltitudeTarget
+				self.hoverAltitude = targetAltitude
 				
 				-- Calculate
 				local scanRays = 6
-				local scanLength = self.hoverAltitudeTarget + 30
+				local scanLength = targetAltitude + 30
 				local scanArc = 45
 				local scanPos = self.Pos
 				for i = 0, (scanRays - 1) do
@@ -655,16 +663,16 @@ function HumanAIBehaviours.handleAbilities(self)
 						self.hoverTilt = (self.hoverTilt + (ang * a))
 					end
 					
-					PrimitiveMan:DrawLinePrimitive(scanPos, scanPos + Vector(vec.X, vec.Y):SetMagnitude(ray), 122);
+					--PrimitiveMan:DrawLinePrimitive(scanPos, scanPos + Vector(vec.X, vec.Y):SetMagnitude(ray), 122);
 				end
 				self.hoverTilt = self.hoverTilt / scanRays
 				
 				self.hoverUpdate:Reset()
 			end
-			PrimitiveMan:DrawLinePrimitive(self.Pos, self.Pos + Vector(0, 15):RadRotate(self.hoverTilt), 5);
+			--PrimitiveMan:DrawLinePrimitive(self.Pos, self.Pos + Vector(0, 15):RadRotate(self.hoverTilt), 5);
 			
-			PrimitiveMan:DrawCirclePrimitive(self.Pos, self.hoverAltitude, 13)
-			local factor = math.max((self.hoverAltitudeTarget - self.hoverAltitude) / 100, 0)
+			--PrimitiveMan:DrawCirclePrimitive(self.Pos, self.hoverAltitude, 13)
+			local factor = math.max((targetAltitude - self.hoverAltitude) / 100, 0)
 			
 			self.Vel = self.Vel - (SceneMan.GlobalAcc * TimerMan.DeltaTimeSecs * factor * 2.0):RadRotate(self.hoverTilt) - Vector(0, math.max(self.Vel.Y, 0)) * TimerMan.DeltaTimeSecs * 12.0 * factor
 			
@@ -678,35 +686,37 @@ function HumanAIBehaviours.handleAbilities(self)
 			if input == 1 then
 				
 				if self.Vel.X < 0 then
-					self.Vel = Vector(self.Vel.X  / (1 + TimerMan.DeltaTimeSecs * damp * 1.5), self.Vel.Y)
+					self.Vel = Vector(self.Vel.X  / (1 + TimerMan.DeltaTimeSecs * damp * 2.5), self.Vel.Y)
 				end
 			elseif input == -1 then
 				
 				if self.Vel.X > 0 then
-					self.Vel = Vector(self.Vel.X  / (1 + TimerMan.DeltaTimeSecs * damp * 1.5), self.Vel.Y)
+					self.Vel = Vector(self.Vel.X  / (1 + TimerMan.DeltaTimeSecs * damp * 2.5), self.Vel.Y)
 				end
 			else
 				self.Vel = Vector(self.Vel.X / (1 + TimerMan.DeltaTimeSecs * damp), self.Vel.Y)
 			end
 			-- Movement
-			local movementSpeed = 15
+			local movementSpeed = 25
 			local movementTargetVel = 10
 			self.Vel = Vector(self.Vel.X + (movementSpeed * input * math.max((movementTargetVel - math.abs(self.Vel.X)) / movementTargetVel)) * TimerMan.DeltaTimeSecs, self.Vel.Y)
 			
 			-- Stop Animations
-			--self.controller:SetState(Controller.HOLD_RIGHT, false)
-			--self.controller:SetState(Controller.HOLD_LEFT, false)
+			self.controller:SetState(Controller.MOVE_RIGHT, false)
+			self.controller:SetState(Controller.MOVE_LEFT, false)
 			
 			-- STABILITY
 			if self.Status == 1 then
 				self.Status = 0
 			elseif self.Status == 0 then
-				self.AngularVel = self.AngularVel + (self.Vel.X * 0.1 * RangeRand(0.4, 0.5));
+				self.AngularVel = self.AngularVel - (self.Vel.X * 0.075 * RangeRand(0.4, 0.5));
 			end
 			---
-		
-			self.hoverEngineLoop.Pitch = (self.Vel.Magnitude / 10) + 1;
-			self.hoverEngineLoop.Pitch = math.min(self.hoverEngineLoop.Pitch, 1.5);
+			
+			local change = self.Vel - hoverVel
+			
+			self.hoverEngineLoop.Pitch = (change.Magnitude / 3 + self.Vel.Magnitude / 10) + 1;
+			self.hoverEngineLoop.Pitch = math.min(self.hoverEngineLoop.Pitch, 2.0);
 			
 			if self.Jetpack then
 				-- GFX
