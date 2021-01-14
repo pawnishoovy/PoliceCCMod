@@ -559,8 +559,10 @@ function HumanAIBehaviours.handleAbilities(self)
 		local value = (1 * TimerMan.DeltaTimeSecs * 100);
 		self.Health = self.Health + value
 		self.healJuice = self.healJuice - value
-		if math.random(0, 100) < 10 then
-			self:RemoveAnyRandomWounds(1);
+		for i = 1, 2 do
+			if math.random(0, 100) < 10 then
+				self:RemoveAnyRandomWounds(1);
+			end
 		end
 		self.oldHealth = self.Health;
 	end
