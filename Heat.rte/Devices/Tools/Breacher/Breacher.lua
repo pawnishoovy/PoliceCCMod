@@ -41,8 +41,10 @@ function Create(self)
 	self.RateOfFire = 1 / (ms / 1000) * 60
 	
 	self.flashTimer = Timer();
-	self.flashDelay = 200;
-	self.maxFlash = 4;
+	self.flashDelayMin = 100;
+	self.flashDelayMax = 240;
+	self.flashDelay = math.random(self.flashDelayMin, self.flashDelayMax);
+	self.maxFlash = math.random(3,5);
 	
 	-- Progressive Recoil System 
 	self.recoilAcc = 0 -- for sinous
@@ -112,6 +114,7 @@ function Update(self)
 	elseif self.Flashes < self.maxFlash and self.flashTimer:IsPastSimMS(self.flashDelay) then
 		self.Flashes = self.Flashes + 1;
 		self.flashTimer:Reset();
+		self.flashDelay = math.random(self.flashDelayMin, self.flashDelayMax);
 		
 		-- Flash
 		local ID = self.parent and self.parent.ID or 0;
@@ -210,7 +213,7 @@ function Update(self)
 		self.canSmoke = true
 		
 		for i = 1, 4 do
-			local Effect = CreateMOSParticle("Tiny Smoke Ball 1", "Base.rte")
+			local Effect = CreateMOSParticle("Small Smoke Ball 1", "Base.rte")
 			if Effect then
 				Effect.Pos = self.MuzzlePos;
 				Effect.Vel = (self.Vel + Vector(RangeRand(-20,20), RangeRand(-20,20)) + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 30
@@ -218,20 +221,24 @@ function Update(self)
 			end
 		end
 		
-		for i = 1, 2 do
+		for i = 2, 4 do
 			local Effect = CreateMOSParticle("Explosion Smoke 1", "Base.rte")
 			if Effect then
 				Effect.Pos = self.MuzzlePos;
+				Effect.Lifetime = Effect.Lifetime * 2.0
 				Effect.Vel = (self.Vel + Vector(RangeRand(-20,20), RangeRand(-20,20)) + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 30
 				MovableMan:AddParticle(Effect)
 			end
 		end
 		
-		local Effect = CreateMOSParticle("Explosion Smoke 2", "Base.rte")
-		if Effect then
-			Effect.Pos = self.MuzzlePos;
-			Effect.Vel = (self.Vel + Vector(RangeRand(-20,20), RangeRand(-20,20)) + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 30
-			MovableMan:AddParticle(Effect)
+		for i = 2, 4 do
+			local Effect = CreateMOSParticle("Explosion Smoke 2", "Base.rte")
+			if Effect then
+				Effect.Pos = self.MuzzlePos;
+				Effect.Lifetime = Effect.Lifetime * 2.0
+				Effect.Vel = (self.Vel + Vector(RangeRand(-20,20), RangeRand(-20,20)) + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 30
+				MovableMan:AddParticle(Effect)
+			end
 		end
 		
 		local Effect = CreateMOPixel("Glow Explosion Huge", "Base.rte")
@@ -247,6 +254,17 @@ function Update(self)
 				Effect.Pos = self.MuzzlePos;
 				Effect.Vel = (self.Vel + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)) / 10
 				MovableMan:AddParticle(Effect)
+			end
+		end
+		
+		for i = 1, math.random(3,6) do
+			hitPos = Vector(self.MuzzlePos.X, self.MuzzlePos.Y)
+			local obstacleRay = SceneMan:CastObstacleRay(Vector(self.MuzzlePos.X, self.MuzzlePos.Y), Vector(48 * self.FlipFactor, 0):RadRotate(self.RotAngle + math.rad(45) * RangeRand(-1,1)), Vector(), hitPos, rte.NoMOID, self.Team, rte.airID, 3);
+			if obstacleRay >= 0 then
+				local effect = CreateMOSRotating("Breacher Effect", "Heat.rte");
+				effect.Pos = hitPos;
+				MovableMan:AddParticle(effect);
+				effect:GibThis();
 			end
 		end
 
@@ -301,21 +319,6 @@ function Update(self)
 	-- Animation + HUD
 	if self.parent then
 		
-		local ctrl = self.parent:GetController();
-		local screen = ActivityMan:GetActivity():ScreenOfPlayer(ctrl.Player);
-		if self.parent:IsPlayerControlled() and (ctrl:IsState(Controller.PIE_MENU_ACTIVE) or (self.grenadeHUDReady and not self.grenadeHUDTimer:IsPastSimMS(1000))) then
-			local pos = self.parent.AboveHUDPos + Vector(0, 24)
-			
-			if self.grenadeHUDReady and not ctrl:IsState(Controller.PIE_MENU_ACTIVE) and not self.grenadeHUDTimer:IsPastSimMS(2000) then
-				PrimitiveMan:DrawTextPrimitive(screen, pos + Vector(0, 10), "Nade Launcher Ready!", true, 1);
-			elseif self.grenadeLoaded then
-				PrimitiveMan:DrawTextPrimitive(screen, pos, "Underbarrel Nade: Ready", true, 1);
-				PrimitiveMan:DrawTextPrimitive(screen, pos + Vector(0, 10), "Press V to fire", true, 1);
-			else
-				PrimitiveMan:DrawTextPrimitive(screen, pos, "Underbarrel Nade: Loading...", true, 1);
-			end
-		end
-		
 		self.horizontalAnim = math.floor(self.horizontalAnim / (1 + TimerMan.DeltaTimeSecs * 24.0) * 1000) / 1000
 		self.verticalAnim = math.floor(self.verticalAnim / (1 + TimerMan.DeltaTimeSecs * 15.0) * 1000) / 1000
 		
@@ -361,7 +364,7 @@ function Update(self)
 	end
 	
 	if self.canSmoke then	
-		local poof = CreateMOSParticle("Tiny Smoke Ball 1");
+		local poof = CreateMOSParticle("Small Smoke Ball 1");
 		poof.Pos = self.Pos + Vector(self.MuzzleOffset.X * self.FlipFactor, self.MuzzleOffset.Y):RadRotate(self.RotAngle);
 		poof.Lifetime = poof.Lifetime * RangeRand(0.3, 1.3) * 0.9;
 		poof.Vel = self.Vel * 0.1

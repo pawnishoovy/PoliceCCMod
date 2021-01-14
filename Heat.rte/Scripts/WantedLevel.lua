@@ -237,7 +237,7 @@ function WantedLevelScript:SpawnReinforcements()
 				passenger = nil;
 				
 				-- Companion Drone
-				if module == "Heat.rte" and (self.spawnBudget > 0 or math.random() < (0.1 * self.spawnTier)) then
+				if module == "Heat.rte" and (self.spawnBudget > 0 or math.random() < (0.07 * self.spawnTier)) then
 					local drone = CreateActor(math.random(1,2) < 2 and "Gundrone" or "Buzzdrone", module) -- Predeployed drone
 					drone:SetNumberValue("AIMode", 1) -- Follow someone!
 					drone.Team = reinforcementTeam
@@ -477,16 +477,28 @@ function WantedLevelScript:UpdateScript()
 	end
 	
 	if self.cameraFocus and self.cameraFocusEnabled then
+		local input = false
 		for player = Activity.PLAYER_1, Activity.MAXPLAYERCOUNT - 1 do
 			--SceneMan:SetScroll(self.cameraFocusPos, player)
 			--SceneMan:SetScrollTarget(self.cameraFocusPos, 1, SceneMan.SceneWrapsX, player)
 			local actor = ActivityMan:GetActivity():GetControlledActor(player)
 			if actor and self.activity:PlayerActive(player) and self.activity:PlayerHuman(player) then
 				actor.ViewPoint = self.cameraFocusPos
+				
+				local ctrl = actor:GetController()
+				if ctrl:IsState(Controller.HOLD_UP) or 
+				ctrl:IsState(Controller.BODY_JUMP) or 
+				ctrl:IsState(Controller.HOLD_DOWN) or 
+				ctrl:IsState(Controller.BODY_CROUCH) or
+				ctrl:IsState(Controller.HOLD_LEFT) or
+				ctrl:IsState(Controller.HOLD_RIGHT) or
+				ctrl:IsState(Controller.WEAPON_FIRE) then
+					input = true
+				end
 			end
 			
 		end
-		if self.cameraFocusTimer:IsPastSimMS(self.cameraFocusDuration) then
+		if self.cameraFocusTimer:IsPastSimMS(self.cameraFocusDuration) or (input and self.cameraFocusTimer:IsPastSimMS(self.cameraFocusDuration * 0.2)) then
 			self.cameraFocus = false
 		end
 	else

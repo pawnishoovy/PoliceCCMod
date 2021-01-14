@@ -435,6 +435,6 @@ end
 
 function Destroy(self)
 	if self.lfeSound then
-		AudioMan:FadeOutSound(self.lfeSound, 1000);
+		self.lfeSound:FadeOut(1000);
 	end
 end
