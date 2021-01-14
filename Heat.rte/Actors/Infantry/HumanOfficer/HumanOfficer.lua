@@ -156,6 +156,11 @@ function Create(self)
 	self.hoverChargeTimer = Timer();
 	self.hoverChargeDelay = 800;
 	
+	self.hoverAltitudeTarget = 100
+	self.hoverAltitude = 0
+	self.hoverTilt = 0
+	self.hoverUpdate = Timer()
+	
 	self.Hovering = false;
 	
 	self.hoverSound = CreateSoundContainer("VO Normal Female Pain HumanOfficer", "Heat.rte");

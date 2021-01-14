@@ -579,6 +579,8 @@ function HumanAIBehaviours.handleAbilities(self)
 				self.hoverSounds.hoverEnd:Play(self.Pos);
 				self.hoverSound = self.hoverSounds.hoverEnd;
 				
+				self.Vel = Vector(self.Vel.X, self.Vel.Y * 0.5);
+				
 				if self.Gender == 0 then
 				
 					self.voiceSounds = {
@@ -623,11 +625,101 @@ function HumanAIBehaviours.handleAbilities(self)
 			if not self.hoverFlameLoop:IsBeingPlayed() then
 				self.hoverFlameLoop:Play(self.Pos);
 			end
+			
+			---
+			
+			if self.hoverUpdate:IsPastSimMS(60) then
+				--self.hoverAltitude = SceneMan:FindAltitude(self.Pos, 200, 3);
+				
+				-- Reset
+				self.hoverTilt = 0
+				self.hoverAltitude = self.hoverAltitudeTarget
+				
+				-- Calculate
+				local scanRays = 6
+				local scanLength = self.hoverAltitudeTarget + 30
+				local scanArc = 45
+				local scanPos = self.Pos
+				for i = 0, (scanRays - 1) do
+					local fac = ((i / (scanRays - 1)) - 0.5) * 2.0
+					local ang = math.rad(scanArc * fac)
+					local vec = Vector(0, scanLength):RadRotate(ang)
+					
+					local endPos = Vector(self.Pos.X, self.Pos.Y)
+					local ray = SceneMan:CastObstacleRay(scanPos, vec, Vector(0, 0), endPos, 0 , self.Team, 0, 2) -- Do the hitscan stuff, raycast
+					if ray ~= -1 then
+						if self.hoverAltitude > ray then
+							self.hoverAltitude = ray
+						end
+						local a = 1 - (ray / scanLength)
+						self.hoverTilt = (self.hoverTilt + (ang * a))
+					end
+					
+					PrimitiveMan:DrawLinePrimitive(scanPos, scanPos + Vector(vec.X, vec.Y):SetMagnitude(ray), 122);
+				end
+				self.hoverTilt = self.hoverTilt / scanRays
+				
+				self.hoverUpdate:Reset()
+			end
+			PrimitiveMan:DrawLinePrimitive(self.Pos, self.Pos + Vector(0, 15):RadRotate(self.hoverTilt), 5);
+			
+			PrimitiveMan:DrawCirclePrimitive(self.Pos, self.hoverAltitude, 13)
+			local factor = math.max((self.hoverAltitudeTarget - self.hoverAltitude) / 100, 0)
+			
+			self.Vel = self.Vel - (SceneMan.GlobalAcc * TimerMan.DeltaTimeSecs * factor * 2.0):RadRotate(self.hoverTilt) - Vector(0, math.max(self.Vel.Y, 0)) * TimerMan.DeltaTimeSecs * 12.0 * factor
+			
+			-- Input
+			local input = 0
+			input = input + (self.controller:IsState(Controller.HOLD_RIGHT) and 1 or 0)
+			input = input - (self.controller:IsState(Controller.HOLD_LEFT) and 1 or 0)
+			
+			-- Damp X velocity
+			local damp = 0.5
+			if input == 1 then
+				
+				if self.Vel.X < 0 then
+					self.Vel = Vector(self.Vel.X  / (1 + TimerMan.DeltaTimeSecs * damp * 1.5), self.Vel.Y)
+				end
+			elseif input == -1 then
+				
+				if self.Vel.X > 0 then
+					self.Vel = Vector(self.Vel.X  / (1 + TimerMan.DeltaTimeSecs * damp * 1.5), self.Vel.Y)
+				end
+			else
+				self.Vel = Vector(self.Vel.X / (1 + TimerMan.DeltaTimeSecs * damp), self.Vel.Y)
+			end
+			-- Movement
+			local movementSpeed = 15
+			local movementTargetVel = 10
+			self.Vel = Vector(self.Vel.X + (movementSpeed * input * math.max((movementTargetVel - math.abs(self.Vel.X)) / movementTargetVel)) * TimerMan.DeltaTimeSecs, self.Vel.Y)
+			
+			-- Stop Animations
+			--self.controller:SetState(Controller.HOLD_RIGHT, false)
+			--self.controller:SetState(Controller.HOLD_LEFT, false)
+			
+			-- STABILITY
+			if self.Status == 1 then
+				self.Status = 0
+			elseif self.Status == 0 then
+				self.AngularVel = self.AngularVel + (self.Vel.X * 0.1 * RangeRand(0.4, 0.5));
+			end
+			---
 		
-			self.hoverEngineLoop.Pitch = (self.Vel.Magnitude / 20) + 1;
+			self.hoverEngineLoop.Pitch = (self.Vel.Magnitude / 10) + 1;
 			self.hoverEngineLoop.Pitch = math.min(self.hoverEngineLoop.Pitch, 1.5);
 			
 			if self.Jetpack then
+				-- GFX
+				local effect = CreateMOSRotating("Ground Smoke Particle 1", "Heat.rte")
+				effect.Pos = self.Jetpack.Pos + Vector(RangeRand(-1,1), RangeRand(-1,1)) * 6
+				effect.Vel = Vector(math.random(110,200),0):RadRotate(math.pi * 1.5 + math.rad(45) * RangeRand(-1,1))
+				effect.Lifetime = effect.Lifetime * RangeRand(0.8,2.0)
+				effect.AirResistance = effect.AirResistance * RangeRand(0.5,0.8)
+				MovableMan:AddParticle(effect)
+				--
+				
+				self.controller:SetState(Controller.BODY_JUMP, false)
+				self.controller:SetState(Controller.BODY_JUMPSTART, false)
 				self.Jetpack:EnableEmission(false);
 			end
 		end
