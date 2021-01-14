@@ -633,14 +633,30 @@ function HumanAIBehaviours.handleAbilities(self)
 			local hoverVel = Vector(self.Vel.X, self.Vel.Y)
 			
 			local targetAltitude = self.hoverAltitudeTarget
+			if self.Indoors == true and not self.controller:IsState(Controller.HOLD_UP) then
+				self.controller:SetState(Controller.HOLD_DOWN, true);
+				self.controller:SetState(Controller.BODY_CROUCH, true);
+			end
+				
 			if self.controller:IsState(Controller.HOLD_DOWN) then
 				targetAltitude = targetAltitude * 0.66
 			elseif self.controller:IsState(Controller.HOLD_UP) then
-				targetAltitude = targetAltitude * 1.5
+				targetAltitude = targetAltitude * 1.4
 			end
 			
 			if self.hoverUpdate:IsPastSimMS(60) then
 				--self.hoverAltitude = SceneMan:FindAltitude(self.Pos, 200, 3);
+				
+				local inVec = Vector(0,-35);
+				local inRay = SceneMan:CastObstacleRay(self.Pos, inVec, Vector(), Vector(), 0, self.Team, 0, 4);
+				
+				--PrimitiveMan:DrawLinePrimitive(self.Pos, self.Pos + inVec, 122);
+				
+				if inRay > 0 then
+					self.Indoors = true;
+				else
+					self.Indoors = false;
+				end
 				
 				-- Reset
 				self.hoverTilt = 0
@@ -703,7 +719,7 @@ function HumanAIBehaviours.handleAbilities(self)
 			end
 			-- Movement
 			local movementSpeed = 25
-			local movementTargetVel = 10
+			local movementTargetVel = 15
 			self.Vel = Vector(self.Vel.X + (movementSpeed * input * math.max((movementTargetVel - math.abs(self.Vel.X)) / movementTargetVel)) * TimerMan.DeltaTimeSecs, self.Vel.Y)
 			
 			-- Stop Animations
@@ -720,8 +736,8 @@ function HumanAIBehaviours.handleAbilities(self)
 			
 			local change = self.Vel - hoverVel
 			
-			self.hoverEngineLoop.Pitch = (change.Magnitude / 3 + self.Vel.Magnitude / 10) + 1;
-			self.hoverEngineLoop.Pitch = math.min(self.hoverEngineLoop.Pitch, 2.0);
+			self.hoverEngineLoop.Pitch = (change.Magnitude / 3 + self.Vel.Magnitude / 30) + 1;
+			self.hoverEngineLoop.Pitch = math.min(self.hoverEngineLoop.Pitch, 1.7);
 			
 			if self.Jetpack then
 				-- GFX
