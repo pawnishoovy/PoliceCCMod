@@ -1,0 +1,5 @@
+Add GrnFlameSpearFire2DA GrnKohmPistolShotA exp_large_core_close_03
+
+Reflection GrnFlameSpearTailC
+
+Charge GrineerJetPolearmWhooshA GrnDrillSgtFlameThrowerLoop
