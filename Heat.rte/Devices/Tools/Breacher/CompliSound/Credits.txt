@@ -1,5 +1,5 @@
 Add GrnFlameSpearFire2DA GrnKohmPistolShotA exp_large_core_close_03
 
-Reflection GrnFlameSpearTailC
+Reflection GrnFlameSpearTailC refl_explo_urban_cls_front_lrg_01 exp_large_tail_close_01
 
 Charge GrineerJetPolearmWhooshA GrnDrillSgtFlameThrowerLoop
