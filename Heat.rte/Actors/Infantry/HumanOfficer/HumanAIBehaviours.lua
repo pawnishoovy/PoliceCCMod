@@ -718,7 +718,7 @@ function HumanAIBehaviours.handleAbilities(self)
 				self.Vel = Vector(self.Vel.X / (1 + TimerMan.DeltaTimeSecs * damp), self.Vel.Y)
 			end
 			-- Movement
-			local movementSpeed = 25
+			local movementSpeed = 22
 			local movementTargetVel = 15
 			self.Vel = Vector(self.Vel.X + (movementSpeed * input * math.max((movementTargetVel - math.abs(self.Vel.X)) / movementTargetVel)) * TimerMan.DeltaTimeSecs, self.Vel.Y)
 			
@@ -730,7 +730,7 @@ function HumanAIBehaviours.handleAbilities(self)
 			if self.Status == 1 then
 				self.Status = 0
 			elseif self.Status == 0 then
-				self.AngularVel = self.AngularVel - (self.Vel.X * 0.075 * RangeRand(0.4, 0.5));
+				self.AngularVel = self.AngularVel - (self.Vel.X * 0.06 * RangeRand(0.4, 0.5));
 			end
 			---
 			
