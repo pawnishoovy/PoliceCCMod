@@ -41,10 +41,8 @@ function Create(self)
 	self.RateOfFire = 1 / (ms / 1000) * 60
 	
 	self.flashTimer = Timer();
-	self.flashDelayMin = 100;
-	self.flashDelayMax = 240;
-	self.flashDelay = math.random(self.flashDelayMin, self.flashDelayMax);
-	self.maxFlash = math.random(3,5);
+	self.flashDelay = 150;
+	self.maxFlash = 4;
 	
 	-- Progressive Recoil System 
 	self.recoilAcc = 0 -- for sinous
@@ -114,7 +112,6 @@ function Update(self)
 	elseif self.Flashes < self.maxFlash and self.flashTimer:IsPastSimMS(self.flashDelay) then
 		self.Flashes = self.Flashes + 1;
 		self.flashTimer:Reset();
-		self.flashDelay = math.random(self.flashDelayMin, self.flashDelayMax);
 		
 		-- Flash
 		local ID = self.parent and self.parent.ID or 0;
