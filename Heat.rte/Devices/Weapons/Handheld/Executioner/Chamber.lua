@@ -310,7 +310,7 @@ function Update(self)
 		self.canSmoke = true
 		self.smokeTimer:Reset()
 		
-		for i = 1, (4 + (self:GetNumberValue("Charge")*2)) do
+		for i = 1, (5 + (self:GetNumberValue("Charge")*2)) do
 			local Bullet = CreateMOPixel("Particle Executioner", "Heat.rte")
 			Bullet.Pos = self.MuzzlePos;
 			Bullet.Vel = self.Vel + Vector(150*self.FlipFactor,0):RadRotate(self.RotAngle)

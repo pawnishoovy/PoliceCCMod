@@ -571,13 +571,16 @@ function HumanAIBehaviours.handleAbilities(self)
 	--- hovering
 	
 	if self.hoverCharging == false then
-		if (self:IsPlayerControlled() and UInputMan:KeyPressed(15)) then
+		if (self:IsPlayerControlled() and UInputMan:KeyPressed(15)) or self.hoverFuel <= 0 then
 			if self.Hovering == true then
+				self.hoverFuel = 0;
 				self.Hovering = false;
 				self.hoverFlameLoop:Stop(-1);
 				self.hoverEngineLoop:Stop(-1);
 				self.hoverSounds.hoverEnd:Play(self.Pos);
 				self.hoverSound = self.hoverSounds.hoverEnd;
+				
+				self.hoverAnimTimer:Reset();
 				
 				--self.Vel = Vector(self.Vel.X, self.Vel.Y * 0.5);
 				if self.Jetpack then
@@ -621,6 +624,21 @@ function HumanAIBehaviours.handleAbilities(self)
 		end
 		
 		if self.Hovering then
+		
+			if self:IsPlayerControlled() then
+				-- Fuel Gauge
+				-- Bar Background
+				PrimitiveMan:DrawLinePrimitive(self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength, 0), self.Pos + self.hoverFuelOffset + Vector(self.hoverFuelLength, 0), 26);
+				-- Bar Foreground
+				local fac = math.max(math.min(self.hoverFuel / self.hoverFuelMax, 1), 0)
+				PrimitiveMan:DrawLinePrimitive(self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength, 0), self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength + (self.hoverFuelLength * 2 * fac), 0), 116);
+				self.hoverAIEndTimer:Reset();
+			elseif self.hoverAIEndTimer:IsPastSimMS(self.hoverAIEndDelay) then
+				self.hoverFuel = 0;
+			end
+			
+			local value = (TimerMan.DeltaTimeSecs * 10);
+			self.hoverFuel = self.hoverFuel - value;
 		
 			if not self.hoverEngineLoop:IsBeingPlayed() then
 				self.hoverEngineLoop:Play(self.Pos);
@@ -766,12 +784,27 @@ function HumanAIBehaviours.handleAbilities(self)
 				self.Jetpack:EnableEmission(false);
 			end
 		else
-			if self.Jetpack then
+		
+			if self.hoverFuel < self.hoverFuelMax then
+				local value = (TimerMan.DeltaTimeSecs * 10);
+				self.hoverFuel = self.hoverFuel + value;
+				-- Fuel Gauge
+				-- Bar Background
+				PrimitiveMan:DrawLinePrimitive(self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength, 0), self.Pos + self.hoverFuelOffset + Vector(self.hoverFuelLength, 0), 26);
+				-- Bar Foreground
+				local fac = math.max(math.min(self.hoverFuel / self.hoverFuelMax, 1), 0)
+				PrimitiveMan:DrawLinePrimitive(self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength, 0), self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength + (self.hoverFuelLength * 2 * fac), 0), 116);
+			end
+		
+			if self.Jetpack and self.hoverAnimTimer:IsPastSimMS(self.hoverAnimDelay) then
 				self.Jetpack.Frame = 0
+			elseif self.Jetpack then
+				self.Jetpack.Frame = 1;
 			end
 		end
 		
 	elseif self.hoverChargeTimer:IsPastSimMS(self.hoverChargeDelay) then
+		self.hoverAIEndTimer:Reset();
 		self.hoverCharging = false;
 		self.Hovering = true;
 		self.hoverFlameLoop:Play(self.Pos);

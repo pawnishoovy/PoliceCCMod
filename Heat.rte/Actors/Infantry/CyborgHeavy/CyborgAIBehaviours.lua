@@ -149,7 +149,7 @@ function CyborgAIBehaviours.handleMovement(self)
 			self.Vel = Vector(self.Vel.X, self.Vel.Y * 0.5)
 			self.Vel = Vector(self.Vel.X, self.Vel.Y):RadRotate(self.RotAngle)
 			
-			self.Vel = self.Vel + Vector(0, -10):RadRotate(self.RotAngle)
+			self.Vel = self.Vel + Vector(0, -7):RadRotate(self.RotAngle)
 			self.boosterReady = false
 			
 			self.boosterTimer:Reset()

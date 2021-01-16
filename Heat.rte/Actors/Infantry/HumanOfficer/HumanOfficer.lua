@@ -164,6 +164,18 @@ function Create(self)
 	
 	self.Hovering = false;
 	
+	self.hoverFuel = 100;
+	self.hoverFuelMax = 100;
+	
+	self.hoverFuelOffset = Vector(0, -25);
+	self.hoverFuelLength = 10;
+	
+	self.hoverAIEndTimer = Timer();
+	self.hoverAIEndDelay = 5000;
+	
+	self.hoverAnimTimer = Timer();
+	self.hoverAnimDelay = 300;
+	
 	self.hoverSound = CreateSoundContainer("VO Normal Female Pain HumanOfficer", "Heat.rte");
 	-- MEANINGLESS! also
 	
