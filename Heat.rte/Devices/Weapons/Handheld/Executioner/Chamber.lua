@@ -144,10 +144,8 @@ function Update(self)
 		
 		if self.Charging == true then
 			self.Charging = false;
-			if self.chargeUpSound then
-				self.chargeUpSound:Stop(-1);
-				self.chargeInterruptSound:Play(self.Pos);
-			end
+			self.chargeUpSound:Stop(-1);
+			self.chargeInterruptSound:Play(self.Pos);
 		end
 
 		if self.reloadPhase == 0 then

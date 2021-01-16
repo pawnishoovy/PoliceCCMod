@@ -198,7 +198,7 @@ function Create(self)
 	attackPhase[i].canDamage = true
 	attackPhase[i].attackDamage = 3
 	attackPhase[i].attackStunChance = 0.15
-	attackPhase[i].attackRange = 13
+	attackPhase[i].attackRange = 15
 	attackPhase[i].attackPush = 0.8
 	attackPhase[i].attackVector = Vector(0, -4) -- local space vector relative to position and rotation
 	attackPhase[i].attackAngle = 90;
@@ -376,7 +376,7 @@ function Create(self)
 	attackPhase2[i].canDamage = true
 	attackPhase2[i].attackDamage = 3
 	attackPhase2[i].attackStunChance = 0.15
-	attackPhase2[i].attackRange = 13
+	attackPhase2[i].attackRange = 15
 	attackPhase2[i].attackPush = 0.8
 	attackPhase2[i].attackVector = Vector(0, -4) -- local space vector relative to position and rotation
 	attackPhase2[i].attackAngle = 90;

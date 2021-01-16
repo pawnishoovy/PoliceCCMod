@@ -251,10 +251,6 @@ function Update(self)
 			end
 		end
 		
-		if self.reflectionSound then
-			self.reflectionSound:Stop(-1);
-		end
-
 		local outdoorRays = 0;
 		
 		local indoorRays = 0;

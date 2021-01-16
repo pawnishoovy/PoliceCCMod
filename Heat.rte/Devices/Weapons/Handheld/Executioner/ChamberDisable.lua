@@ -5,11 +5,9 @@ function OnDetach(self)
 	
 	if self.Charging == true then
 		self.Charging = false;
-		if self.chargeUpSound then
-			self.chargeUpSound:Stop(-1);
-			self.chargeInterruptSound:Play(self.Pos);
-			self.returnToCharge = true;
-		end
+		self.chargeUpSound:Stop(-1);
+		self.chargeInterruptSound:Play(self.Pos);
+		self.returnToCharge = true;
 	elseif self:GetNumberValue("ShieldActive") == 1 then
 		self.returnToShield = true;
 		self:SetNumberValue("DisableShield", 1);

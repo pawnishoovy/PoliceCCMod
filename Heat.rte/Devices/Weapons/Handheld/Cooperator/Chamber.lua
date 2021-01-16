@@ -277,12 +277,9 @@ function Update(self)
 	
 	if self:IsActivated() and self.RoundInMagCount > 0 then
 
-		if self.smokeSound then
-			self.smokeSound:Stop(-1)
-		end
-		if self.stopSound then
-			self.stopSound:Stop(-1)
-		end
+		self.smokeLongSound:Stop(-1)
+		self.smokeShortSound:Stop(-1)
+		self.stopSound:Stop(-1)
 		if self.triggerPulled ~= true then
 			self.triggerPulled = true;
 			self.startSound:Play(self.Pos);

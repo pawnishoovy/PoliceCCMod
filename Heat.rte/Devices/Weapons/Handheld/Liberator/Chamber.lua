@@ -116,8 +116,6 @@ function Update(self)
 	-- mechanism stuff
 	
 	if self.mechanismSwitching == true then
-	
-		self:Deactivate();
 		
 		if self.mechanismState == 1 then
 			if self.mechanismSwitchTimer:IsPastSimMS(self.mechanismSwitchActiveDelay) then

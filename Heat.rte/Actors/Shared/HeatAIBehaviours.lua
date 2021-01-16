@@ -243,8 +243,6 @@ end
 function HeatAIBehaviours.handleHeadLoss(self)
 	if not (self.Head) then
 		self.voiceSounds = {};
-		if (self.voiceSound) then
-			self.voiceSound:Stop(-1);
-		end
+		self.voiceSound:Stop(-1);
 	end
 end
