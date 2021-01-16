@@ -626,19 +626,18 @@ function HumanAIBehaviours.handleAbilities(self)
 		if self.Hovering then
 		
 			if self:IsPlayerControlled() then
+				--[[
 				-- Fuel Gauge
 				-- Bar Background
 				PrimitiveMan:DrawLinePrimitive(self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength, 0), self.Pos + self.hoverFuelOffset + Vector(self.hoverFuelLength, 0), 26);
 				-- Bar Foreground
 				local fac = math.max(math.min(self.hoverFuel / self.hoverFuelMax, 1), 0)
 				PrimitiveMan:DrawLinePrimitive(self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength, 0), self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength + (self.hoverFuelLength * 2 * fac), 0), 116);
+				]]
 				self.hoverAIEndTimer:Reset();
 			elseif self.hoverAIEndTimer:IsPastSimMS(self.hoverAIEndDelay) then
 				self.hoverFuel = 0;
 			end
-			
-			local value = (TimerMan.DeltaTimeSecs * 10);
-			self.hoverFuel = self.hoverFuel - value;
 		
 			if not self.hoverEngineLoop:IsBeingPlayed() then
 				self.hoverEngineLoop:Play(self.Pos);
@@ -754,6 +753,9 @@ function HumanAIBehaviours.handleAbilities(self)
 			
 			local change = self.Vel - hoverVel
 			
+			local value = (TimerMan.DeltaTimeSecs * 4) + (change.Magnitude * TimerMan.DeltaTimeSecs * 10);
+			self.hoverFuel = math.max(self.hoverFuel - value, 0);
+			
 			self.hoverEngineLoop.Pitch = (change.Magnitude / 3 + self.Vel.Magnitude / 30) + 1;
 			self.hoverEngineLoop.Pitch = math.min(self.hoverEngineLoop.Pitch, 1.7);
 			
@@ -784,17 +786,8 @@ function HumanAIBehaviours.handleAbilities(self)
 				self.Jetpack:EnableEmission(false);
 			end
 		else
-		
-			if self.hoverFuel < self.hoverFuelMax then
-				local value = (TimerMan.DeltaTimeSecs * 10);
-				self.hoverFuel = self.hoverFuel + value;
-				-- Fuel Gauge
-				-- Bar Background
-				PrimitiveMan:DrawLinePrimitive(self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength, 0), self.Pos + self.hoverFuelOffset + Vector(self.hoverFuelLength, 0), 26);
-				-- Bar Foreground
-				local fac = math.max(math.min(self.hoverFuel / self.hoverFuelMax, 1), 0)
-				PrimitiveMan:DrawLinePrimitive(self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength, 0), self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength + (self.hoverFuelLength * 2 * fac), 0), 116);
-			end
+			local value = (TimerMan.DeltaTimeSecs * 10);
+			self.hoverFuel = math.min(self.hoverFuel + value, self.hoverFuelMax);
 		
 			if self.Jetpack and self.hoverAnimTimer:IsPastSimMS(self.hoverAnimDelay) then
 				self.Jetpack.Frame = 0
@@ -847,7 +840,19 @@ function HumanAIBehaviours.handleAbilities(self)
 	elseif self.hoverChargeTimer:IsPastSimMS(self.hoverChargeDelay - 100) then
 		self.Jetpack.Frame = 1
 	end
-		
+	
+	if self.HUDVisible and self:IsPlayerControlled() and (self.Hovering or self.hoverFuel < self.hoverFuelMax) then
+		-- Fuel Gauge
+		local colors = {244, 46, 47, 48, 86, 87, 118, 135, 149, 162, 147}
+		local fac = math.max(math.min(self.hoverFuel / self.hoverFuelMax, 1), 0)
+		local color = colors[math.floor(fac * (#colors - 1) + 1.5)]
+		for i = -1, 1 do
+			-- Bar Background
+			PrimitiveMan:DrawLinePrimitive(self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength, i), self.Pos + self.hoverFuelOffset + Vector(self.hoverFuelLength, i), 26);
+			-- Bar Foreground
+			PrimitiveMan:DrawLinePrimitive(self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength, i), self.Pos + self.hoverFuelOffset + Vector(-self.hoverFuelLength + (self.hoverFuelLength * 2 * fac), i), color);
+		end
+	end
 	
 end
 

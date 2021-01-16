@@ -167,7 +167,7 @@ function Create(self)
 	self.hoverFuel = 100;
 	self.hoverFuelMax = 100;
 	
-	self.hoverFuelOffset = Vector(0, -25);
+	self.hoverFuelOffset = Vector(0, -26);
 	self.hoverFuelLength = 10;
 	
 	self.hoverAIEndTimer = Timer();
