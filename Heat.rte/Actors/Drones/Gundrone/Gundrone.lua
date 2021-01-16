@@ -31,6 +31,29 @@ function Create(self)
 	self.moveTimer = Timer();
 	-- Sounds
 	
+	-- Initialize AI
+	self.AI = {}
+	
+	self.AI.master = nil -- follow this actor
+	
+	self.AI.passiveMode = 1 -- 0 patrol, 1 follow friendly, 2 stay still
+	
+	self.AI.passiveFollowOffset = Vector(0,0)
+	--self.AI.passiveSentryPos = Vector(self.Pos.X, self.Pos.Y)
+	
+	
+	self.AI.passiveUpdateTimer = Timer()
+	self.AI.passiveUpdateDelayMin = 1000
+	self.AI.passiveUpdateDelayMax = 3000
+	self.AI.passiveUpdateDelay = math.random(self.AI.passiveUpdateDelayMin, self.AI.passiveUpdateDelayMax)
+	
+	self.AI.aggressive = false
+	
+	self.AI.aggressiveUpdateTimer = Timer()
+	self.AI.aggressiveUpdateDelayMin = 100
+	self.AI.aggressiveUpdateDelayMax = 300
+	self.AI.aggressiveUpdateDelay = math.random(self.AI.aggressiveUpdateDelayMin, self.AI.aggressiveUpdateDelayMax)
+	
 	self.scan = ToGameActivity(ActivityMan:GetActivity()):GetFogOfWarEnabled()
 	self.scanTimer = Timer();
 	
@@ -175,6 +198,30 @@ function Update(self)
 	
 	-- Controller
 	
+	-- Look for enemies
+	if self.AI.aggressiveUpdateTimer:IsPastSimMS(self.AI.aggressiveUpdateDelay) then
+		local target = MovableMan:GetClosestEnemyActor(self.Team, self.Pos, 450, Vector());
+		if target and target.Status < Actor.INACTIVE then
+			--Check that the target isn't obscured by terrain
+			local aimTrace = SceneMan:ShortestDistance(self.Pos, target.Pos, SceneMan.SceneWrapsX);
+			local terrCheck = SceneMan:CastStrengthRay(self.Pos, aimTrace, 30, Vector(), 5, 0, SceneMan.SceneWrapsX);
+			if terrCheck == false then
+				--self.hoverPosTarget = Vector(target.Pos.X, target.Pos.Y)
+				self:SetNumberValue("AttackAngle", aimTrace.AbsRadAngle)
+				
+				self.AI.aggressive = true
+				--self.master = nil
+			else
+				self.AI.aggressive = false
+			end
+		else
+			self.AI.aggressive = false
+		end
+		
+		self.AI.aggressiveUpdateTimer:Reset()
+		self.AI.aggressiveUpdateDelay = math.random(self.AI.aggressiveUpdateDelayMin, self.AI.aggressiveUpdateDelayMax)
+	end
+	
 	if self:IsPlayerControlled() then -- PLAYER
 		local movementVector = Vector()
 		local ctrl = self:GetController()
@@ -200,9 +247,9 @@ function Update(self)
 		end
 		
 		if ctrl:IsState(Controller.WEAPON_FIRE) then
-			--self.sawEnabled = true
+			self:SetNumberValue("Attacking", 1)
 		else
-			--self.sawEnabled = false
+			self:SetNumberValue("Attacking", 0)
 		end
 		
 		if moving then
@@ -212,145 +259,98 @@ function Update(self)
 		
 		self.Scan = false;
 		self.aggroScan = false;
-		
+		self.master = nil
 		
 	else -- AI
-		if not self.AI then -- Initialize AI
-			self.AI = {}
+		-- Update AI
+		if self:NumberValueExists("AIMode") then
+			self.AI.passiveMode = self:GetNumberValue("AIMode")
+			self:RemoveNumberValue("AIMode")
 			
-			self.AI.master = nil -- follow this actor
+			self.master = nil
 			
-			self.AI.passiveMode = 1 -- 0 patrol, 1 follow friendly, 2 stay still
+			self:FlashWhite(100)
+		end
+		
+		if self.AI.aggressive then
+			self.aggroScan = true;
 			
-			self.AI.passiveFollowOffset = Vector(0,0)
-			--self.AI.passiveSentryPos = Vector(self.Pos.X, self.Pos.Y)
+			self:SetNumberValue("Attacking", 1)
 			
+			self.Frame = 0
+		else
+			self.aggroScan = false;
 			
-			self.AI.passiveUpdateTimer = Timer()
-			self.AI.passiveUpdateDelayMin = 1000
-			self.AI.passiveUpdateDelayMax = 3000
-			self.AI.passiveUpdateDelay = math.random(self.AI.passiveUpdateDelayMin, self.AI.passiveUpdateDelayMax)
+			self:SetNumberValue("Attacking", 0)
 			
-			self.AI.aggressive = false
+			self.Frame = 1
+		end
 			
-			self.AI.aggressiveUpdateTimer = Timer()
-			self.AI.aggressiveUpdateDelayMin = 100
-			self.AI.aggressiveUpdateDelayMax = 300
-			self.AI.aggressiveUpdateDelay = math.random(self.AI.aggressiveUpdateDelayMin, self.AI.aggressiveUpdateDelayMax)
-		else -- Update AI
-			if self:NumberValueExists("AIMode") then
-				self.AI.passiveMode = self:GetNumberValue("AIMode")
-				self:RemoveNumberValue("AIMode")
+		if self.AI.passiveMode == 0 then
+			if self.AI.passiveUpdateTimer:IsPastSimMS(self.AI.passiveUpdateDelay) then
+				local patrolVector = Vector()
+				local altitude = SceneMan:FindAltitude(self.Pos, 100, 3);
 				
-				self.master = nil
-				
-				self:FlashWhite(100)
-			end
-			
-			-- Look for enemies
-			if self.AI.aggressiveUpdateTimer:IsPastSimMS(self.AI.aggressiveUpdateDelay) then
-				local target = MovableMan:GetClosestEnemyActor(self.Team, self.Pos, 450, Vector());
-				if target and target.Status < Actor.INACTIVE then
-					--Check that the target isn't obscured by terrain
-					local aimTrace = SceneMan:ShortestDistance(self.Pos, target.Pos, SceneMan.SceneWrapsX);
-					local terrCheck = SceneMan:CastStrengthRay(self.Pos, aimTrace, 30, Vector(), 5, 0, SceneMan.SceneWrapsX);
-					if terrCheck == false then
-						--self.hoverPosTarget = Vector(target.Pos.X, target.Pos.Y)
-						self:SetNumberValue("AttackAngle", aimTrace.AbsRadAngle)
-						
-						self.AI.aggressive = true
-						--self.master = nil
-					else
-						self.AI.aggressive = false
-					end
+				local rangeX = 60
+				local rangeY = 25
+				if altitude > 70 then
+					patrolVector = Vector(RangeRand(-1,1) * rangeX, RangeRand(0,1) * rangeY)
+				elseif altitude < 25 then
+					patrolVector = Vector(RangeRand(-1,1) * rangeX, RangeRand(-1,0) * rangeY)
 				else
-					self.AI.aggressive = false
+					patrolVector = Vector(RangeRand(-1,1) * rangeX, RangeRand(-1,1) * rangeY)
 				end
 				
-				self.AI.aggressiveUpdateTimer:Reset()
-				self.AI.aggressiveUpdateDelay = math.random(self.AI.aggressiveUpdateDelayMin, self.AI.aggressiveUpdateDelayMax)
+				local terrCheck = SceneMan:CastStrengthRay(self.Pos, patrolVector, 30, Vector(), 6, 0, SceneMan.SceneWrapsX);
+				if terrCheck == false then
+					self.hoverPosTarget = self.Pos + patrolVector
+				end
+				
+				self.AI.passiveUpdateTimer:Reset()
+				self.AI.passiveUpdateDelay = math.random(self.AI.passiveUpdateDelayMin, self.AI.passiveUpdateDelayMax)
 			end
-			
-			if self.AI.aggressive then
-				self.aggroScan = true;
+		elseif self.AI.passiveMode == 1 then
+			if self.master and self.master.ID ~= rte.NoMOID then -- Follow master
 				
-				self:SetNumberValue("Attacking", 1)
-				
-				self.Frame = 0
-			else
-				self.aggroScan = false;
-				
-				self:SetNumberValue("Attacking", 0)
-				
-				self.Frame = 1
-			end
-				
-			if self.AI.passiveMode == 0 then
 				if self.AI.passiveUpdateTimer:IsPastSimMS(self.AI.passiveUpdateDelay) then
-					local patrolVector = Vector()
-					local altitude = SceneMan:FindAltitude(self.Pos, 100, 3);
+					self.AI.passiveFollowOffset = Vector(RangeRand(-1,1), RangeRand(-0.6,0.3)) * 20.0
 					
-					local rangeX = 60
-					local rangeY = 25
-					if altitude > 70 then
-						patrolVector = Vector(RangeRand(-1,1) * rangeX, RangeRand(0,1) * rangeY)
-					elseif altitude < 25 then
-						patrolVector = Vector(RangeRand(-1,1) * rangeX, RangeRand(-1,0) * rangeY)
-					else
-						patrolVector = Vector(RangeRand(-1,1) * rangeX, RangeRand(-1,1) * rangeY)
-					end
+					self.AI.passiveUpdateTimer:Reset()
+					self.AI.passiveUpdateDelay = math.random(self.AI.passiveUpdateDelayMin, self.AI.passiveUpdateDelayMax)
+				end
+				
+				self.hoverPosTarget = self.master.Pos + Vector(0, - (self.master.Height * 0.25 + self.master.Radius * 1.5) / 2) + self.AI.passiveFollowOffset;
+				
+				if self.master.Status == Actor.DEAD or self.master.Status == Actor.DYING then
+					self.master = nil
+				end
+			else
+				self.master = nil
+				if self.AI.passiveUpdateTimer:IsPastSimMS(self.AI.passiveUpdateDelay) then
 					
-					local terrCheck = SceneMan:CastStrengthRay(self.Pos, patrolVector, 30, Vector(), 6, 0, SceneMan.SceneWrapsX);
-					if terrCheck == false then
-						self.hoverPosTarget = self.Pos + patrolVector
+					-- Find master
+					local shortestDist;
+					for actor in MovableMan.Actors do
+						if actor.ID ~= self.ID and actor.Team == self.Team and IsAHuman(actor) then
+							local dist = SceneMan:ShortestDistance(self.Pos, actor.Pos, SceneMan.SceneWrapsX);
+							if not shortestDist or dist.Magnitude < shortestDist then
+								local aimTrace = SceneMan:ShortestDistance(self.Pos, actor.Pos, SceneMan.SceneWrapsX);
+								local terrCheck = SceneMan:CastStrengthRay(self.Pos, aimTrace, 30, Vector(), 6, 0, SceneMan.SceneWrapsX);
+								if terrCheck == false then
+									shortestDist = dist.Magnitude;
+									self.master = actor;
+								end
+							end
+						end
 					end
 					
 					self.AI.passiveUpdateTimer:Reset()
 					self.AI.passiveUpdateDelay = math.random(self.AI.passiveUpdateDelayMin, self.AI.passiveUpdateDelayMax)
 				end
-			elseif self.AI.passiveMode == 1 then
-				if self.master and self.master.ID ~= rte.NoMOID then -- Follow master
-					
-					if self.AI.passiveUpdateTimer:IsPastSimMS(self.AI.passiveUpdateDelay) then
-						self.AI.passiveFollowOffset = Vector(RangeRand(-1,1), RangeRand(-0.6,0.3)) * 20.0
-						
-						self.AI.passiveUpdateTimer:Reset()
-						self.AI.passiveUpdateDelay = math.random(self.AI.passiveUpdateDelayMin, self.AI.passiveUpdateDelayMax)
-					end
-					
-					self.hoverPosTarget = self.master.Pos + Vector(0, - (self.master.Height * 0.25 + self.master.Radius * 1.5) / 2) + self.AI.passiveFollowOffset;
-					
-					if self.master.Status == Actor.DEAD or self.master.Status == Actor.DYING then
-						self.master = nil
-					end
-				else
-					self.master = nil
-					if self.AI.passiveUpdateTimer:IsPastSimMS(self.AI.passiveUpdateDelay) then
-						
-						-- Find master
-						local shortestDist;
-						for actor in MovableMan.Actors do
-							if actor.ID ~= self.ID and actor.Team == self.Team and IsAHuman(actor) then
-								local dist = SceneMan:ShortestDistance(self.Pos, actor.Pos, SceneMan.SceneWrapsX);
-								if not shortestDist or dist.Magnitude < shortestDist then
-									local aimTrace = SceneMan:ShortestDistance(self.Pos, actor.Pos, SceneMan.SceneWrapsX);
-									local terrCheck = SceneMan:CastStrengthRay(self.Pos, aimTrace, 30, Vector(), 6, 0, SceneMan.SceneWrapsX);
-									if terrCheck == false then
-										shortestDist = dist.Magnitude;
-										self.master = actor;
-									end
-								end
-							end
-						end
-						
-						self.AI.passiveUpdateTimer:Reset()
-						self.AI.passiveUpdateDelay = math.random(self.AI.passiveUpdateDelayMin, self.AI.passiveUpdateDelayMax)
-					end
-					
-				end
-			elseif self.AI.passiveMode == 2 then
-				-- Do nothing
+				
 			end
+		elseif self.AI.passiveMode == 2 then
+			-- Do nothing
 		end
 	end
 
