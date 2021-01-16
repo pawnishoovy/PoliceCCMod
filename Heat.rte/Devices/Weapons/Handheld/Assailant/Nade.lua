@@ -41,9 +41,7 @@ function Create(self)
 end
 function Update(self)
 	
-	if self.whistleSound then
-		self.whistleSound.Pos = self.Pos;
-	end
+	self.whistleSound.Pos = self.Pos;
 	
 	-- Epic smoke trail TM by filipex2000, 2020
 	local smoke
@@ -78,8 +76,7 @@ function Update(self)
 end
 
 function Destroy(self)
-	if self.whistleSound ~= nil then
-		self.whistleSound:Stop(-1)
-		self.whistleSound = nil
-	end
+
+	self.whistleSound:Stop(-1)
+	
 end

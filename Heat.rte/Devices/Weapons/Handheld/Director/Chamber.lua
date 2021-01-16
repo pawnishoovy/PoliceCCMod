@@ -326,12 +326,8 @@ function Update(self)
 	
 	if self:IsActivated() and self.RoundInMagCount > 0 then
 	
-		if self.reflectionSound then
-			self.reflectionSound:Stop(-1)
-		end
-		if self.stopSound then
-			self.stopSound:Stop(-1)
-		end
+		self.reflectionSound:Stop(-1)
+		self.stopSound:Stop(-1)
 		if self.triggerPulled ~= true then
 			self.triggerPulled = true;
 			self.startSound:Play(self.Pos);

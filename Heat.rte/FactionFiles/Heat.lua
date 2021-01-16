@@ -5,7 +5,7 @@ local factionid = "Heat";
 CF_Factions[#CF_Factions + 1] = factionid
 
 -- Faction name
-CF_FactionNames[factionid] = "The Heat";
+CF_FactionNames[factionid] = "Heat Tech";
 -- Faction description
 CF_FactionDescriptions[factionid] = "The Heat, in space! Nothing escapes the long arm of the law! Weaponry ranging from nimble auto-aiming pistols to massive death lazers with units to match.";
 -- Set true if faction is selectable by player or AI
@@ -81,6 +81,16 @@ CF_ActTypes[factionid][i] = CF_ActorTypes.LIGHT;
 CF_ActPowers[factionid][i] = 3
 
 i = #CF_ActNames[factionid] + 1
+CF_ActNames[factionid][i] = "Police Corporal"
+CF_ActPresets[factionid][i] = "Corporal"
+CF_ActModules[factionid][i] = "Heat.rte"
+CF_ActPrices[factionid][i] = 220
+CF_ActDescriptions[factionid][i] = "Tactics-inclined corporal of the force. Hover on/off with O."
+CF_ActUnlockData[factionid][i] = 1400
+CF_ActTypes[factionid][i] = CF_ActorTypes.LIGHT;
+CF_ActPowers[factionid][i] = 5
+
+i = #CF_ActNames[factionid] + 1
 CF_ActNames[factionid][i] = "Police Sergeant"
 CF_ActPresets[factionid][i] = "Sergeant"
 CF_ActModules[factionid][i] = "Heat.rte"
@@ -89,18 +99,6 @@ CF_ActDescriptions[factionid][i] = "The Sarge himself come to help you out. Brin
 CF_ActUnlockData[factionid][i] = 2000
 CF_ActTypes[factionid][i] = CF_ActorTypes.HEAVY;
 CF_ActPowers[factionid][i] = 6
-
-i = #CF_ActNames[factionid] + 1
-CF_ActNames[factionid][i] = "Police Corporal"
-CF_ActPresets[factionid][i] = "Corporal"
-CF_ActModules[factionid][i] = "Heat.rte"
-CF_ActPrices[factionid][i] = 200
-CF_ActDescriptions[factionid][i] = "Tactics-inclined corporal of the force."
-CF_ActUnlockData[factionid][i] = 1400
-CF_ActTypes[factionid][i] = CF_ActorTypes.LIGHT;
-CF_ActPowers[factionid][i] = 5
-
-
 
 i = #CF_ActNames[factionid] + 1
 CF_ActNames[factionid][i] = "Anti-Air Drone"
@@ -265,6 +263,16 @@ CF_ItmDescriptions[factionid][i] = "Strongest scanner out of the three. Can reve
 CF_ItmUnlockData[factionid][i] = 450
 CF_ItmTypes[factionid][i] = CF_WeaponTypes.TOOL;
 CF_ItmPowers[factionid][i] = 0
+
+i = #CF_ItmNames[factionid] + 1
+CF_ItmNames[factionid][i] = "C-PB Breacher Tool"
+CF_ItmPresets[factionid][i] = "C-PB Breacher Tool"
+CF_ItmModules[factionid][i] = "Heat.rte"
+CF_ItmPrices[factionid][i] = 70
+CF_ItmDescriptions[factionid][i] = "Bang-and-flash plasma-copper breaching tool. Makes short work of most doors."
+CF_ItmUnlockData[factionid][i] = 450
+CF_ItmTypes[factionid][i] = CF_WeaponTypes.TOOL;
+CF_ItmPowers[factionid][i] = 1
 
 i = #CF_ItmNames[factionid] + 1
 CF_ItmNames[factionid][i] = "Lightningstar"

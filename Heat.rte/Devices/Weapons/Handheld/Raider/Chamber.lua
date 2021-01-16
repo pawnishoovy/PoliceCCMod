@@ -191,7 +191,7 @@ function Update(self)
 			
 				if self.reloadPhase == 0 then
 					self.phaseOnStop = 1;
-					 for i = 1, 2 do
+					 for i = 1, self.Casings do
 						 local fake
 						 shell = CreateAEmitter("Shell Raider", "Heat.rte");
 						 shell.Pos = self.Pos + Vector(-2 * self.FlipFactor, 0):RadRotate(self.RotAngle);
@@ -320,6 +320,13 @@ function Update(self)
 		
 		self.Burst = true;
 		self.shotCounter = 0;
+		
+		if self.Magazine and self.Magazine.RoundCount == 1 then
+			self.Casings = 1;
+		else
+			self.Casings = 2;
+		end
+		
 		self.burstTimer:Reset();
 		
 		for i = 1, 2 do
