@@ -85,8 +85,8 @@ function Update(self)
 		self.flash = false
 	end
 	for i, ID in ipairs(self.flashedActors) do
-		local actor = ToActor(MovableMan:FindObjectByUniqueID(ID))
-		if actor then
+		local actor = MovableMan:FindObjectByUniqueID(ID)
+		if actor and IsActor(actor) then
 			actor = ToActor(actor)
 			if actor.Status == 0 and IsAHuman(actor) then
 				actor.Status = 1

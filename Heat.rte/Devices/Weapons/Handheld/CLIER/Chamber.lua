@@ -567,7 +567,7 @@ function Update(self)
 		self.SharpStanceOffset = Vector(self.originalSharpStanceOffset.X, self.originalSharpStanceOffset.Y) + stance
 		
 		if self.parent:IsPlayerControlled() then
-			if UInputMan:KeyPressed(8) then
+			if UInputMan:KeyPressed(HeatHotkeyMap.WeaponAbilitySecondary) then
 				if self.laserOn == true then
 					self.laserOn = false;
 					self.laserOffSound:Play(self.Pos);
@@ -580,7 +580,7 @@ function Update(self)
 		
 		local fire = false
 		if self.parent:IsPlayerControlled() then
-			if UInputMan:KeyPressed(22) then
+			if UInputMan:KeyPressed(HeatHotkeyMap.WeaponAbilityPrimary) then
 				fire = true
 			end
 		elseif self.Magazine then -- AI

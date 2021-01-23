@@ -571,7 +571,7 @@ function HumanAIBehaviours.handleAbilities(self)
 	--- hovering
 	
 	if self.hoverCharging == false then
-		if (self:IsPlayerControlled() and UInputMan:KeyPressed(15)) or self.hoverFuel <= 0 then
+		if (self:IsPlayerControlled() and UInputMan:KeyPressed(HeatHotkeyMap.ActorAbility)) or self.hoverFuel <= 0 then
 			if self.Hovering == true then
 				self.hoverFuel = 0;
 				self.Hovering = false;

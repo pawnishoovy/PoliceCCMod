@@ -419,7 +419,7 @@ function CyborgAIBehaviours.handleVoicelines(self)
 end
 
 function CyborgAIBehaviours.handleAbilities(self)
-	if (self:IsPlayerControlled() and UInputMan:KeyPressed(15)) or self.shieldAITrigger == true then
+	if (self:IsPlayerControlled() and UInputMan:KeyPressed(HeatHotkeyMap.ActorAbility)) or self.shieldAITrigger == true then
 		if self.shieldUsed == false then
 			self:AddInventoryItem(self.Shield);
 			self.shieldUsed = true;

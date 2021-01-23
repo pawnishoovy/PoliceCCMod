@@ -434,7 +434,7 @@ function Update(self)
 		self.SharpStanceOffset = Vector(self.originalSharpStanceOffset.X, self.originalSharpStanceOffset.Y) + stance
 		
 		if self.parent:IsPlayerControlled() then
-			if UInputMan:KeyPressed(22) then
+			if UInputMan:KeyPressed(HeatHotkeyMap.WeaponAbilityPrimary) then
 				if self.Mode == 0 then
 					self.switchToBurstSound:Play(self.Pos);
 					self.Mode = 1;
