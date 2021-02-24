@@ -647,14 +647,15 @@ function Update(self)
 		self.rotation = (self.rotation + self.rotationTarget * TimerMan.DeltaTimeSecs * self.rotationSpeed) / (1 + TimerMan.DeltaTimeSecs * self.rotationSpeed)
 		local total = math.rad(self.rotation) * self.FlipFactor
 		
-		self.RotAngle = self.RotAngle + total;
-		self:SetNumberValue("MagRotation", total);
+		self.InheritedRotAngleOffset = total;
+		-- self.RotAngle = self.RotAngle + total;
+		-- self:SetNumberValue("MagRotation", total);
 		
-		local jointOffset = Vector(self.JointOffset.X * self.FlipFactor, self.JointOffset.Y):RadRotate(self.RotAngle);
-		local offsetTotal = Vector(jointOffset.X, jointOffset.Y):RadRotate(-total) - jointOffset
-		self.Pos = self.Pos + offsetTotal;
-		self:SetNumberValue("MagOffsetX", offsetTotal.X);
-		self:SetNumberValue("MagOffsetY", offsetTotal.Y);
+		-- local jointOffset = Vector(self.JointOffset.X * self.FlipFactor, self.JointOffset.Y):RadRotate(self.RotAngle);
+		-- local offsetTotal = Vector(jointOffset.X, jointOffset.Y):RadRotate(-total) - jointOffset
+		-- self.Pos = self.Pos + offsetTotal;
+		-- self:SetNumberValue("MagOffsetX", offsetTotal.X);
+		-- self:SetNumberValue("MagOffsetY", offsetTotal.Y);
 		
 		self.StanceOffset = Vector(self.originalStanceOffset.X, self.originalStanceOffset.Y) + stance
 		self.SharpStanceOffset = Vector(self.originalSharpStanceOffset.X, self.originalSharpStanceOffset.Y) + stance

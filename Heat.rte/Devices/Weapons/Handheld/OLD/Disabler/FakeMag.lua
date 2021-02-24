@@ -1,6 +1,7 @@
 function Create(self)
 	self.Frame = 0;
 	self.parent = nil;
+	self.InheritsRotAngle = true;
 end
 
 function Update(self)
@@ -32,12 +33,12 @@ function Update(self)
 		else
 			self.Frame = 1;
 		end
-		if self.parent:NumberValueExists("MagRotation") then
-			self.RotAngle = self.RotAngle + self.parent:GetNumberValue("MagRotation");
-		end
-		if self.parent:NumberValueExists("MagOffsetX") and self.parent:NumberValueExists("MagOffsetY") then
-			self.Pos = self.Pos + Vector(self.parent:GetNumberValue("MagOffsetX"), self.parent:GetNumberValue("MagOffsetY"));
-		end
+		-- if self.parent:NumberValueExists("MagRotation") then
+			-- self.RotAngle = self.RotAngle + self.parent:GetNumberValue("MagRotation");
+		-- end
+		-- if self.parent:NumberValueExists("MagOffsetX") and self.parent:NumberValueExists("MagOffsetY") then
+			-- self.Pos = self.Pos + Vector(self.parent:GetNumberValue("MagOffsetX"), self.parent:GetNumberValue("MagOffsetY"));
+		-- end
 		--self.RotAngle = self.parent.RotAngle;
 	end
 	
