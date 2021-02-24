@@ -623,7 +623,7 @@ function Update(self)
 		
 		self.SupportOffset = self.originalSupportOffset + supportOffset
 		
-		self.InheritedRotAngleOffset = total;
+		self.InheritedRotAngleOffset = total * self.FlipFactor;
 		-- self.RotAngle = self.RotAngle + total;
 		-- self:SetNumberValue("MagRotation", total);
 		
