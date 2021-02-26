@@ -1,5 +1,6 @@
 function Create(self)
-
+	self.Mass = 5
+	
 	self.bounceSound = CreateSoundContainer("Bounce Riotbreaker", "Heat.rte");
 	
 	self.rollSound = CreateSoundContainer("Roll Riotbreaker", "Heat.rte");
