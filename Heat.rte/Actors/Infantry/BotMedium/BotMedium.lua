@@ -98,19 +98,6 @@ function Update(self)
 
 	self.controller = self:GetController();
 	
-	if self.alternativeGib then
-		HumanFunctions.DoAlternativeGib(self);
-	end
-	if self.automaticEquip then
-		HumanFunctions.DoAutomaticEquip(self);
-	end
-	if self.armSway then
-		HumanFunctions.DoArmSway(self, (self.Health/self.MaxHealth));	--Argument: shove strength
-	end
-	if self.visibleInventory then
-		HumanFunctions.DoVisibleInventory(self, false);	--Argument: whether to show all items
-	end
-	
 	-- Start modded code--
 	
 	self.voiceSound.Pos = self.Pos;

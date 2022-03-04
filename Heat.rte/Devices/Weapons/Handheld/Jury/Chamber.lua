@@ -379,6 +379,8 @@ function Update(self)
 			else
 				self.chamberOnReload = true;
 			end
+		else
+			self.chamberOnReload = true;
 		end
 		
 		for i = 1, 2 do

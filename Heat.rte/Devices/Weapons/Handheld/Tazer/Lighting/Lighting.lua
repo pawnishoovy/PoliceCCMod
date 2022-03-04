@@ -4,6 +4,10 @@ function DrawCircleDir(pos, radius, dir)
 end
 
 function Create(self)
+	-- yup
+	if self.FlipFactor == -1 then	
+		self.RotAngle = self.RotAngle - math.rad(180);
+	end
 	local glow = CreateMOPixel("Tazer Lighting Glow 2");
 	glow.Pos = self.Pos;
 	MovableMan:AddParticle(glow);

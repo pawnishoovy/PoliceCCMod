@@ -293,8 +293,7 @@ function Update(self)
 			self.triggerPulled = false;
 			
 			if self.lfeSound then
-				AudioMan:FadeOutSound(self.lfeSound, 1000);
-				--self.lfeSound:FadeOut(1000)
+				self.lfeSound:FadeOut(1000)
 			end
 		
 			if self.shotCounter > 59 then

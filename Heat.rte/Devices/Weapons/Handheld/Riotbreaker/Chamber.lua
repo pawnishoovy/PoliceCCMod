@@ -171,6 +171,10 @@ function Update(self)
 				self.breechShellReload = true;
 				self:Reload();
 			end
+		else
+			self.ammoCount = 0;
+			self.breechShellReload = true;
+			self:Reload();
 		end
 
 		local outdoorRays = 0;
@@ -623,7 +627,7 @@ function Update(self)
 		
 		self.SupportOffset = self.originalSupportOffset + supportOffset
 		
-		self.InheritedRotAngleOffset = total * self.FlipFactor;
+		self.RotAngle = self.RotAngle + total;
 		-- self.RotAngle = self.RotAngle + total;
 		-- self:SetNumberValue("MagRotation", total);
 		

@@ -314,12 +314,13 @@ function Update(self)
 		
 		self.canSmoke = true
 		self.smokeTimer:Reset()
-		
 		if self.Magazine then
 			if self.Magazine.RoundCount > 0 then			
 			else
 				self.chamberOnReload = true;
 			end
+		else
+			self.chamberOnReload = true;
 		end
 		
 		for i = 1, 2 do

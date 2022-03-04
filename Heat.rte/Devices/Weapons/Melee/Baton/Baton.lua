@@ -901,8 +901,8 @@ function Update(self)
 		local pushVector = Vector(10 * self.FlipFactor, 0):RadRotate(self.RotAngle)
 		
 		self.StanceOffset = self.originalStanceOffset + self.stance
-		self.InheritedRotAngleOffset = self.rotation
-		--self.RotAngle = self.RotAngle + self.rotation
+		--self.InheritedRotAngleOffset = self.rotation * self.FlipFactor
+		self.RotAngle = self.RotAngle + self.rotation
 		
 		local jointOffset = Vector(self.JointOffset.X * self.FlipFactor, self.JointOffset.Y):RadRotate(self.RotAngle);
 		self.Pos = self.Pos - jointOffset + Vector(jointOffset.X, jointOffset.Y):RadRotate(-self.rotation);

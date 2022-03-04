@@ -305,6 +305,11 @@ function Update(self)
 				self.chamberOnReload = true;
 				self.mechLastSound:Play(self.Pos);
 			end
+		else
+			self.magOutPrepareDelay = 1;
+			self:Reload();
+			self.chamberOnReload = true;
+			self.mechLastSound:Play(self.Pos);
 		end
 		
 		for i = 1, 2 do

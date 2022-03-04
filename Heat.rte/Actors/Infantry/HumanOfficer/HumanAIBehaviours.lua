@@ -561,7 +561,7 @@ function HumanAIBehaviours.handleAbilities(self)
 		self.healJuice = self.healJuice - value
 		for i = 1, 2 do
 			if math.random(0, 100) < 15 then
-				self:RemoveAnyRandomWounds(1);
+				self:RemoveWounds(1);
 			end
 		end
 		self.oldHealth = self.Health;

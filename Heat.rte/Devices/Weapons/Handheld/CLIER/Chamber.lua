@@ -443,6 +443,9 @@ function Update(self)
 				self.chamberOnReload = true;
 				self.reloadPhase = 0;
 			end
+		else
+			self.chamberOnReload = true;
+			self.reloadPhase = 0;
 		end
 		
 		for i = 1, 2 do

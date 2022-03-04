@@ -24,7 +24,7 @@ function Update(self)
 	if self.cast then
 		local step = self.castLength
 		local endPos = Vector(self.Pos.X, self.Pos.Y); -- This value is going to be overriden by function below, this is the end of the ray
-		self.ray = SceneMan:CastObstacleRay(self.Pos, Vector(1, 0):RadRotate(self.RotAngle) * step, Vector(0, 0), endPos, 0 , self.Team, 0, 1) -- Do the hitscan stuff, raycast
+		self.ray = SceneMan:CastObstacleRay(self.Pos, Vector(1 * self.FlipFactor, 0):RadRotate(self.RotAngle) * step, Vector(0, 0), endPos, 0 , self.Team, 0, 1) -- Do the hitscan stuff, raycast
 		
 		local travel = SceneMan:ShortestDistance(endPos, self.Pos,SceneMan.SceneWrapsX);
 		--PrimitiveMan:DrawLinePrimitive(self.Pos, self.Pos + travel, 13);
