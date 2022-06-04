@@ -215,11 +215,11 @@ function WantedLevelScript:SpawnReinforcements()
 			local actorsInCargo = 0
 			
 			--The max allowed weight of this craft plus cargo
-			local craftMaxMass = ship.MaxMass;
+			local craftMaxMass = ship.MaxInventoryMass;
 			if craftMaxMass < 0 then
 				craftMaxMass = math.huge;
 			elseif craftMaxMass < 1 then
-				craftMaxMass = ship.Mass + 400;	--MaxMass not defined
+				craftMaxMass = 800;	--MaxMass not defined
 			end
 			
 			--Set the ship up with a cargo of a few armed and equipped actors
