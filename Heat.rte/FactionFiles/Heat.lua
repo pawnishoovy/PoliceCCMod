@@ -214,7 +214,7 @@ CF_ItmPowers[factionid][i] = 5
 
 i = #CF_ItmNames[factionid] + 1
 CF_ItmNames[factionid][i] = "Buzzdrone"
-CF_ItmPresets[factionid][i] = "Buzzdrone Deploy"
+CF_ItmPresets[factionid][i] = "Buzzdrone Kit"
 CF_ItmModules[factionid][i] = "Heat.rte"
 CF_ItmPrices[factionid][i] = 40
 CF_ItmDescriptions[factionid][i] = "Throwable buzzsaw drone. Definitely ethical to use on criminals, right?"
@@ -225,7 +225,7 @@ CF_ItmPowers[factionid][i] = 2
 
 i = #CF_ItmNames[factionid] + 1
 CF_ItmNames[factionid][i] = "Gundrone"
-CF_ItmPresets[factionid][i] = "Gundrone Deploy"
+CF_ItmPresets[factionid][i] = "Gundrone Kit"
 CF_ItmModules[factionid][i] = "Heat.rte"
 CF_ItmPrices[factionid][i] = 60
 CF_ItmDescriptions[factionid][i] = "Throwable gundrone."
