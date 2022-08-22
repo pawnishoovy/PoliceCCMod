@@ -155,7 +155,13 @@ function Create(self)
 			end
 			
 			local wound = CreateAEmitter(actor:GetEntryWoundPresetName(), PresetMan:GetDataModule(actor.ModuleID).FileName);
-			actor.Health = actor.Health - wound.BurstDamage * 0.33 * math.random(1,3) / actor.Radius * 14
+			local mult = 0.33 + math.max(0, 0.20 * (3 - wound.BurstDamage)) -- lessen the impact of low burstdamage
+			local damage = wound.BurstDamage * mult * math.random(1,3) / actor.Radius * 14
+			if actor:IsMechanical() then
+				damage = damage * 1.5;
+			end
+			print(damage)
+			actor.Health = actor.Health - damage;
 		end
 	end
 	
