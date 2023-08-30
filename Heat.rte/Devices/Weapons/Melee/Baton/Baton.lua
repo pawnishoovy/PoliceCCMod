@@ -2053,6 +2053,8 @@ function Update(self)
 					local actorHit = MovableMan:GetMOFromID(MO.RootID)
 					if (actorHit and IsActor(actorHit)) then-- and (MO.RootID == moCheck or (not IsAttachable(MO) or string.find(MO.PresetName,"Arm") or string.find(MO,"Leg") or string.find(MO,"Head"))) then -- Apply addational damage
 					
+						actorHit = ToActor(actorHit)
+						
 						if crit then
 							actorHit:GetController():SetState(Controller.BODY_CROUCH,true);
 							actorHit:GetController():SetState(Controller.WEAPON_CHANGE_NEXT,false);
