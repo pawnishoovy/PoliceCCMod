@@ -26,6 +26,7 @@ function Update(self)
 			if not self.eating then
 				self.eatTimer:Reset();
 				self.eating = true;
+				self.parent:SetNumberValue("Eating Delicious Heat Donut", 1);
 			end
 			
 			if self.eatTimer:IsPastSimMS(100) then
@@ -40,6 +41,7 @@ function Update(self)
 						effect.Vel = self.Vel + Vector(math.random(3, 5), 0):RadRotate(math.pi*math.random(0, 100)/100);
 						MovableMan:AddParticle(effect);
 					end
+					self.parent:SetNumberValue("Ate Delicious Heat Donut", 1);
 				else
 					self.eatMechanicalSound:Play(self.Pos);
 					
@@ -50,7 +52,7 @@ function Update(self)
 						MovableMan:AddParticle(effect);
 					end
 					for i = 1, 10 do
-						local effect = CreateMOPixel("Drop Blain Fluid Dark", "Base.rte");
+						local effect = CreateMOPixel("Drop Brain Fluid Dark", "Base.rte");
 						effect.Pos = self.Pos
 						effect.Vel = self.Vel + Vector(math.random(3, 5), 0):RadRotate(math.pi*math.random(0, 100)/100);
 						MovableMan:AddParticle(effect);

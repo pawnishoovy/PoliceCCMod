@@ -390,12 +390,14 @@ function Update(self)
 			self.addHiAddSound:Play(self.Pos);
 		elseif self:GetNumberValue("Charge") == 2 then
 			self.addMedAddSound:Play(self.Pos);
+			CameraMan:AddScreenShake(10, self.Pos);
 		end
 		
 		if outdoorRays >= self.rayThreshold then
 			self.reflectionSound:Play(self.Pos);
 			if self:GetNumberValue("Charge") == 3 then
 				self.reflectionHiAddSound:Play(self.Pos);
+				CameraMan:AddScreenShake(20, self.Pos);
 			elseif self:GetNumberValue("Charge") == 2 then
 				self.reflectionMedAddSound:Play(self.Pos);
 			end

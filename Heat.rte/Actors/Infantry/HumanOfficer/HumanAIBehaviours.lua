@@ -460,6 +460,11 @@ end
 
 function HumanAIBehaviours.handleVoicelines(self)
 
+	if self:NumberValueExists("Eating Delicious Heat Donut") then
+		self:RemoveNumberValue("Eating Delicious Heat Donut");
+		HumanAIBehaviours.createEmotion(self, 4, 1, 150, false);
+	end
+
 	-- squad stuff
 	-- this is imperfect: itll only play when we go straight from being in a squad to being player controlled (i.e. we are now the leader)
 	-- there is no way to see if we're leading a squad, so that close approximation is the best we can get.
