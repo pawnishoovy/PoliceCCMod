@@ -66,7 +66,7 @@ function Create(self)
 	
 	self.reloadPhase = 0;
 	
-	self.ReloadTime = 9999;
+	self.BaseReloadTime = 9999;
 	
 	-- Progressive Recoil System 
 	self.recoilAcc = 0 -- for sinous
@@ -220,7 +220,7 @@ function Update(self)
 					if self.chamberOnReload then
 						self.phaseOnStop = 2;
 					else
-						self.ReloadTime = 0; -- done! no after delay if non-chambering reload.
+						self.BaseReloadTime = 0; -- done! no after delay if non-chambering reload.
 						self.reloadPhase = 0;
 						self.mechLastSound = CreateSoundContainer("Mech Last Centress", "Heat.rte");
 						self.phaseOnStop = nil;
@@ -252,7 +252,7 @@ function Update(self)
 				if self.chamberOnReload and self.reloadPhase == 1 then
 					self.reloadPhase = self.reloadPhase + 1;
 				elseif self.reloadPhase == 1 or self.reloadPhase == 3 then
-					self.ReloadTime = 0;
+					self.BaseReloadTime = 0;
 					self.reloadPhase = 0;
 					self.mechLastSound = CreateSoundContainer("Mech Last Centress", "Heat.rte");
 				else
@@ -272,7 +272,7 @@ function Update(self)
 			self.reloadPhase = self.phaseOnStop;
 			self.phaseOnStop = nil;
 		end
-		self.ReloadTime = 9999;
+		self.BaseReloadTime = 9999;
 	end
 	
 	if self:DoneReloading() == true and self.chamberOnReload then

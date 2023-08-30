@@ -160,7 +160,7 @@ function Create(self)
 			if actor:IsMechanical() then
 				damage = damage * 1.5;
 			end
-			print(damage)
+			--print(damage)
 			actor.Health = actor.Health - damage;
 		end
 	end

@@ -51,8 +51,7 @@ function Update(self)
 			end
 		end
 		
-		for i = 1 , MovableMan:GetMOIDCount() - 1 do
-			local mo = MovableMan:GetMOFromID(i);
+		for mo in MovableMan:GetMOsInRadius(self.Pos, self.range, Activity.NOTEAM, false) do
 			if mo and mo.PinStrength == 0 and mo.ClassName ~= "ADoor" and mo.ClassName ~= "ACraft" and mo.UniqueID ~= self.UniqueID then
 				local distance = SceneMan:ShortestDistance(self.Pos, mo.Pos + mo.Vel * GetPPM() * TimerMan.DeltaTimeSecs, SceneMan.SceneWrapsX).Magnitude
 				

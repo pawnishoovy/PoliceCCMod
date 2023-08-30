@@ -1,7 +1,7 @@
 function OnDetach(self)
 
 	self:DisableScript("Heat.rte/Devices/Weapons/Handheld/Tazer/Chamber.lua");
-	self.ReloadTime = 3300;
+	self.BaseReloadTime = 3300;
 	
 	if self.magInside == true then
 		self.Frame = 5;
@@ -25,6 +25,6 @@ function OnAttach(self)
 
 	self:EnableScript("Heat.rte/Devices/Weapons/Handheld/Tazer/Chamber.lua");
 	self.reloadTimer:Reset();
-	self.ReloadTime = 9999;
+	self.BaseReloadTime = 9999;
 	
 end

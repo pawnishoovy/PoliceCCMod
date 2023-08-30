@@ -83,7 +83,7 @@ function Create(self)
 	
 	self.reloadPhase = 2;
 	
-	self.ReloadTime = 9999;
+	self.BaseReloadTime = 9999;
 
 	local actor = MovableMan:GetMOFromID(self.RootID);
 	if actor and IsAHuman(actor) then
@@ -303,7 +303,7 @@ function Update(self)
 					if self.chamberOnReload then
 						
 					else
-						self.ReloadTime = 0; -- done! no after delay if non-chambering reload.
+						self.BaseReloadTime = 0; -- done! no after delay if non-chambering reload.
 						self.reloadPhase = 2;
 					end
 					self:RemoveNumberValue("MagRemoved");
@@ -327,11 +327,11 @@ function Update(self)
 				self.prepareSoundPlayed = false;
 				self.afterSoundPlayed = false;
 				if self.chamberOnReload and self.reloadPhase == 4 then
-					self.ReloadTime = 0;
+					self.BaseReloadTime = 0;
 					self.reloadPhase = 2;
 					self.boltLockedBack = false;
 				elseif (not self.chamberOnReload) and self.reloadPhase == 3 then
-					self.ReloadTime = 0;
+					self.BaseReloadTime = 0;
 					self.reloadPhase = 2;
 					self.boltLockedBack = false;
 				else
@@ -353,7 +353,7 @@ function Update(self)
 		self.reloadTimer:Reset();
 		self.prepareSoundPlayed = false;
 		self.afterSoundPlayed = false;
-		self.ReloadTime = 9999;
+		self.BaseReloadTime = 9999;
 	end
 	
 	if self:DoneReloading() == true and self.chamberOnReload then

@@ -1,7 +1,7 @@
 function OnDetach(self)
 
 	self:DisableScript("Heat.rte/Devices/Weapons/Handheld/Centress/Chamber.lua");
-	self.ReloadTime = 1700;
+	self.BaseReloadTime = 1700;
 	self.Frame = 0;
 	
 end

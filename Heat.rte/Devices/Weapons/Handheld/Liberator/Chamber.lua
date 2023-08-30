@@ -78,7 +78,7 @@ function Create(self)
 	
 	self.reloadPhase = 0;
 	
-	self.ReloadTime = 99999;
+	self.BaseReloadTime = 99999;
 	
 	-- Progressive Recoil System 
 	self.recoilAcc = 0 -- for sinous
@@ -270,7 +270,7 @@ function Update(self)
 		if self.Reloading ~= true then
 			self.Reloading = true;
 			self.reloadCycle = true;
-			self.ReloadTime = 99999;
+			self.BaseReloadTime = 99999;
 		end
 
 		if self.reloadPhase == 0 then
@@ -391,7 +391,7 @@ function Update(self)
 					if self.reloadCycle == true then
 						self.reloadPhase = 0; -- keep reloading
 					else
-						self.ReloadTime = 0;
+						self.BaseReloadTime = 0;
 						self.reloadPhase = 0;
 						self.Reloading = false;
 					end
@@ -408,7 +408,7 @@ function Update(self)
 			self.reloadPhase = self.phaseOnStop;
 			self.phaseOnStop = nil;
 		end
-		self.ReloadTime = 99999;
+		self.BaseReloadTime = 99999;
 	end
 	
 	if self:DoneReloading() == true then

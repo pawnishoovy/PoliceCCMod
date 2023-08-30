@@ -110,6 +110,9 @@ function Create(self)
 	self.shieldUsed = false;
 	self.shieldAITrigger = false
 	
+	
+	self.MeleeAISkill = 1;
+	
 	-- End modded code
 end
 

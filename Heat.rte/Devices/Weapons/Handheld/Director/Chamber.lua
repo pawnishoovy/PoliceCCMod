@@ -82,7 +82,7 @@ function Create(self)
 	
 	self.reloadPhase = 0;
 	
-	self.ReloadTime = 9999;
+	self.BaseReloadTime = 9999;
 	
 	-- Progressive Recoil System 
 	self.recoilAcc = 0 -- for sinous
@@ -295,7 +295,7 @@ function Update(self)
 				self.afterSoundPlayed = false;
 				self.prepareSoundPlayed = false;
 				if self.reloadPhase == 2 then
-					self.ReloadTime = 0;
+					self.BaseReloadTime = 0;
 					self.reloadPhase = 0;
 				else
 					self.reloadPhase = self.reloadPhase + 1;
@@ -311,7 +311,7 @@ function Update(self)
 			self.reloadPhase = self.phaseOnStop;
 			self.phaseOnStop = nil;
 		end
-		self.ReloadTime = 9999;
+		self.BaseReloadTime = 9999;
 	end
 
 	-- PAWNIS RELOAD ANIMATION HERE

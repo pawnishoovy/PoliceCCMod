@@ -1,7 +1,7 @@
 function OnDetach(self)
 
 	self:DisableScript("Heat.rte/Devices/Weapons/Handheld/Jury/Chamber.lua");
-	self.ReloadTime = 5000;
+	self.BaseReloadTime = 5000;
 	
 	if self.canShrapnel then	
 		self.Frame = 5;

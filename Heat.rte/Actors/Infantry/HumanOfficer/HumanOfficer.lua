@@ -201,6 +201,9 @@ function Create(self)
 	self.boosterTimer = Timer()
 	self.boosterAIDelay = 6000
 	
+	
+	self.MeleeAISkill = 0.6;
+	
 	-- End modded code
 end
 

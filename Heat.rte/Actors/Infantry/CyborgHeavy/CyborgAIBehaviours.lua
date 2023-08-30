@@ -376,6 +376,26 @@ function CyborgAIBehaviours.handleVoicelines(self)
 		self:RemoveNumberValue("Melee Attacked");
 		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 3);
 	end
+	
+	if self:NumberValueExists("Light Attack") then
+		self:RemoveNumberValue("Light Attack");
+		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 3);
+	end
+	
+	if self:NumberValueExists("Medium Attack") then
+		self:RemoveNumberValue("Medium Attack");
+		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 3);
+	end
+
+	if self:NumberValueExists("Large Attack") then
+		self:RemoveNumberValue("Large Attack");
+		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 3);
+	end
+	
+	if self:NumberValueExists("Extreme Attack") then
+		self:RemoveNumberValue("Extreme Attack");
+		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 3);
+	end
 		
 		
 	-- holding

@@ -3,7 +3,7 @@ function OnDetach(self)
 	-- really shouldn't be used outside of being held
 
 	self:DisableScript("Heat.rte/Devices/Weapons/Handheld/Riotbreaker/Chamber.lua");
-	self.ReloadTime = 6000;
+	self.BaseReloadTime = 6000;
 	
 	self.ammoCountRaised = false;
 	if self.Reloading then

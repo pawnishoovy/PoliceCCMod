@@ -1,7 +1,7 @@
 function OnDetach(self)
 
 	self:DisableScript("Heat.rte/Devices/Weapons/Handheld/Executioner/Chamber.lua");
-	self.ReloadTime = 4200;
+	self.BaseReloadTime = 4200;
 	
 	if self.Charging == true then
 		self.Charging = false;

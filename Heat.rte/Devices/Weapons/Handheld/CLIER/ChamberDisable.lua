@@ -1,7 +1,7 @@
 function OnDetach(self)
 
 	self:DisableScript("Heat.rte/Devices/Weapons/Handheld/CLIER/Chamber.lua");
-	self.ReloadTime = 3000;
+	self.BaseReloadTime = 3000;
 	if self.boltLockedBack == true then
 		self.Frame = 3;
 	else

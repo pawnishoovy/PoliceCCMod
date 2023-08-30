@@ -79,7 +79,7 @@ function Create(self)
 	
 	self.reloadPhase = 0;
 	
-	self.ReloadTime = 9999;
+	self.BaseReloadTime = 9999;
 	
 	-- Progressive Recoil System 
 	self.recoilAcc = 0 -- for sinous
@@ -262,7 +262,7 @@ function Update(self)
 				self.prepareSoundPlayed = false;
 				if self.reloadPhase == 3 then
 					self.Reloading = false;
-					self.ReloadTime = 0;
+					self.BaseReloadTime = 0;
 					self.reloadPhase = 0;
 					
 					self:SetNumberValue("Charge", 0);
@@ -288,7 +288,7 @@ function Update(self)
 			self.reloadPhase = self.phaseOnStop;
 			self.phaseOnStop = nil;
 		end
-		self.ReloadTime = 9999;
+		self.BaseReloadTime = 9999;
 	end
 	
 	if self.Charging and self.shieldActivationTimer:IsPastSimMS(self.shieldActivationDelay) then

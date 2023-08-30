@@ -1,7 +1,7 @@
 function OnDetach(self)
 
 	self:DisableScript("Heat.rte/Devices/Weapons/Handheld/Federal/Chamber.lua");
-	self.ReloadTime = 2500;
+	self.BaseReloadTime = 2500;
 	
 	if self.Mode == 1 then
 		self.returnToBurst = true;
