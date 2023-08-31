@@ -82,4 +82,19 @@ function Update(self)
 			self.wirePointPosX = self.wirePointPosX + SceneMan.SceneWidth
 		end
 	end
+	
+	-- what the fuck?
+	-- explanation: without this... thing, this script is the most demanding script in the game
+	-- with it, it's not even a blip on the radar
+	-- thanks luajit
+	
+	return
+	
+	if SceneMan.SceneWrapsX then
+		if self.wirePointPosX > SceneMan.SceneWidth then
+			self.wirePointPosX = self.wirePointPosX - SceneMan.SceneWidth
+		elseif self.wirePointPosX < 0 then
+			self.wirePointPosX = self.wirePointPosX + SceneMan.SceneWidth
+		end
+	end
 end 
