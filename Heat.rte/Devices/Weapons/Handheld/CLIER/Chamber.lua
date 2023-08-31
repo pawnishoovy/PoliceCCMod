@@ -611,7 +611,7 @@ function Update(self)
 			PrimitiveMan:DrawLinePrimitive(point, point, 13);
 			
 			if self.targetingLaserTimer:IsPastSimMS(self.targetingLaserDelay) then
-				local glow = CreateMOPixel("Mine Laser Particle");
+				local glow = CreateMOPixel("Mine Laser Beam");
 				glow.Pos = point;
 				MovableMan:AddParticle(glow);
 				
@@ -624,11 +624,11 @@ function Update(self)
 				--PrimitiveMan:DrawLinePrimitive(point, point + vec, 13);
 				if self.parent:IsPlayerControlled() then
 					if self.ray > 0 then
-						local glow = CreateMOPixel("Mine Laser Particle");
+						local glow = CreateMOPixel("Mine Laser Beam");
 						glow.Pos = endPos;
 						MovableMan:AddParticle(glow);
 						
-						glow = CreateMOPixel("Mine Laser Particle");
+						glow = CreateMOPixel("Mine Laser Beam");
 						glow.Pos = endPos;
 						MovableMan:AddParticle(glow);
 						PrimitiveMan:DrawLinePrimitive(endPos, endPos, 13);

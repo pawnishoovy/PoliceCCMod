@@ -460,6 +460,52 @@ end
 
 function HumanAIBehaviours.handleVoicelines(self)
 
+	self:RemoveNumberValue("Warcried");
+
+	if (self:IsPlayerControlled() and UInputMan:KeyPressed(HeatHotkeyMap.WarcryHotkey)) then
+	
+		HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Battlecry, 3, 3, false);
+		
+		if self.EquippedItem and (self.EquippedItem:IsInGroup("Weapons - Mordhau Melee") or self.EquippedItem:NumberValueExists("Weapons - Mordhau Melee")) then
+			self.EquippedItem:SetNumberValue("Warcried", 1);
+		end
+		
+		for actor in MovableMan:GetMOsInRadius(self.Pos, 200, Activity.NOTEAM, true) do
+			if IsAHuman(actor) and actor.Team == self.Team then
+				actor = ToAHuman(actor);
+				local d = SceneMan:ShortestDistance(actor.Pos, self.Pos, true).Magnitude;
+				local strength = SceneMan:CastStrengthSumRay(self.Pos, actor.Pos, 0, 128);
+				if strength < 400 and math.random(1, 100) < 85 then
+					actor:SetNumberValue("Warcry Together", 1)
+				else
+					if IsAHuman(actor) and actor.Head then -- if it is a human check for head
+						local strength = SceneMan:CastStrengthSumRay(self.Pos, ToAHuman(actor).Head.Pos, 0, 128);	
+						if strength < 400 and math.random(1, 100) < 85 then		
+							actor:SetNumberValue("Warcry Together", 1)
+						end
+					end
+				end
+			end
+		end
+		
+		self:SetNumberValue("Warcried", 1);
+	elseif self:NumberValueExists("Warcry Together") then
+	
+		if not self.AI.Target then
+			HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Battlecry, 3, 3, false);
+			if self.EquippedItem and (self.EquippedItem:IsInGroup("Weapons - Mordhau Melee") or self.EquippedItem:NumberValueExists("Weapons - Mordhau Melee")) then
+				self.EquippedItem:SetNumberValue("Warcried", 1);
+			end
+		end
+		
+		self:RemoveNumberValue("Warcry Together");
+	end
+
+	if self:NumberValueExists("Attack Success") then
+		self:RemoveNumberValue("Attack Success");
+		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Intimidate, 3);
+	end
+
 	if self:NumberValueExists("Eating Delicious Heat Donut") then
 		self:RemoveNumberValue("Eating Delicious Heat Donut");
 		HumanAIBehaviours.createEmotion(self, 4, 1, 150, false);

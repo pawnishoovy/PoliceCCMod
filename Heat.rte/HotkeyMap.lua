@@ -1,5 +1,7 @@
 HeatHotkeyMap = {};
 
+HeatHotkeyMap.WarcryHotkey = Key.X
+
 HeatHotkeyMap.MeleeBlockHotkey = Key.R
 HeatHotkeyMap.MeleeOverheadHotkey = Key.V
 HeatHotkeyMap.MeleeStabHotkey = Key.B

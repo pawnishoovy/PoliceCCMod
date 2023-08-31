@@ -101,11 +101,11 @@ CF_ActTypes[factionid][i] = CF_ActorTypes.HEAVY;
 CF_ActPowers[factionid][i] = 6
 
 i = #CF_ActNames[factionid] + 1
-CF_ActNames[factionid][i] = "Anti-Air Drone"
-CF_ActPresets[factionid][i] = "Anti-Air Drone"
+CF_ActNames[factionid][i] = "Gatling Drone"
+CF_ActPresets[factionid][i] = "Gatling Drone"
 CF_ActModules[factionid][i] = "Base.rte"
 CF_ActPrices[factionid][i] = 225
-CF_ActDescriptions[factionid][i] = "Tradstar's Anti-Air Drone sports a machine gun plus a pair of fully automated surface to air missiles for bringing down any unwanted visitors above your landing zone."
+CF_ActDescriptions[factionid][i] = "Tradstar's Gatling Drone sports a machine gun plus a pair of fully automated surface to air missiles for bringing down any unwanted visitors above your landing zone."
 CF_ActUnlockData[factionid][i] = 750
 CF_ActClasses[factionid][i] = "ACrab"
 CF_ActTypes[factionid][i] = CF_ActorTypes.ARMOR;

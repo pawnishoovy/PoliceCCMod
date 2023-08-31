@@ -479,8 +479,8 @@ function WantedLevelScript:UpdateScript()
 	if self.cameraFocus and self.cameraFocusEnabled then
 		local input = false
 		for player = Activity.PLAYER_1, Activity.MAXPLAYERCOUNT - 1 do
-			--SceneMan:SetScroll(self.cameraFocusPos, player)
-			--SceneMan:SetScrollTarget(self.cameraFocusPos, 1, SceneMan.SceneWrapsX, player)
+			--CameraMan:SetScroll(self.cameraFocusPos, player)
+			--CameraMan:SetScrollTarget(self.cameraFocusPos, 1, SceneMan.SceneWrapsX, player)
 			local actor = ActivityMan:GetActivity():GetControlledActor(player)
 			if actor and self.activity:PlayerActive(player) and self.activity:PlayerHuman(player) then
 				actor.ViewPoint = self.cameraFocusPos
