@@ -357,6 +357,11 @@ end
 
 function CyborgAIBehaviours.handleVoicelines(self)
 
+	if self:NumberValueExists("Attack Success") then
+		self:RemoveNumberValue("Attack Success");
+		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Intimidate, 3);
+	end
+
 	-- squad stuff
 	-- this is imperfect: itll only play when we go straight from being in a squad to being player controlled (i.e. we are now the leader)
 	-- there is no way to see if we're leading a squad, so that close approximation is the best we can get.
@@ -374,27 +379,27 @@ function CyborgAIBehaviours.handleVoicelines(self)
 	
 	if self:NumberValueExists("Melee Attacked") then
 		self:RemoveNumberValue("Melee Attacked");
-		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 3);
+		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 2);
 	end
 	
 	if self:NumberValueExists("Light Attack") then
 		self:RemoveNumberValue("Light Attack");
-		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 3);
+		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 2);
 	end
 	
 	if self:NumberValueExists("Medium Attack") then
 		self:RemoveNumberValue("Medium Attack");
-		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 3);
+		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 2);
 	end
 
 	if self:NumberValueExists("Large Attack") then
 		self:RemoveNumberValue("Large Attack");
-		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 3);
+		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 2);
 	end
 	
 	if self:NumberValueExists("Extreme Attack") then
 		self:RemoveNumberValue("Extreme Attack");
-		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 3);
+		CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.meleeYell, 2);
 	end
 		
 		

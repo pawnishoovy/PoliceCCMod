@@ -265,6 +265,17 @@ CF_ItmTypes[factionid][i] = CF_WeaponTypes.TOOL;
 CF_ItmPowers[factionid][i] = 0
 
 i = #CF_ItmNames[factionid] + 1
+CF_ItmNames[factionid][i] = "Donut"
+CF_ItmPresets[factionid][i] = "Donut"
+CF_ItmModules[factionid][i] = "Heat.rte"
+CF_ItmPrices[factionid][i] = 3
+CF_ItmDescriptions[factionid][i] = "Delicious donut. Offers no tactical advantage whatsoever."
+CF_ItmUnlockData[factionid][i] = 0
+CF_ItmClasses[factionid][i] = "HeldDevice"
+CF_ItmTypes[factionid][i] = CF_WeaponTypes.TOOL;
+CF_ItmPowers[factionid][i] = 0
+
+i = #CF_ItmNames[factionid] + 1
 CF_ItmNames[factionid][i] = "C-PB Breacher Tool"
 CF_ItmPresets[factionid][i] = "C-PB Breacher Tool"
 CF_ItmModules[factionid][i] = "Heat.rte"

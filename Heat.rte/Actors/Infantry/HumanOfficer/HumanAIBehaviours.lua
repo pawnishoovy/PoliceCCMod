@@ -464,6 +464,11 @@ function HumanAIBehaviours.handleVoicelines(self)
 		self:RemoveNumberValue("Eating Delicious Heat Donut");
 		HumanAIBehaviours.createEmotion(self, 4, 1, 150, false);
 	end
+	
+	if self:NumberValueExists("Attack Success") then
+		self:RemoveNumberValue("Attack Success");
+		HumanAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Battlecry, 3, 3);
+	end
 
 	-- squad stuff
 	-- this is imperfect: itll only play when we go straight from being in a squad to being player controlled (i.e. we are now the leader)

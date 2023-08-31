@@ -71,8 +71,6 @@ function Create(self)
 	self.originalBaseRotation = -15;
 	self.baseRotation = -15;
 	
-	self.equipAnimationTimer = Timer();
-	
 	self.attackAnimations = {}
 	self.attackAnimationCanHit = false
 	self.attackAnimationsSounds = {}
@@ -934,6 +932,125 @@ function Create(self)
 	self.attackAnimations[3] = overheadattackPhase
 	self.attackAnimationsTypes[3] = overheadattackPhase.Type
 	
+	-- flourish anim
+	flourishPhase = {}
+	flourishPhase.Type = "Flourish";
+	
+	-- Out
+	i = 1
+	flourishPhase[i] = {}
+	flourishPhase[i].durationMS = 130
+	
+	flourishPhase[i].canBeBlocked = false
+	flourishPhase[i].canDamage = false
+	flourishPhase[i].attackDamage = 0
+	flourishPhase[i].attackStunChance = 0
+	flourishPhase[i].attackRange = 0
+	flourishPhase[i].attackPush = 0
+	flourishPhase[i].attackVector = Vector(0, -4) -- local space vector relative to position and rotation
+	flourishPhase[i].attackAngle = 90;
+	
+	flourishPhase[i].frameStart = self.baseFrame
+	flourishPhase[i].frameEnd = self.baseFrame - 5
+	flourishPhase[i].angleStart = -10
+	flourishPhase[i].angleEnd = 25
+	flourishPhase[i].offsetStart = Vector(3, -5)
+	flourishPhase[i].offsetEnd = Vector(4, 6)
+	
+	flourishPhase[i].soundStart = CreateSoundContainer("Unequip Baton Heat", "Heat.rte");
+	
+	-- Out
+	i = 2
+	flourishPhase[i] = {}
+	flourishPhase[i].durationMS = 100
+	
+	flourishPhase[i].canBeBlocked = false
+	flourishPhase[i].canDamage = false
+	flourishPhase[i].attackDamage = 0
+	flourishPhase[i].attackStunChance = 0
+	flourishPhase[i].attackRange = 0
+	flourishPhase[i].attackPush = 0
+	flourishPhase[i].attackVector = Vector(0, -4) -- local space vector relative to position and rotation
+	flourishPhase[i].attackAngle = 90;
+	
+	flourishPhase[i].frameStart = self.baseFrame
+	flourishPhase[i].frameEnd = self.baseFrame - 5
+	flourishPhase[i].angleStart = 25
+	flourishPhase[i].angleEnd = 45
+	flourishPhase[i].offsetStart = Vector(4, 6)
+	flourishPhase[i].offsetEnd = Vector(-7, -6)
+	
+	-- Out
+	i = 3
+	flourishPhase[i] = {}
+	flourishPhase[i].durationMS = 200
+	
+	flourishPhase[i].canBeBlocked = false
+	flourishPhase[i].canDamage = false
+	flourishPhase[i].attackDamage = 0
+	flourishPhase[i].attackStunChance = 0
+	flourishPhase[i].attackRange = 0
+	flourishPhase[i].attackPush = 0
+	flourishPhase[i].attackVector = Vector(0, -4) -- local space vector relative to position and rotation
+	flourishPhase[i].attackAngle = 90;
+	
+	flourishPhase[i].frameStart = 2
+	flourishPhase[i].frameEnd = 7
+	flourishPhase[i].angleStart = 45
+	flourishPhase[i].angleEnd = -140
+	flourishPhase[i].offsetStart = Vector(-7, -6)
+	flourishPhase[i].offsetEnd = Vector(7, 6)
+	
+	flourishPhase[i].soundStart = CreateSoundContainer("Equip Baton Heat", "Heat.rte");
+	
+	-- Upright
+	i = 4
+	flourishPhase[i] = {}
+	flourishPhase[i].durationMS = 60
+	
+	flourishPhase[i].canBeBlocked = false
+	flourishPhase[i].canDamage = false
+	flourishPhase[i].attackDamage = 0
+	flourishPhase[i].attackStunChance = 0
+	flourishPhase[i].attackRange = 0
+	flourishPhase[i].attackPush = 0
+	flourishPhase[i].attackVector = Vector(4, -4) -- local space vector relative to position and rotation
+	flourishPhase[i].attackAngle = 0;
+	
+	flourishPhase[i].frameStart = 7
+	flourishPhase[i].frameEnd = 7
+	flourishPhase[i].angleStart = -140
+	flourishPhase[i].angleEnd = -160
+	flourishPhase[i].offsetStart = Vector(7, 6)
+	flourishPhase[i].offsetEnd = Vector(-5, 7)
+	
+	-- Stance
+	i = 5
+	flourishPhase[i] = {}
+	flourishPhase[i].durationMS = 160
+	
+	flourishPhase[i].canBeBlocked = false
+	flourishPhase[i].canDamage = false
+	flourishPhase[i].attackDamage = 3.4
+	flourishPhase[i].attackStunChance = 0.15
+	flourishPhase[i].attackRange = 20
+	flourishPhase[i].attackPush = 0.8
+	flourishPhase[i].attackVector = Vector(4, 4) -- local space vector relative to position and rotation
+	flourishPhase[i].attackAngle = 0;
+	
+	flourishPhase[i].frameStart = 7
+	flourishPhase[i].frameEnd = 7
+	flourishPhase[i].angleStart = -60
+	flourishPhase[i].angleEnd = -35
+	flourishPhase[i].offsetStart = Vector(-5, 8)
+	flourishPhase[i].offsetEnd = Vector(0, 0)
+	
+	-- Add the animation to the animation table
+	self.attackAnimationsSounds[4] = regularAttackSounds
+	self.attackAnimationsGFX[4] = regularAttackGFX
+	self.attackAnimations[4] = flourishPhase
+	self.attackAnimationsTypes[4] = flourishPhase.Type
+	
 	-- warcry
 	warcryPhase = {}
 	warcryPhase.Type = "Warcry";
@@ -1335,7 +1452,7 @@ function Update(self)
 	elseif controller then --          :-)
 	
 		-- INPUT
-		--local flourish
+		local flourish
 		local warcry = self:NumberValueExists("Warcried");
 		local stab
 		local overhead
@@ -1343,10 +1460,10 @@ function Update(self)
 		local activated
 		if self.parriedCooldown == false then
 			if player then
-				--flourish = (player and UInputMan:KeyPressed(HeatHotkeyMap.MeleeFlourishHotkey));
+				flourish = (player and UInputMan:KeyPressed(HeatHotkeyMap.MeleeFlourishHotkey));
 				stab = (player and UInputMan:KeyPressed(HeatHotkeyMap.MeleeStabHotkey))
 				overhead = (player and UInputMan:KeyPressed(HeatHotkeyMap.MeleeOverheadHotkey))
-				if stab or overhead or warcry then
+				if stab or overhead or flourish or warcry then
 					controller:SetState(Controller.PRESS_PRIMARY, true)
 					self:Activate();
 				end
@@ -1357,11 +1474,11 @@ function Update(self)
 					self.attackCooldown = false;
 				end
 			else
-				--flourish = self:NumberValueExists("AI Flourish");
+				flourish = self:NumberValueExists("AI Flourish");
 				stab = self:NumberValueExists("AI Stab");
 				overhead = self:NumberValueExists("AI Overhead");
 				attack = self:NumberValueExists("AI Attack");
-				if stab or overhead or warcry then
+				if stab or overhead or flourish or warcry then
 					controller:SetState(Controller.PRESS_PRIMARY, true)
 					self:Activate();
 				end
@@ -1436,7 +1553,7 @@ function Update(self)
 				
 			end
 			
-			if not stab and not overhead and not warcry then
+			if not stab and not overhead and not flourish and not warcry then
 				if self.parent:NumberValueExists("Mordhau Disable Movement") then -- we're probably on a horse if this is set... probably...
 					playAttackAnimation(self, 15) -- regular attack
 					self:SetNumberValue("Current Attack Type", 2);
@@ -1462,9 +1579,9 @@ function Update(self)
 				else
 					playAttackAnimation(self, 5)
 				end
-			-- elseif flourish and not self.parent:NumberValueExists("Mordhau Charge Ready") then
-				-- self.parent:SetNumberValue("Block Foley", 1);
-				-- playAttackAnimation(self, 4) -- fancypants shit
+			elseif flourish and not self.parent:NumberValueExists("Mordhau Charge Ready") then
+				self.parent:SetNumberValue("Block Foley", 1);
+				playAttackAnimation(self, 4) -- fancypants shit
 			end
 			
 			-- if self.isCharged then
@@ -1602,7 +1719,7 @@ function Update(self)
 			
 				self.moveBuffered = true;
 			
-				if not stab and not overhead and not warcry then
+				if not stab and not overhead and not flourish and not warcry then
 					if self.parent:NumberValueExists("Mordhau Disable Movement") then -- we're probably on a horse if this is set... probably...
 						self.attackAnimationBuffered = 15;
 					else
@@ -1619,8 +1736,8 @@ function Update(self)
 					else
 						self.attackAnimationBuffered =  5;
 					end
-				-- elseif flourish and not self.parent:NumberValueExists("Mordhau Charge Ready") then
-					-- self.attackAnimationBuffered = 4;
+				elseif flourish and not self.parent:NumberValueExists("Mordhau Charge Ready") then
+					self.attackAnimationBuffered = 4;
 				end
 				
 			end

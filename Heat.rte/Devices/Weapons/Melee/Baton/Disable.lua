@@ -65,8 +65,6 @@ function OnAttach(self)
 		
 	end
 	
-	self.canBlock = true;
-	
 end
 
 function Update(self)

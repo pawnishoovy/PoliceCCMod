@@ -201,6 +201,8 @@ function Update(self)
 	end
 	
 	if self.FiredFrame then
+	
+		CameraMan:AddScreenShake(30, self.Pos);
 		
 		self.Fired = true;
 		self.RateOfFire = 1;
