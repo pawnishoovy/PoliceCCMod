@@ -1,3 +1,5 @@
+dofile("Heat.rte/HeatHotkeyMap.lua")
+
 function Create(self)
 
 	self.parentSet = false;

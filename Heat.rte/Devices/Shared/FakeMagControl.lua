@@ -1,3 +1,5 @@
+--[[MULTITHREAD]]--
+
 function Create(self)
 
 	self.fakeMag = nil;
@@ -13,7 +15,7 @@ function Create(self)
 	end
 end
 
-function Update(self)
+function ThreadedUpdate(self)
 	
 	if self.fakeMag and not self:NumberValueExists("LostFakeMag") then
 		self.fakeMag:ClearForces();

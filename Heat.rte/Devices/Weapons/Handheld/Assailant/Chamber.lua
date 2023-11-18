@@ -1,3 +1,7 @@
+--[[MULTITHREAD]]--
+
+dofile("Heat.rte/HeatHotkeyMap.lua")
+
 function Create(self)
 
 	self.parentSet = false;
@@ -97,7 +101,7 @@ function Create(self)
 	-- Progressive Recoil System 
 end
 
-function Update(self)
+function ThreadedUpdate(self)
 	self.Frame = 0;
 	self.rotationTarget = 0 -- ZERO IT FIRST AAAA!!!!!
 	

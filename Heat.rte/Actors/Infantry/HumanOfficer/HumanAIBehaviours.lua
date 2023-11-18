@@ -1,3 +1,5 @@
+dofile("Heat.rte/HeatHotkeyMap.lua")
+
 HumanAIBehaviours = {};
 
 -- function HumanAIBehaviours.createSoundEffect(self, effectName, variations)

@@ -1,3 +1,5 @@
+dofile("Heat.rte/HeatHotkeyMap.lua")
+
 CyborgAIBehaviours = {};
 
 -- function CyborgAIBehaviours.createSoundEffect(self, effectName, variations)

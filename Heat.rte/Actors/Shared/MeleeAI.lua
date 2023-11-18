@@ -1,3 +1,5 @@
+--[[MULTITHREAD]]--
+
 --require("AI/NativeHumanAI")   -- or NativeCrabAI or NativeTurretAI
 
 function Sign(x)
