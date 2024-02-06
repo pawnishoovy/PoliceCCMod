@@ -95,7 +95,7 @@ function Create(self)
 	-- End modded code
 end
 
-function Update(self)
+function ThreadedUpdate(self)
 
 	self.controller = self:GetController();
 	
@@ -127,9 +127,27 @@ function Update(self)
 	end
 
 end
+
+function SyncedUpdate(self)
+
+	-- Spotting sets number values, which isn't thread-safe
+	
+	if self.AI.Target then
+		if self.threadingJustSpotted then
+			self.AI.Target:SetNumberValue("Heat Enemy Spotted Age", self.AI.Target.Age)
+			self.AI.Target:SetNumberValue("Heat Enemy Spotted Delay", math.random(self.spotDelayMin, self.spotDelayMax))
+		else
+			self.AI.Target:SetNumberValue("Heat Enemy Spotted Age", self.AI.Target.Age)
+		end
+	end
+
+	self.threadingJustSpotted = false;
+	
+end
+
 -- End modded code --
 
-function UpdateAI(self)
+function ThreadedUpdateAI(self)
 	self.AI:Update(self)
 
 end

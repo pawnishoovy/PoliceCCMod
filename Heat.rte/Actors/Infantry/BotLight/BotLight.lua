@@ -65,7 +65,7 @@ function Create(self)
 	-- End modded code
 end
 
-function Update(self)
+function ThreadedUpdate(self)
 
 	self.controller = self:GetController();
 	
@@ -90,7 +90,7 @@ function Update(self)
 end
 -- End modded code --
 
-function UpdateAI(self)
+function ThreadedUpdateAI(self)
 	self.AI:Update(self)
 
 end

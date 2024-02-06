@@ -111,7 +111,7 @@ function Create(self)
 	self.targetingMOUniqueID = -1	
 end
 
-function Update(self)
+function ThreadedUpdate(self)
 
 	if self.ID == self.RootID then
 		self.parent = nil;

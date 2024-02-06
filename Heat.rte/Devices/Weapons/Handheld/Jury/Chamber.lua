@@ -110,7 +110,7 @@ function Create(self)
 	-- Progressive Recoil System 
 end
 
-function Update(self)
+function ThreadedUpdate(self)
 	self.rotationTarget = 0 -- ZERO IT FIRST AAAA!!!!!
 	
 	if self.ID == self.RootID then

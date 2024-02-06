@@ -23,7 +23,7 @@ function Create(self)
 	
 end
 
-function Update(self)
+function ThreadedUpdate(self)
 
 	local cont = self:GetController();
 	

@@ -282,19 +282,18 @@ function BotMediumAIBehaviours.handleAITargetLogic(self)
 				self.AI.Target:GetNumberValue("Heat Enemy Spotted Age") < (self.AI.Target.Age - self.AI.Target:GetNumberValue("Heat Enemy Spotted Delay")) or -- If the timer runs out of time limit
 				math.random(0, 100) < self.spotIgnoreDelayChance -- Small chance to ignore timers, to spice things up
 				then
-					-- Setup the delay timer
-					self.AI.Target:SetNumberValue("Heat Enemy Spotted Age", self.AI.Target.Age)
-					self.AI.Target:SetNumberValue("Heat Enemy Spotted Delay", math.random(self.spotDelayMin, self.spotDelayMax))
 					
 					self.spotAllowed = false;
-					
 					BotMediumAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Spot, 3);
+					
+					self.threadingJustSpotted = true;
+					self:RequestSyncedUpdate();
 					
 				end
 			else
 				-- Refresh the delay timer
 				if self.AI.Target:NumberValueExists("Heat Enemy Spotted Age") then
-					self.AI.Target:SetNumberValue("Heat Enemy Spotted Age", self.AI.Target.Age)
+					self:RequestSyncedUpdate();
 				end
 			end
 		end

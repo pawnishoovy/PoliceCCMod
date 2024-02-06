@@ -330,18 +330,18 @@ function CyborgAIBehaviours.handleAITargetLogic(self)
 				math.random(0, 100) < self.spotIgnoreDelayChance -- Small chance to ignore timers, to spice things up
 				then
 					-- Setup the delay timer
-					self.AI.Target:SetNumberValue("Heat Enemy Spotted Age", self.AI.Target.Age)
-					self.AI.Target:SetNumberValue("Heat Enemy Spotted Delay", math.random(self.spotDelayMin, self.spotDelayMax))
 					
 					self.spotAllowed = false;
-					
 					CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Intimidate, 3);
+					
+					self.threadingJustSpotted = true;
+					self:RequestSyncedUpdate();
 					
 				end
 			else
 				-- Refresh the delay timer
 				if self.AI.Target:NumberValueExists("Heat Enemy Spotted Age") then
-					self.AI.Target:SetNumberValue("Heat Enemy Spotted Age", self.AI.Target.Age)
+					self:RequestSyncedUpdate();
 				end
 			end
 		end
@@ -363,49 +363,16 @@ function CyborgAIBehaviours.handleVoicelines(self)
 
 	if (self:IsPlayerControlled() and UInputMan:KeyPressed(HeatHotkeyMap.WarcryHotkey)) then
 	
-		if math.random(0, 100) < 50 then
-			CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Battlecry, 3, false);
-		else
-			CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Intimidate, 3, false);
-		end
+		self.threadingWarcried = true;
+		self:RequestSyncedUpdate();
 		
-		if self.EquippedItem and (self.EquippedItem:IsInGroup("Weapons - Mordhau Melee") or self.EquippedItem:NumberValueExists("Weapons - Mordhau Melee")) then
-			self.EquippedItem:SetNumberValue("Warcried", 1);
-		end
-		
-		for actor in MovableMan:GetMOsInRadius(self.Pos, 200, Activity.NOTEAM, true) do
-			if IsAHuman(actor) and actor.Team == self.Team then
-				actor = ToAHuman(actor);
-				local d = SceneMan:ShortestDistance(actor.Pos, self.Pos, true).Magnitude;
-				local strength = SceneMan:CastStrengthSumRay(self.Pos, actor.Pos, 0, 128);
-				if strength < 400 and math.random(1, 100) < 85 then
-					actor:SetNumberValue("Warcry Together", 1)
-				else
-					if IsAHuman(actor) and actor.Head then -- if it is a human check for head
-						local strength = SceneMan:CastStrengthSumRay(self.Pos, ToAHuman(actor).Head.Pos, 0, 128);	
-						if strength < 400 and math.random(1, 100) < 85 then		
-							actor:SetNumberValue("Warcry Together", 1)
-						end
-					end
-				end
-			end
-		end
-		
-		self:SetNumberValue("Warcried", 1);
 	elseif self:NumberValueExists("Warcry Together") then
 	
-		if not self.AI.Target then
-			if math.random(0, 100) < 50 then
-				CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Battlecry, 3, false);
-			else
-				CyborgAIBehaviours.createVoiceSoundEffect(self, self.voiceSounds.Intimidate, 3, false);
-			end
-			if self.EquippedItem and (self.EquippedItem:IsInGroup("Weapons - Mordhau Melee") or self.EquippedItem:NumberValueExists("Weapons - Mordhau Melee")) then
-				self.EquippedItem:SetNumberValue("Warcried", 1);
-			end
-		end
+		self.threadingWarcried = true;
+		self:RequestSyncedUpdate();
 		
 		self:RemoveNumberValue("Warcry Together");
+		
 	end
 
 	if self:NumberValueExists("Attack Success") then

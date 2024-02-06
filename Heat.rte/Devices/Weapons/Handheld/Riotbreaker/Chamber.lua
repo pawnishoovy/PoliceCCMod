@@ -84,7 +84,7 @@ function Create(self)
 	-- Progressive Recoil System 	
 end
 
-function Update(self)
+function ThreadedUpdate(self)
 	self.rotationTarget = 0 -- ZERO IT FIRST AAAA!!!!!
 	self.delayedFireEnabled = true -- IMPORTANT
 	

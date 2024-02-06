@@ -87,7 +87,7 @@ function Create(self)
 	-- Progressive Recoil System 
 end
 
-function Update(self)
+function ThreadedUpdate(self)
 	self.rotationTarget = 0 -- ZERO IT FIRST AAAA!!!!!
 	
 	if self.ID == self.RootID then
@@ -118,7 +118,7 @@ function Update(self)
     end
     
     self.lastRotAngle = self.RotAngle
-    self.angVel = (result / TimerMan.DeltaTimeSecs) * self.FlipFactor
+    self.angVel = (result/2 / TimerMan.DeltaTimeSecs) * self.FlipFactor
     
     if self.lastHFlipped ~= nil then
         if self.lastHFlipped ~= self.HFlipped then
@@ -318,7 +318,12 @@ function Update(self)
 	-- Animation
 	if self.parent then
 	
-		if self.Target then
+		if self.Target and MovableMan:FindObjectByUniqueID(self.Target.UniqueID) then
+		
+			local screen = ActivityMan:GetActivity():ScreenOfPlayer(ToActor(self.parent):GetController().Player);
+			local topLeft = Vector(-self.Target.Radius, -self.Target.Radius);
+			local bottomRight = Vector(self.Target.Radius, self.Target.Radius);
+			PrimitiveMan:DrawBoxPrimitive(screen, self.Target.Pos + topLeft, self.Target.Pos + bottomRight, 149);
 		
 			-- bias towards head if we have one
 			-- we can't just target it cuz we will often miss upwards then
@@ -340,6 +345,7 @@ function Update(self)
 			else
 				self.Target = nil;
 			end
+			
 		end	
 	
 		self.horizontalAnim = math.floor(self.horizontalAnim / (1 + TimerMan.DeltaTimeSecs * 24.0) * 1000) / 1000
@@ -374,9 +380,6 @@ function Update(self)
 		
 		self.rotation = (self.rotation + self.rotationTarget * TimerMan.DeltaTimeSecs * self.rotationSpeed) / (1 + TimerMan.DeltaTimeSecs * self.rotationSpeed)
 		local total = math.rad(self.rotation) * self.FlipFactor
-		
-		-- this shit was broken by pre4, muzzle flash is just gonna be in the wrong place sorry
-		-- ask your precious furfag gay nigger-lover overlords why
 		
 		self.RotAngle = self.RotAngle + total;
 		-- self.RotAngle = self.RotAngle + total;
@@ -419,7 +422,7 @@ function Update(self)
 		
 		-- Smart Pistol Ripoff Moment
 		
-		if self.Mode == 1 and self.Magazine then
+		if self.Mode == 1 then
 			if self.FiredFrame then -- needs to be here to get the rotation right...
 				for i = 1, 1 do
 					local Bullet = CreateMOPixel("Particle Judge", "Heat.rte")
@@ -445,7 +448,7 @@ function Update(self)
 					MovableMan:AddParticle(Effect)
 				end
 			end
-			if self.Magazine.RoundCount > 0 then
+			if self.RoundInMagCount > 0 then
 				
 				if self.searchTimer:IsPastSimTimeLimit() then
 					self.searchTimer:Reset();
@@ -491,7 +494,6 @@ function Update(self)
 										end
 									end
 									local screen = ActivityMan:GetActivity():ScreenOfPlayer(ToActor(self.parent):GetController().Player);
-									PrimitiveMan:DrawBoxPrimitive(screen, actor.Pos + topLeft, actor.Pos + bottomRight, 149);
 									
 									if IsAHuman(actor) and ToAHuman(actor).Head then
 										self.TargetHead = ToAHuman(actor).Head;
