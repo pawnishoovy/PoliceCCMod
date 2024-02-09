@@ -1,19 +1,7 @@
---[[MULTITHREAD]]--
-
-dofile("Base.rte/Constants.lua")
-require("AI/NativeHumanAI")  --dofile("Base.rte/AI/NativeHumanAI.lua")
 package.path = package.path .. ";Heat.rte/?.lua";
 require("Actors/Infantry/BotMedium/BotMediumAIBehaviours")
 
 function Create(self)
-	self.AI = NativeHumanAI:Create(self)
-	--You can turn features on and off here
-	self.armSway = true;
-	self.automaticEquip = false;
-	self.alternativeGib = true;
-	self.visibleInventory = false;
-	
-	-- Start modded code --
 	
 	self.RTE = "Heat.rte";
 	self.baseRTE = "Heat.rte";
@@ -91,15 +79,12 @@ function Create(self)
 	self.boosterReady = true
 	self.boosterTimer = Timer()
 	self.boosterAIDelay = 6000
-	
-	-- End modded code
+
 end
 
 function ThreadedUpdate(self)
 
 	self.controller = self:GetController();
-	
-	-- Start modded code--
 	
 	self.voiceSound.Pos = self.Pos;
 	
@@ -145,22 +130,12 @@ function SyncedUpdate(self)
 	
 end
 
--- End modded code --
-
-function ThreadedUpdateAI(self)
-	self.AI:Update(self)
-
-end
 
 function Destroy(self)
-	self.AI:Destroy(self)
-	
-	-- Start modded code --
+
 	
 	if not self.ToSettle then -- we have been gibbed		
 		self.voiceSound:Stop(-1);
 	end
-	
-	-- End modded code --
 	
 end

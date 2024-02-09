@@ -13,7 +13,7 @@ function Create(self)
 	
 	self.range = 160
 	
-	self.timeFactor = (1 - 0.15)
+	self.timeFactor = (1 - 0.02)
 	
 	self.glowSpawnTimer = Timer();
 	
@@ -33,23 +33,23 @@ function Update(self)
 	if self.active then
 		--PrimitiveMan:DrawCirclePrimitive(self.Pos, self.range, 5)
 		
-		for mo in MovableMan.Particles do
-			if mo and mo.PinStrength < 1 and (mo.HitsMOs == true or math.random(1,3) <= 2) then
-				local distance = SceneMan:ShortestDistance(self.Pos, mo.Pos + mo.Vel * GetPPM() * TimerMan.DeltaTimeSecs, SceneMan.SceneWrapsX).Magnitude
+		-- for mo in MovableMan.Particles do
+			-- if mo and mo.PinStrength < 1 and (mo.HitsMOs == true or math.random(1,3) <= 2) then
+				-- local distance = SceneMan:ShortestDistance(self.Pos, mo.Pos + mo.Vel * GetPPM() * TimerMan.DeltaTimeSecs, SceneMan.SceneWrapsX).Magnitude
 				
-				if distance < self.range then
-					local distanceFactor = math.sqrt(math.max(self.range - (distance * 0.3), 0) / self.range)
-					local timeFactor = self.timeFactor * distanceFactor
+				-- if distance < self.range then
+					-- local distanceFactor = math.sqrt(math.max(self.range - (distance * 0.3), 0) / self.range)
+					-- local timeFactor = self.timeFactor * distanceFactor
 					
-					--PrimitiveMan:DrawCirclePrimitive(mo.Pos, 1, 5)
-					if mo.Lifetime and mo.Lifetime > 0 and mo.ClassName ~= "AEmitter" and mo.ClassName ~= "MOSRotating" and mo.ClassName ~= "Actor" then
-						mo.Lifetime = mo.Lifetime + TimerMan.DeltaTimeSecs * 700 * timeFactor
-					end
-					mo.Pos = mo.Pos - mo.Vel * GetPPM() * TimerMan.DeltaTimeSecs * timeFactor
-					mo.Vel = mo.Vel - SceneMan.GlobalAcc * TimerMan.DeltaTimeSecs * 0.5 * mo.GlobalAccScalar * distanceFactor
-				end
-			end
-		end
+					-- --PrimitiveMan:DrawCirclePrimitive(mo.Pos, 1, 5)
+					-- if mo.Lifetime and mo.Lifetime > 0 and mo.ClassName ~= "AEmitter" and mo.ClassName ~= "MOSRotating" and mo.ClassName ~= "Actor" then
+						-- mo.Lifetime = mo.Lifetime + TimerMan.DeltaTimeSecs * 700 * timeFactor
+					-- end
+					-- --mo.Pos = mo.Pos - mo.Vel * GetPPM() * TimerMan.DeltaTimeSecs * timeFactor
+					-- mo.Vel = mo.Vel - SceneMan.GlobalAcc * TimerMan.DeltaTimeSecs * 0.5 * mo.GlobalAccScalar * distanceFactor
+				-- end
+			-- end
+		-- end
 		
 		for mo in MovableMan:GetMOsInRadius(self.Pos, self.range, Activity.NOTEAM, false) do
 			if mo and mo.PinStrength == 0 and mo.ClassName ~= "ADoor" and mo.ClassName ~= "ACraft" and mo.UniqueID ~= self.UniqueID then
@@ -59,9 +59,13 @@ function Update(self)
 					local distanceFactor = math.sqrt(math.max(self.range - (distance * 0.3), 0) / self.range)
 					local timeFactor = self.timeFactor * distanceFactor
 					
+					if mo.Lifetime and mo.Lifetime > 0 and mo.ClassName ~= "AEmitter" and mo.ClassName ~= "MOSRotating" and mo.ClassName ~= "Actor" then
+						mo.Lifetime = mo.Lifetime + TimerMan.DeltaTimeSecs
+					end
+					
 					--PrimitiveMan:DrawCirclePrimitive(mo.Pos, 3, 5)
 					mo.Pos = mo.Pos - mo.Vel * GetPPM() * TimerMan.DeltaTimeSecs * timeFactor
-					mo.Vel = mo.Vel - SceneMan.GlobalAcc * TimerMan.DeltaTimeSecs * 0.5 * mo.GlobalAccScalar * distanceFactor
+					mo.Vel = mo.Vel - (SceneMan.GlobalAcc*2) * TimerMan.DeltaTimeSecs * 0.5 * mo.GlobalAccScalar * distanceFactor
 					
 					if self.glowSpawnTimer:IsPastSimMS(65) and math.random(1,4) < 2 and IsActor(mo) then
 						ToActor(mo).Health = ToActor(mo).Health - TimerMan.DeltaTimeSecs
